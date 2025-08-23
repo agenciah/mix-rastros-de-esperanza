@@ -1,0 +1,52 @@
+{
+  "name": "gastos-bot",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js",
+    "jest": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/vision": "^5.2.0",
+    "@supabase/supabase-js": "^2.50.0",
+    "axios": "^1.10.0",
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13",
+    "dotenv": "^16.5.0",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "googleapis": "^150.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "node-cron": "^4.1.1",
+    "nodemailer": "^7.0.3",
+    "pdfkit": "^0.17.1",
+    "sqlite": "^4.2.1",
+    "sqlite3": "^5.1.7",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "babel-jest": "^30.0.5",
+    "jest": "^30.0.5",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4"
+  }
+}
