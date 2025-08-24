@@ -4,6 +4,8 @@ import { wrapEmailLayout } from '../utils/emailLayout.js';
 import transporter from '../utils/getTransporter.js';
 
 const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+const backendUrl = process.env.PUBLIC_URL || 'http://localhost:3001';
+
 
 function getFromAlias(tipo = 'notificaciones') {
   switch (tipo) {
@@ -19,7 +21,8 @@ function getFromAlias(tipo = 'notificaciones') {
 
 // 📧 Confirmación de cuenta
 export async function sendConfirmationEmail(to, token) {
-  const confirmUrl = `${frontendUrl}/api/auth/confirm?token=${token}`;
+  const confirmUrl = `${backendUrl}/api/auth/confirm?token=${token}`;
+  console.log(`[EMAIL] confirmUrl=${confirmUrl}`);
 
   const mailOptions = {
     from: getFromAlias('notificaciones'),

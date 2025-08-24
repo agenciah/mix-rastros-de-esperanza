@@ -26,6 +26,13 @@ export async function registerUser(req, res) {
 
   const { nombre, email, telefono, password, plan = [], datosFiscales, acepto_terminos, estado_republica } = req.body;
 
+const emailNormalized = email?.trim().toLowerCase();
+const telefonoNormalized = telefono?.trim().replace(/\s+/g, '');
+const nombreNormalized = nombre?.trim();
+const estadoRepublicaNormalized = estado_republica?.trim();
+
+logger.info(`[REGISTER] emailNorm=${emailNormalized} telNorm=${telefonoNormalized} estado=${estadoRepublicaNormalized}`);
+
   if (!nombre || !email || !telefono || !password) {
     return res.status(400).json({ error: 'Todos los campos son obligatorios.' });
   }
@@ -36,7 +43,7 @@ export async function registerUser(req, res) {
 
   try {
     // Validar duplicidad de usuario
-    const existingEmail = await findUserByEmail(email);
+    const existingEmail = await findUserByEmail(emailNormalized);
     if (existingEmail) return res.status(409).json({ error: 'Este correo ya está registrado.' });
 
     const existingPhone = await findUserByPhone(telefono);
@@ -44,7 +51,9 @@ export async function registerUser(req, res) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const confirmationToken = jwt.sign({ email }, JWT_CONFIRM_SECRET, { expiresIn: '1d' });
+    const confirmationToken = jwt.sign({ email: emailNormalized }, JWT_CONFIRM_SECRET, { expiresIn: '1d' });
+    logger.info(`[CONFIRM] token generado len=${confirmationToken.length} prefix=${confirmationToken.slice(0, 12)}… secret=${process.env.JWT_CONFIRM_SECRET ? 'ENV' : 'DEFAULT'}`);
+
     const planesArray = Array.isArray(plan) && plan.length > 0 ? plan : ['trial'];
 
     // Campos fiscales del servicio
@@ -62,9 +71,9 @@ export async function registerUser(req, res) {
 
     // Crear usuario con los campos nuevos
     const userId = await createUser({
-      nombre,
-      telefono,
-      email,
+      nombre: nombreNormalized,
+      telefono: telefonoNormalized,
+      email: emailNormalized,
       passwordHash: hashedPassword,
       plan: planesArray,
       confirmationToken,
@@ -76,7 +85,7 @@ export async function registerUser(req, res) {
       acepto_terminos,
       fecha_aceptacion: fechaAceptacion,
       version_terminos: versionTerminos,
-      estado_republica: estado_republica || null,
+      estado_republica: estadoRepublicaNormalized || null,
       ultima_conexion: null,
       numero_referencia_unico,
       fichas_activas_pagadas: 0,
@@ -84,8 +93,10 @@ export async function registerUser(req, res) {
       user_state: 'nuevo'
     });
 
+    logger.info(`[EMAIL] enviando confirmación a ${emailNormalized}`);
     // Enviar correo de confirmación
-    await sendConfirmationEmail(email, confirmationToken);
+    await sendConfirmationEmail(emailNormalized, confirmationToken);
+    logger.info(`[EMAIL] confirmación ENVIADA a ${emailNormalized}`);
 
     res.status(201).json({
       message: 'Usuario registrado exitosamente.',

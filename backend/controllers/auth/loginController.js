@@ -14,22 +14,26 @@ export async function loginUser(req, res) {
     return res.status(400).json({ error: 'Email y contraseña son requeridos.' });
   }
 
+  // Normalizar email sin reasignar un const
+  const emailNormalized = email.trim().toLowerCase();
+
   try {
-    const user = await findUserByEmail(email);
+    const user = await findUserByEmail(emailNormalized);
+    logger.info(`[LOGIN] email=${email} encontrado=${!!user}`);
 
     if (!user) {
-      logger.warn(`⚠️ Usuario no encontrado con el email: ${email}`);
+      logger.warn(`⚠️ Usuario no encontrado con el email: ${emailNormalized}`);
       return res.status(401).json({ error: 'Usuario no encontrado.' });
     }
 
     if (!user.email_confirmed) {
-      logger.warn(`⚠️ Intento de login con correo no confirmado: ${email}`);
+      logger.warn(`⚠️ Intento de login con correo no confirmado: ${emailNormalized}`);
       return res.status(403).json({ error: 'Correo no confirmado. Revisa tu email para confirmar tu cuenta.' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      logger.warn(`⚠️ Contraseña incorrecta del email: ${email}`);
+      logger.warn(`⚠️ Contraseña incorrecta del email: ${emailNormalized}`);
       return res.status(401).json({ error: 'Contraseña incorrecta.' });
     }
 
@@ -37,7 +41,7 @@ export async function loginUser(req, res) {
     const nowISO = new Date().toISOString();
     await updateUserUltimaConexion(user.id, nowISO);
 
-    // JWT con nuevos campos importantes
+    // JWT con campos importantes
     const tokenPayload = {
       id: user.id,
       email: user.email,

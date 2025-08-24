@@ -27,8 +27,14 @@ const Login = () => {
   const onSubmit = async (data) => {
     setLoading(true)
     try {
-      const res = await api.post('auth/login', data)
+      const payload = {
+      ...data,
+      email: data.email.trim().toLowerCase()
+    }
+      const res = await api.post('api/auth/login', payload)
       const { user, token } = res.data
+
+      
 
       login(user, token) // Actualiza contexto y localStorage
       console.log("token: ", token)
@@ -37,6 +43,7 @@ const Login = () => {
     } catch (err) {
       const msg = err.response?.data?.message || 'Credenciales inválidas'
       toast.error(msg)
+      console.error("Error en login:", err.response || err.message);
     } finally {
       setLoading(false)
     }
