@@ -129,3 +129,32 @@ export async function sendPagoConfirmadoEmail(to, nombreUsuario, plan, monto, pe
     throw error;
   }
 }
+
+// 📧 Notificación de posible coincidencia de hallazgo
+export async function sendMatchNotification(to, subject, message) {
+  if (!to || !subject || !message) {
+    logger.error('❌ No se pudo enviar el correo de notificación: faltan parámetros', { to, subject, message });
+    return;
+  }
+
+  const mailOptions = {
+    from: getFromAlias('notificaciones'),
+    to,
+    subject,
+    html: wrapEmailLayout(`
+      <p>Hola,</p>
+      <p>¡Tenemos una actualización importante!</p>
+      <p>${message}</p>
+      <p>Por favor, inicia sesión en tu cuenta para ver los detalles de la posible coincidencia.</p>
+      <p><a href="${frontendUrl}" target="_blank" style="color:#007bff;">Ir a la plataforma</a></p>
+      <p>Gracias por usar nuestro servicio.</p>
+    `)
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    logger.error('❌ Error al enviar el correo de notificación de coincidencia:', { to, error });
+    throw error;
+  }
+}

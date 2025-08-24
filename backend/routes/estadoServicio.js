@@ -2,7 +2,7 @@ import express from 'express';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 
 // Importaciones de controladores individuales
-import { getEstadoServicio, putActualizarFacturasRestantes, putProgramarCancelacion, putCambiarEstadoServicio, putActualizarProximoPago } from '../controllers/estadoServicio/index.js';
+import { getEstadoServicio, putProgramarCancelacion, putCambiarEstadoServicio, putActualizarProximoPago } from '../controllers/estadoServicio/index.js';
 
 const router = express.Router();
 
@@ -18,12 +18,6 @@ router.get('/', (req, res, next) => {
   console.log('→ Usuario autenticado:', req.user); // gracias a authenticateToken
   next();
 }, getEstadoServicio);
-
-/**
- * PUT /api/estado-servicio/facturas
- * - Actualiza el número de facturas restantes (por ejemplo, si se consume una factura).
- */
-router.put('/facturas', putActualizarFacturasRestantes);
 
 /**
  * PUT /api/estado-servicio/cancelacion

@@ -4,8 +4,6 @@ import cors from 'cors';
 import logger from './utils/logger.js';
 
 import authRoutes from './routes/auth.js';
-import gastosRoutes from './routes/gastos.js';
-import webhookRoutes from './whatsapp/routes/webhookRoutes.js';
 import cancelacionesRoutes from './routes/cancelaciones.js';
 import mercadoPagoRoutes from './routes/mercadoPagoRoutes.js';
 import excelRoutes from './routes/excel.js';
@@ -30,8 +28,6 @@ app.use((req, _res, next) => {
 
 // Rutas
 app.use('/api/auth', authRoutes);
-app.use('/api/gastos', gastosRoutes);
-app.use('/webhook', webhookRoutes);
 app.use('/api/cancelaciones', cancelacionesRoutes);
 app.use('/api/mercadopago', mercadoPagoRoutes);
 app.use('/api/excel', excelRoutes);

@@ -69,7 +69,7 @@ export const actualizarPlanes = async (req, res) => {
 export const actualizarPerfil = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { nombre, email, telefono } = req.body;
+    const { nombre, email, telefono, estado_republica } = req.body;
 
     if (!nombre || !email) {
       return res.status(400).json({ mensaje: 'Nombre y correo son requeridos' });
@@ -80,7 +80,7 @@ export const actualizarPerfil = async (req, res) => {
       return res.status(400).json({ mensaje: 'Ese correo ya está en uso' });
     }
 
-    await updateUserProfile(userId, { nombre, email, telefono });
+    await updateUserProfile(userId, { nombre, email, telefono, estado_republica });
 
     // Llama a la función con 3 argumentos separados
     await enviarNotificacion(

@@ -179,11 +179,11 @@ export async function findUserById(id) {
 /**
  * Actualizar perfil básico
  */
-export async function updateUserProfile(userId, { nombre, email, telefono }) {
+export async function updateUserProfile(userId, { nombre, email, telefono, estado_republica }) {
   const db = await openDb();
   await db.run(
-    `UPDATE users SET nombre = ?, email = ?, telefono = ? WHERE id = ?`,
-    [nombre, email, telefono || null, userId]
+    `UPDATE users SET nombre = ?, email = ?, telefono = ?, estado_republica = ? WHERE id = ?`,
+    [nombre, email, telefono || null, estado_republica || null, userId]
   );
 }
 

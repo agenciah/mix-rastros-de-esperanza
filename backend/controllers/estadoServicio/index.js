@@ -1,5 +1,4 @@
 export { getEstadoServicio } from './getEstadoServicio.js'
-export { putActualizarFacturasRestantes } from './putActualizarFacturasRestantes.js'
 export { putProgramarCancelacion } from './putProgramarCancelacion.js'
 export { putCambiarEstadoServicio } from './putCambiarEstadoServicio.js'
 export { putActualizarProximoPago } from './putActualizarProximoPago.js'

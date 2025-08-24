@@ -1,7 +1,6 @@
 import express from 'express';
 // Se elimina la importación de 'obtenerUsuariosParaFacturacionServicio' de usuariosController.js
 import { obtenerUsuariosParaAdmin, actualizarUsuario } from '../controllers/admin/usuariosController.js';
-import { getTicketsFacturables, marcarGastoComoFacturado } from '../controllers/admin/facturacionController.js';
 import { obtenerDashboardAdmin } from '../controllers/admin/adminController.js';
 import {
   // Renombrada getFacturas a getFacturasYaEmitidas en el controlador
@@ -26,8 +25,6 @@ router.post('/login', loginAdmin);
 // Rutas admin
 router.get('/usuarios', authenticateAdminToken, obtenerUsuariosParaAdmin);
 router.put('/usuarios/:id', authenticateAdminToken, actualizarUsuario);
-router.get('/tickets', authenticateAdminToken, getTicketsFacturables);
-router.put('/gastos/:id/facturado', authenticateAdminToken, marcarGastoComoFacturado);
 router.get('/dashboard', authenticateAdminToken, obtenerDashboardAdmin);
 
 // Rutas facturas servicio
