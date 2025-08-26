@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import api from '@/lib/axios'
 import { Loader2 } from 'lucide-react'
-import usePlanIncluyeFacturacion from '@/hooks/usePlanIncluyeFacturacion'
+
 import { useAuth } from '@/context/AuthContext'
 
 const schema = z.object({
@@ -19,7 +19,7 @@ const schema = z.object({
 })
 
 const DatosFiscalesSection = () => {
-  const incluyeFacturacion = usePlanIncluyeFacturacion()
+  
   const [editando, setEditando] = useState(false)
   const [cargando, setCargando] = useState(true)
   const [datosFiscales, setDatosFiscales] = useState(null)
@@ -87,8 +87,6 @@ const DatosFiscalesSection = () => {
       </div>
     )
   }
-
-   if (!incluyeFacturacion) return null
 
   return (
     <div className="border rounded-md p-4 space-y-4">

@@ -99,36 +99,34 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-
-// Rutas para Catálogos (sin autenticación, ya que son datos públicos)
 // GET /api/fichas/catalogos/tipos-lugar
 router.get('/catalogos/tipos-lugar', async (req, res) => {
-    try {
-        const result = await obtenerCatalogoTiposLugar();
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
+  try {
+    await obtenerCatalogoTiposLugar(req, res);
+  } catch (err) {
+    console.error("Error en ruta /tipos-lugar:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 // GET /api/fichas/catalogos/partes-cuerpo
 router.get('/catalogos/partes-cuerpo', async (req, res) => {
-    try {
-        const result = await obtenerCatalogoPartesCuerpo();
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
+  try {
+    await obtenerCatalogoPartesCuerpo(req, res);
+  } catch (err) {
+    console.error("Error en ruta /partes-cuerpo:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 // GET /api/fichas/catalogos/prendas
 router.get('/catalogos/prendas', async (req, res) => {
-    try {
-        const result = await obtenerCatalogoPrendas();
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
+  try {
+    await obtenerCatalogoPrendas(req, res);
+  } catch (err) {
+    console.error("Error en ruta /prendas:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 export default router;

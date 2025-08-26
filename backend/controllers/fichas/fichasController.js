@@ -424,12 +424,19 @@ export const obtenerCatalogoPartesCuerpo = async (req, res) => {
     try {
         const db = await openDb();
         const partes = await db.all(`SELECT * FROM catalogo_partes_cuerpo`);
-        res.json({ success: true, catalogo_partes_cuerpo: partes });
+        // Mapeamos los campos para estandarizar
+        const partesNormalizadas = partes.map(p => ({
+            id: p.id_parte_cuerpo,       // <- importante
+            nombre: p.nombre_parte,
+            categoria: p.categoria_principal
+        }));
+        res.json({ success: true, catalogo_partes_cuerpo: partesNormalizadas });
     } catch (error) {
         logger.error(`❌ Error al obtener catálogo de partes del cuerpo: ${error.message}`);
         res.status(500).json({ success: false, message: 'Error interno del servidor' });
     }
 };
+
 
 /**
  * Obtiene el catálogo de prendas.

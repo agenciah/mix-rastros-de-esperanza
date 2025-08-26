@@ -10,16 +10,10 @@ import {
   User,
   Bot
 } from 'lucide-react'
-import { PLANES } from '@/constants/planes'
-import EstadoServicioCard from '@/pages/dashboard/estadoServicioCard';
-import usePlanIncluyeChatbot from '@/hooks/usePlanIncluyeChatbot';
 
 
 const DashboardLayout = () => {
   const { user, logout } = useAuth();
-  const planObject = PLANES.find(p => p.id === user.plan);
-  const tieneAccesoChatbot = usePlanIncluyeChatbot();
-
 
   return (
     // Contenedor principal: min-h-screen y w-full para ocupar toda la pantalla, sin colores de depuración.
@@ -53,32 +47,18 @@ const DashboardLayout = () => {
       <Home size={18} /> Inicio
     </NavLink>
     <NavLink
-      to="/dashboard/gastos"
-      className={({ isActive }) =>
-        `flex items-center gap-3 px-3 py-2 rounded-md transition ${
-          isActive
-            ? 'bg-gray-200 text-black font-semibold'
-            : 'text-gray-700 hover:bg-gray-100 hover:text-black'
-        }`
-      }
-    >
-      <Wallet size={18} /> Gastos
-    </NavLink>
+              to="/dashboard/fichas"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded-md transition ${
+                  isActive
+                    ? 'bg-gray-200 text-black font-semibold'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-black'
+                }`
+              }
+            >
+              <Wallet size={18} /> Crear Ficha
+            </NavLink>
 
-    {tieneAccesoChatbot && (
-              <NavLink
-                to="/dashboard/chatbot-cta"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2 rounded-md transition ${
-                    isActive
-                      ? 'bg-gray-200 text-black font-semibold'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-black'
-                  }`
-                }
-              >
-                <Bot size={18} /> Chatbots {/* Sugerencia: Icono de Bot :) */}
-              </NavLink>
-            )}
     
     <NavLink
       to="/dashboard/configuracion"
@@ -92,9 +72,7 @@ const DashboardLayout = () => {
     >
       <Settings size={18} /> Configuración
     </NavLink>
-    
-
-    <EstadoServicioCard />
+  
 
   </nav>
 </aside>

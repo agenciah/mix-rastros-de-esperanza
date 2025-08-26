@@ -13,7 +13,6 @@ import TerminosCondiciones from '@/pages/public/Terminos';
 import CorreoEnviado from '@/pages/auth/correoEnviado';
 import ErrorToken from '@/pages/components/landing/errorToken';
 import ConfirmarToken from '@/pages/components/landing/ConfirmarToken';
-import ChatbotPlanInfo from '../pages/dashboard/ChatbotPlanInfo';
 import ForgotPassword from '@/pages/auth/ForgotPassword';
 import ResetPassword from '@/pages/auth/ResetPassword';
 import AdminLogin from '@/pages/admin/AdminLogin';
@@ -25,8 +24,7 @@ import { adminRoutesConfig } from './adminRoutesConfig';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import DashboardLayout from '../layouts/DashboardLayout';
 import Dashboard from '../pages/Dashboard';
-import Gastos from '../pages/dashboard/Gastos';
-import ExportarExcel from '../pages/dashboard/ExportarExcel';
+import FichaFormLayout from '@/pages/dashboard/fichas/FichaFormLayout';
 import Configuracion from '../pages/dashboard/Configuracion';
 import Contacto from '@/pages/public/Contacto';
 
@@ -50,7 +48,6 @@ const RoutesApp = () => {
     { path: '/error-token', element: <ErrorToken/>},
     { path: "/confirmar/:token", element: <ConfirmarToken /> },
     { path: '/seleccionar-plan', element: <PlanSelector/>},
-    { path: "chatbot-info", element: <ChatbotPlanInfo /> },
     { path: "/forgot-password", element: <ForgotPassword /> },
     { path: "/recuperar/:token", element: <ResetPassword /> },
     { path: "/admin/login", element: <AdminLogin /> },
@@ -67,10 +64,8 @@ const RoutesApp = () => {
           element: <DashboardLayout />, // Este es el layout del dashboard
           children: [
             { index: true, element: <Dashboard /> }, // Ruta index para /dashboard
-            { path: "gastos", element: <Gastos /> },
-            { path: "excel", element: <ExportarExcel /> },
+            { path: "fichas", element: <FichaFormLayout /> },
             { path: "configuracion", element: <Configuracion /> },
-            { path: 'chatbot-cta', element: <ChatbotPlanInfo/>},
           ],
         },
       ],

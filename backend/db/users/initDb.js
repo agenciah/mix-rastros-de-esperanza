@@ -11,28 +11,29 @@ let dbInstance = null;
 // 1. Catálogos: Listas de datos
 // ======================
 const TIPOS_LUGAR = [
-    "Vía pública",
-    "Domicilio particular",
-    "Trabajo",
-    "Escuela",
-    "Hospital / Clínica",
-    "SEMEFO / Servicio Médico Forense",
-    "Estación de policía",
-    "Centro de reclusión",
-    "Refugio / Albergue",
-    "Centro de transporte (aeropuerto, estación de autobuses)",
-    "Parque / Área verde",
-    "Zona rural / Campo",
-    "Playa / Costa",
-    "Centro comercial / Plaza",
-    "Hotel / Motel",
-    "Bodega / Nave",
-    "Centro comunitario",
-    "Iglesia / Templo",
-    "Carretera / Autopista",
-    "Terminal marítima / Puerto",
-    "Otro",
+  { nombre: "Vía pública", categoria: null },
+  { nombre: "Domicilio particular", categoria: null },
+  { nombre: "Trabajo", categoria: null },
+  { nombre: "Escuela", categoria: null },
+  { nombre: "Hospital / Clínica", categoria: null },
+  { nombre: "SEMEFO / Servicio Médico Forense", categoria: null },
+  { nombre: "Estación de policía", categoria: null },
+  { nombre: "Centro de reclusión", categoria: null },
+  { nombre: "Refugio / Albergue", categoria: null },
+  { nombre: "Centro de transporte (aeropuerto, estación de autobuses)", categoria: null },
+  { nombre: "Parque / Área verde", categoria: null },
+  { nombre: "Zona rural / Campo", categoria: null },
+  { nombre: "Playa / Costa", categoria: null },
+  { nombre: "Centro comercial / Plaza", categoria: null },
+  { nombre: "Hotel / Motel", categoria: null },
+  { nombre: "Bodega / Nave", categoria: null },
+  { nombre: "Centro comunitario", categoria: null },
+  { nombre: "Iglesia / Templo", categoria: null },
+  { nombre: "Carretera / Autopista", categoria: null },
+  { nombre: "Terminal marítima / Puerto", categoria: null },
+  { nombre: "Otro", categoria: null },
 ];
+
 
 const PARTES_CUERPO = [
     { nombre: "Frente", categoria: "Cabeza" },
@@ -72,6 +73,9 @@ const PARTES_CUERPO = [
     { nombre: "Dorso de la mano", categoria: "Brazos y Manos" },
     { nombre: "Dedos de la mano", categoria: "Brazos y Manos" },
     { nombre: "Uñas de la mano", categoria: "Brazos y Manos" },
+    { nombre: "brazo derecho", categoria: "Brazos y Manos" },
+    { nombre: "brazo izquierdo", categoria: "Brazos y Manos" },
+    { nombre: "Pierna", categoria: "Piernas y Pies" },
     { nombre: "Muslo", categoria: "Piernas y Pies" },
     { nombre: "Rodilla", categoria: "Piernas y Pies" },
     { nombre: "Pantorrilla", categoria: "Piernas y Pies" },
@@ -514,49 +518,64 @@ export async function ensureAllTables() {
 // 4. Inserción de catálogos (Seed)
 // ======================
 export async function insertCatalogos() {
-    const db = await openDb();
+  const db = await openDb();
 
-    console.log("⏳ Iniciando seed de catálogos…");
-    await db.exec("BEGIN");
+  console.log("⏳ Iniciando seed de catálogos…");
+  await db.exec("BEGIN");
 
-    try {
-        let insTipos = 0;
-        for (const nombre_tipo of TIPOS_LUGAR) {
-            const res = await db.run(
-                `INSERT OR IGNORE INTO catalogo_tipo_lugar (nombre_tipo) VALUES (?)`,
-                nombre_tipo
-            );
-            if (res.changes) insTipos += res.changes;
-        }
-        console.log(`📍 Tipos de lugar: +${insTipos} insertados, ${TIPOS_LUGAR.length - insTipos} ya existían`);
-        
-        let insPartes = 0;
-        for (const { nombre, categoria } of PARTES_CUERPO) {
-            const res = await db.run(
-                `INSERT OR IGNORE INTO catalogo_partes_cuerpo (nombre_parte, categoria_principal) VALUES (?, ?)`,
-                nombre,
-                categoria
-            );
-            if (res.changes) insPartes += res.changes;
-        }
-        console.log(`🧍 Partes del cuerpo: +${insPartes} insertadas, ${PARTES_CUERPO.length - insPartes} ya existían`);
-
-        let insPrendas = 0;
-        for (const { tipo, cat } of PRENDAS) {
-            const res = await db.run(
-                `INSERT OR IGNORE INTO catalogo_prendas (tipo_prenda, categoria_general) VALUES (?, ?)`,
-                tipo,
-                cat
-            );
-            if (res.changes) insPrendas += res.changes;
-        }
-        console.log(`👕 Prendas: +${insPrendas} insertadas, ${PRENDAS.length - insPrendas} ya existían`);
-
-        await db.exec("COMMIT");
-        console.log("✅ Seed de catálogos finalizado correctamente.");
-    } catch (err) {
-        console.error("💥 Error durante el seed de catálogos:", err);
-        await db.exec("ROLLBACK");
-        throw err;
+  try {
+    // TIPOS DE LUGAR
+    let insTipos = 0;
+    for (const tipoObj of TIPOS_LUGAR) {
+      const res = await db.run(
+        `INSERT OR IGNORE INTO catalogo_tipo_lugar (nombre_tipo) VALUES (?)`,
+        tipoObj.nombre
+      );
+      if (res.changes) insTipos += res.changes;
     }
+    console.log(`📍 Tipos de lugar: +${insTipos} insertados, ${TIPOS_LUGAR.length - insTipos} ya existían`);
+
+    // PARTES DEL CUERPO
+    let insPartes = 0;
+    for (const { nombre, categoria } of PARTES_CUERPO) {
+      const res = await db.run(
+        `INSERT OR IGNORE INTO catalogo_partes_cuerpo (nombre_parte, categoria_principal) VALUES (?, ?)`,
+        nombre,
+        categoria
+      );
+      if (res.changes) insPartes += res.changes;
+    }
+    console.log(`🧍 Partes del cuerpo: +${insPartes} insertadas, ${PARTES_CUERPO.length - insPartes} ya existían`);
+
+    // PRENDAS
+    let insPrendas = 0;
+    for (const { tipo, cat } of PRENDAS) {
+      const res = await db.run(
+        `INSERT OR IGNORE INTO catalogo_prendas (tipo_prenda, categoria_general) VALUES (?, ?)`,
+        tipo,
+        cat
+      );
+      if (res.changes) insPrendas += res.changes;
+    }
+    console.log(`👕 Prendas: +${insPrendas} insertadas, ${PRENDAS.length - insPrendas} ya existían`);
+
+    await db.exec("COMMIT");
+    console.log("✅ Seed de catálogos finalizado correctamente.");
+
+    // Obtener todos los registros con IDs para retorno
+    const tiposLugar = await db.all(`SELECT * FROM catalogo_tipo_lugar`);
+    const partesCuerpo = await db.all(`SELECT * FROM catalogo_partes_cuerpo`);
+    const prendas = await db.all(`SELECT * FROM catalogo_prendas`);
+
+    return {
+      tiposLugar,
+      partesCuerpo,
+      prendas,
+    };
+
+  } catch (err) {
+    console.error("💥 Error durante el seed de catálogos:", err);
+    await db.exec("ROLLBACK");
+    throw err;
+  }
 }
