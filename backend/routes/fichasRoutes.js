@@ -25,17 +25,7 @@ router.use((req, res, next) => {
 
 // Rutas para Fichas de Desaparición
 // POST /api/fichas/
-router.post('/', authenticateToken, async (req, res) => {
-    try {
-        const result = await createFichaDesaparicion(req.body);
-        if (!result.success && result.matches) {
-            return res.status(200).json(result); // Devolver coincidencias al cliente
-        }
-        res.status(201).json(result);
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
+router.post('/', authenticateToken, createFichaDesaparicion);
 
 // GET /api/fichas/
 router.get('/', authenticateToken, async (req, res) => {

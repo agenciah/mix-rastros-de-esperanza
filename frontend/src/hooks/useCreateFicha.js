@@ -1,5 +1,6 @@
+// src/hooks/useCreateFicha.js
 import { useState } from "react";
-import axios from "axios";
+import api from "../lib/axios";
 
 export default function useCreateFicha() {
   const [loading, setLoading] = useState(false);
@@ -8,7 +9,7 @@ export default function useCreateFicha() {
   const [fichaId, setFichaId] = useState(null);
   const [matches, setMatches] = useState([]);
 
-  const createFicha = async (data) => {
+  const createFicha = async (data) => { 
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -16,16 +17,26 @@ export default function useCreateFicha() {
     setMatches([]);
 
     try {
-      const res = await axios.post("/api/fichas/", data);
-      if (res.data.success) {
-        setSuccess(true);
-        setFichaId(res.data.id_ficha);
-        if (res.data.matches) setMatches(res.data.matches);
-      } else {
-        setError(res.data.message || "Error al crear ficha");
-      }
+      const res = await api.post("/api/fichas", data);
+      
+      // Actualiza el estado del hook
+      setSuccess(res.data.success);
+      setFichaId(res.data.id_ficha);
+      if (res.data.matches) setMatches(res.data.matches);
+
+      // ¡Importante! Devuelve la respuesta para que el otro hook pueda usarla
+      return {
+        success: res.data.success,
+        message: res.data.message,
+        id_ficha: res.data.id_ficha,
+        matches: res.data.matches
+      };
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Error de red");
+      const errorMessage = err.response?.data?.message || err.message || "Error de red";
+      setError(errorMessage);
+      
+      // Devuelve el error para que el otro hook lo maneje
+      return { success: false, message: errorMessage };
     } finally {
       setLoading(false);
     }

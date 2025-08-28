@@ -34,7 +34,6 @@ const TIPOS_LUGAR = [
   { nombre: "Otro", categoria: null },
 ];
 
-
 const PARTES_CUERPO = [
     { nombre: "Frente", categoria: "Cabeza" },
     { nombre: "Pelo", categoria: "Cabeza" },
@@ -168,11 +167,11 @@ export async function openDb() {
 // ======================
 // 3. Creación y verificación de TODAS las tablas
 // ======================
+    // Tablas de Usuarios y Se
 export async function ensureAllTables() {
     const db = await openDb();
 
-    // ---------------
-    // Tablas de Usuarios y Servicios
+    // ---------------rvicios
     // ---------------
     await db.exec(`
         CREATE TABLE IF NOT EXISTS users (
@@ -273,8 +272,6 @@ export async function ensureAllTables() {
             FOREIGN KEY (user_id) REFERENCES users(id)
         );
     `);
-    
-    // Aquí es donde estaban las funciones ensureXXXTable()
 
     // ---------------
     // Tablas de Fichas y Hallazgos
@@ -337,20 +334,34 @@ export async function ensureAllTables() {
       );
     `);
 
+    // Tabla para las características de la FICHA (la persona desaparecida)
     await db.exec(`
-      CREATE TABLE IF NOT EXISTS ficha_caracteristicas (
-          id_ficha_caracteristica INTEGER PRIMARY KEY AUTOINCREMENT,
-          id_ficha INTEGER NOT NULL,
-          id_parte_cuerpo INTEGER,
-          id_prenda INTEGER,
-          tipo_caracteristica TEXT, -- Ej: 'Tatuaje', 'Lunar', 'Piercing'
-          descripcion TEXT,
-          FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion (id_ficha) ON DELETE CASCADE,
-          FOREIGN KEY (id_parte_cuerpo) REFERENCES catalogo_partes_cuerpo (id_parte_cuerpo),
-          FOREIGN KEY (id_prenda) REFERENCES catalogo_prendas (id_prenda)
-        );
-      `)
+      CREATE TABLE IF NOT EXISTS ficha_rasgos_fisicos (
+        id_rasgo INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_ficha INTEGER NOT NULL,
+        id_parte_cuerpo INTEGER NOT NULL,
+        tipo_rasgo TEXT NOT NULL,
+        descripcion_detalle TEXT,
+        FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion (id_ficha),
+        FOREIGN KEY (id_parte_cuerpo) REFERENCES catalogo_partes_cuerpo (id_parte_cuerpo)
+      );
+    `);
+
+    // Esta tabla es para la vestimenta de la FICHA (la persona desaparecida)
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS ficha_vestimenta (
+        id_vestimenta INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_ficha INTEGER NOT NULL,
+        id_prenda INTEGER,
+        color TEXT,
+        marca TEXT,
+        caracteristica_especial TEXT,
+        FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion (id_ficha),
+        FOREIGN KEY (id_prenda) REFERENCES catalogo_prendas (id_prenda)
+      );
+    `);
     
+    // Tabla para los hallazgos (lo que se encontró)
     await db.exec(`
       CREATE TABLE IF NOT EXISTS hallazgos (
         id_hallazgo INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -365,56 +376,24 @@ export async function ensureAllTables() {
         FOREIGN KEY (id_tipo_lugar_hallazgo) REFERENCES catalogo_tipo_lugar (id_tipo_lugar)
       );
     `);
-
+    
+    // TABLA FALTANTE: Rasgos físicos del hallazgo. Esta es la que resuelve el error.
     await db.exec(`
-      CREATE TABLE IF NOT EXISTS coincidencias_confirmadas (
-        id_coincidencia INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_ficha INTEGER NOT NULL,
+      CREATE TABLE IF NOT EXISTS hallazgo_caracteristicas (
+        id_hallazgo_caracteristica INTEGER PRIMARY KEY AUTOINCREMENT,
         id_hallazgo INTEGER NOT NULL,
-        fecha_coincidencia TEXT NOT NULL,
-        FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion (id_ficha),
-        FOREIGN KEY (id_hallazgo) REFERENCES hallazgos (id_hallazgo)
-      );
-    `);
-
-    await db.exec(`
-      CREATE TABLE IF NOT EXISTS ficha_rasgos_fisicos (
-        id_rasgo INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_ficha INTEGER NOT NULL,
-        id_parte_cuerpo INTEGER NOT NULL,
-        tipo_rasgo TEXT NOT NULL,
-        descripcion_detalle TEXT,
-        FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion (id_ficha),
-        FOREIGN KEY (id_parte_cuerpo) REFERENCES catalogo_partes_cuerpo (id_parte_cuerpo)
-      );
-    `);
-
-    await db.exec(`
-      CREATE TABLE IF NOT EXISTS ficha_vestimenta (
-        id_vestimenta INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_ficha INTEGER NOT NULL,
+        id_parte_cuerpo INTEGER,
         id_prenda INTEGER,
-        color TEXT,
-        marca TEXT,
-        caracteristica_especial TEXT,
-        FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion (id_ficha),
+        tipo_caracteristica TEXT,
+        descripcion TEXT,
+        foto_evidencia TEXT,
+        FOREIGN KEY (id_hallazgo) REFERENCES hallazgos (id_hallazgo) ON DELETE CASCADE,
+        FOREIGN KEY (id_parte_cuerpo) REFERENCES catalogo_partes_cuerpo (id_parte_cuerpo),
         FOREIGN KEY (id_prenda) REFERENCES catalogo_prendas (id_prenda)
       );
     `);
 
-    await db.exec(`
-      CREATE TABLE IF NOT EXISTS hallazgo_rasgos_fisicos (
-        id_hallazgo_rasgo INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_hallazgo INTEGER NOT NULL,
-        id_parte_cuerpo INTEGER NOT NULL,
-        tipo_rasgo TEXT NOT NULL,
-        descripcion_detalle TEXT,
-        foto_evidencia TEXT,
-        FOREIGN KEY (id_hallazgo) REFERENCES hallazgos (id_hallazgo),
-        FOREIGN KEY (id_parte_cuerpo) REFERENCES catalogo_partes_cuerpo (id_parte_cuerpo)
-      );
-    `);
-
+    // TABLA YA EXISTENTE: Vestimenta del hallazgo
     await db.exec(`
       CREATE TABLE IF NOT EXISTS hallazgo_vestimenta (
         id_hallazgo_vestimenta INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -430,85 +409,96 @@ export async function ensureAllTables() {
     `);
 
     await db.exec(`
-        CREATE TABLE IF NOT EXISTS pagos (
-            id_pago INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_ficha INTEGER NOT NULL,
-            monto REAL NOT NULL,
-            estado_pago TEXT NOT NULL DEFAULT 'pendiente',
-            fecha_pago TEXT NOT NULL,
-            metodo_pago TEXT,
-            referencia_pago TEXT UNIQUE,
-            comentarios TEXT,
-            fecha_creacion TEXT DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion (id_ficha) ON DELETE CASCADE
-        );
+      CREATE TABLE IF NOT EXISTS coincidencias_confirmadas (
+        id_coincidencia INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_ficha INTEGER NOT NULL,
+        id_hallazgo INTEGER NOT NULL,
+        fecha_coincidencia TEXT NOT NULL,
+        FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion (id_ficha),
+        FOREIGN KEY (id_hallazgo) REFERENCES hallazgos (id_hallazgo)
+      );
     `);
     
     await db.exec(`
-        CREATE TABLE IF NOT EXISTS facturas_servicio (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            fecha_emision TEXT NOT NULL DEFAULT (datetime('now')),
-            monto INTEGER,
-            periodo TEXT,
-            descripcion TEXT,
-            fecha_pago TEXT,
-            metodo_pago TEXT,
-            estatus TEXT,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
+      CREATE TABLE IF NOT EXISTS pagos (
+        id_pago INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_ficha INTEGER NOT NULL,
+        monto REAL NOT NULL,
+        estado_pago TEXT NOT NULL DEFAULT 'pendiente',
+        fecha_pago TEXT NOT NULL,
+        metodo_pago TEXT,
+        referencia_pago TEXT UNIQUE,
+        comentarios TEXT,
+        fecha_creacion TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion (id_ficha) ON DELETE CASCADE
+      );
+    `);
+    
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS facturas_servicio (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        fecha_emision TEXT NOT NULL DEFAULT (datetime('now')),
+        monto INTEGER,
+        periodo TEXT,
+        descripcion TEXT,
+        fecha_pago TEXT,
+        metodo_pago TEXT,
+        estatus TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
     `);
 
     await db.exec(`
-        CREATE TABLE IF NOT EXISTS admins (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        );
+      CREATE TABLE IF NOT EXISTS admins (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL
+      );
     `);
     
     await db.exec(`
-        CREATE TABLE IF NOT EXISTS mensajes (
-            id_mensaje INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_remitente INTEGER NOT NULL,
-            id_destinatario INTEGER NOT NULL,
-            id_ficha INTEGER,
-            id_coincidencia INTEGER,
-            tipo_mensaje TEXT NOT NULL DEFAULT 'chat',
-            contenido TEXT NOT NULL,
-            fecha_envio TEXT NOT NULL DEFAULT (datetime('now')),
-            estado_leido INTEGER DEFAULT 0,
-            FOREIGN KEY (id_remitente) REFERENCES users(id),
-            FOREIGN KEY (id_destinatario) REFERENCES users(id),
-            FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion(id_ficha)
-        );`
+      CREATE TABLE IF NOT EXISTS mensajes (
+        id_mensaje INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_remitente INTEGER NOT NULL,
+        id_destinatario INTEGER NOT NULL,
+        id_ficha INTEGER,
+        id_coincidencia INTEGER,
+        tipo_mensaje TEXT NOT NULL DEFAULT 'chat',
+        contenido TEXT NOT NULL,
+        fecha_envio TEXT NOT NULL DEFAULT (datetime('now')),
+        estado_leido INTEGER DEFAULT 0,
+        FOREIGN KEY (id_remitente) REFERENCES users(id),
+        FOREIGN KEY (id_destinatario) REFERENCES users(id),
+        FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion(id_ficha)
+      );`
     );
     
     await db.exec(`
-        CREATE TABLE IF NOT EXISTS mensajes_reporte (
-            id_mensaje INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_remitente INTEGER NOT NULL,
-            id_destinatario INTEGER,
-            tipo_reporte TEXT DEFAULT 'general',
-            asunto TEXT,
-            contenido TEXT NOT NULL,
-            estado TEXT NOT NULL DEFAULT 'pendiente',
-            fecha_creacion TEXT NOT NULL DEFAULT (datetime('now')),
-            estado_leido INTEGER DEFAULT 0,
-            FOREIGN KEY (id_remitente) REFERENCES users(id)
-        );`
+      CREATE TABLE IF NOT EXISTS mensajes_reporte (
+        id_mensaje INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_remitente INTEGER NOT NULL,
+        id_destinatario INTEGER,
+        tipo_reporte TEXT DEFAULT 'general',
+        asunto TEXT,
+        contenido TEXT NOT NULL,
+        estado TEXT NOT NULL DEFAULT 'pendiente',
+        fecha_creacion TEXT NOT NULL DEFAULT (datetime('now')),
+        estado_leido INTEGER DEFAULT 0,
+        FOREIGN KEY (id_remitente) REFERENCES users(id)
+      );`
     );
     
     await db.exec(`
-        CREATE TABLE IF NOT EXISTS mensajes_administrador (
-            id_mensaje INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_admin INTEGER,
-            tipo_mensaje TEXT DEFAULT 'info',
-            contenido TEXT NOT NULL,
-            fecha_creacion TEXT NOT NULL DEFAULT (datetime('now')),
-            estado_leido INTEGER DEFAULT 0
-        );`
+      CREATE TABLE IF NOT EXISTS mensajes_administrador (
+        id_mensaje INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_admin INTEGER,
+        tipo_mensaje TEXT DEFAULT 'info',
+        contenido TEXT NOT NULL,
+        fecha_creacion TEXT NOT NULL DEFAULT (datetime('now')),
+        estado_leido INTEGER DEFAULT 0
+      );`
     );
 
     console.log("✔️ Todas las tablas verificadas/creadas correctamente");
@@ -518,64 +508,64 @@ export async function ensureAllTables() {
 // 4. Inserción de catálogos (Seed)
 // ======================
 export async function insertCatalogos() {
-  const db = await openDb();
+    const db = await openDb();
 
-  console.log("⏳ Iniciando seed de catálogos…");
-  await db.exec("BEGIN");
+    console.log("⏳ Iniciando seed de catálogos…");
+    await db.exec("BEGIN");
 
-  try {
-    // TIPOS DE LUGAR
-    let insTipos = 0;
-    for (const tipoObj of TIPOS_LUGAR) {
-      const res = await db.run(
-        `INSERT OR IGNORE INTO catalogo_tipo_lugar (nombre_tipo) VALUES (?)`,
-        tipoObj.nombre
-      );
-      if (res.changes) insTipos += res.changes;
+    try {
+        // TIPOS DE LUGAR
+        let insTipos = 0;
+        for (const tipoObj of TIPOS_LUGAR) {
+            const res = await db.run(
+                `INSERT OR IGNORE INTO catalogo_tipo_lugar (nombre_tipo) VALUES (?)`,
+                tipoObj.nombre
+            );
+            if (res.changes) insTipos += res.changes;
+        }
+        console.log(`📍 Tipos de lugar: +${insTipos} insertados, ${TIPOS_LUGAR.length - insTipos} ya existían`);
+
+        // PARTES DEL CUERPO
+        let insPartes = 0;
+        for (const { nombre, categoria } of PARTES_CUERPO) {
+            const res = await db.run(
+                `INSERT OR IGNORE INTO catalogo_partes_cuerpo (nombre_parte, categoria_principal) VALUES (?, ?)`,
+                nombre,
+                categoria
+            );
+            if (res.changes) insPartes += res.changes;
+        }
+        console.log(`🧍 Partes del cuerpo: +${insPartes} insertadas, ${PARTES_CUERPO.length - insPartes} ya existían`);
+
+        // PRENDAS
+        let insPrendas = 0;
+        for (const { tipo, cat } of PRENDAS) {
+            const res = await db.run(
+                `INSERT OR IGNORE INTO catalogo_prendas (tipo_prenda, categoria_general) VALUES (?, ?)`,
+                tipo,
+                cat
+            );
+            if (res.changes) insPrendas += res.changes;
+        }
+        console.log(`👕 Prendas: +${insPrendas} insertadas, ${PRENDAS.length - insPrendas} ya existían`);
+
+        await db.exec("COMMIT");
+        console.log("✅ Seed de catálogos finalizado correctamente.");
+
+        // Obtener todos los registros con IDs para retorno
+        const tiposLugar = await db.all(`SELECT * FROM catalogo_tipo_lugar`);
+        const partesCuerpo = await db.all(`SELECT * FROM catalogo_partes_cuerpo`);
+        const prendas = await db.all(`SELECT * FROM catalogo_prendas`);
+
+        return {
+            tiposLugar,
+            partesCuerpo,
+            prendas,
+        };
+
+    } catch (err) {
+        console.error("💥 Error durante el seed de catálogos:", err);
+        await db.exec("ROLLBACK");
+        throw err;
     }
-    console.log(`📍 Tipos de lugar: +${insTipos} insertados, ${TIPOS_LUGAR.length - insTipos} ya existían`);
-
-    // PARTES DEL CUERPO
-    let insPartes = 0;
-    for (const { nombre, categoria } of PARTES_CUERPO) {
-      const res = await db.run(
-        `INSERT OR IGNORE INTO catalogo_partes_cuerpo (nombre_parte, categoria_principal) VALUES (?, ?)`,
-        nombre,
-        categoria
-      );
-      if (res.changes) insPartes += res.changes;
-    }
-    console.log(`🧍 Partes del cuerpo: +${insPartes} insertadas, ${PARTES_CUERPO.length - insPartes} ya existían`);
-
-    // PRENDAS
-    let insPrendas = 0;
-    for (const { tipo, cat } of PRENDAS) {
-      const res = await db.run(
-        `INSERT OR IGNORE INTO catalogo_prendas (tipo_prenda, categoria_general) VALUES (?, ?)`,
-        tipo,
-        cat
-      );
-      if (res.changes) insPrendas += res.changes;
-    }
-    console.log(`👕 Prendas: +${insPrendas} insertadas, ${PRENDAS.length - insPrendas} ya existían`);
-
-    await db.exec("COMMIT");
-    console.log("✅ Seed de catálogos finalizado correctamente.");
-
-    // Obtener todos los registros con IDs para retorno
-    const tiposLugar = await db.all(`SELECT * FROM catalogo_tipo_lugar`);
-    const partesCuerpo = await db.all(`SELECT * FROM catalogo_partes_cuerpo`);
-    const prendas = await db.all(`SELECT * FROM catalogo_prendas`);
-
-    return {
-      tiposLugar,
-      partesCuerpo,
-      prendas,
-    };
-
-  } catch (err) {
-    console.error("💥 Error durante el seed de catálogos:", err);
-    await db.exec("ROLLBACK");
-    throw err;
-  }
 }

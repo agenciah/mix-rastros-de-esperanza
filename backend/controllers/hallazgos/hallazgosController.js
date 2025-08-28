@@ -5,8 +5,10 @@ import { sendMatchNotification } from '../../utils/emailService.js';
 import logger from '../../utils/logger.js';
 
 /**
- * Crea un nuevo hallazgo, incluyendo sus características y vestimenta.
- * @param {Object} data - Datos del hallazgo.
+ * Crea un nuevo hallazgo en la base de datos y luego busca coincidencias.
+ * El flujo se ha cambiado para asegurar que cada hallazgo es registrado,
+ * independientemente de si se encuentra una coincidencia inmediata.
+ * * @param {Object} data - Datos del hallazgo.
  * @param {number} data.id_usuario_buscador - ID del usuario que reporta.
  * @param {number} [data.id_ubicacion_hallazgo] - ID de la ubicación.
  * @param {number} [data.id_tipo_lugar_hallazgo] - ID del tipo de lugar.
@@ -14,36 +16,15 @@ import logger from '../../utils/logger.js';
  * @param {string} [data.descripcion_general_hallazgo] - Descripción.
  * @param {Array<Object>} [data.caracteristicas_hallazgo] - Lista de características.
  * @param {Array<Object>} [data.vestimenta_hallazgo] - Lista de prendas.
- * @returns {Promise<Object>} Promesa que resuelve con el ID del nuevo hallazgo, o un error y posibles coincidencias.
+ * @returns {Promise<Object>} Promesa que resuelve con el ID del nuevo hallazgo y posibles coincidencias.
  */
 export const createHallazgo = async (data) => {
     let db;
     try {
         db = await openDb();
-
-        // Paso 1: Buscar coincidencias antes de la creación
-        const matches = await findMatchesForHallazgo(data);
-
-        // Si hay coincidencias significativas, no creamos el hallazgo y notificamos
-        if (matches.length > 0) {
-            // Aquí se enviaría la notificación por correo a cada usuario con una coincidencia
-            for (const match of matches) {
-                const userEmail = await db.get(`SELECT email FROM usuarios WHERE id_usuario = ?`, [match.id_usuario_reporta]);
-                if (userEmail) {
-                    await sendMatchNotification(userEmail.email, 'Posible Coincidencia de Hallazgo', 'Hemos encontrado una posible coincidencia para la persona que reportaste. Por favor, revisa los detalles.');
-                    logger.info(`📧 Correo de notificación enviado a ${userEmail.email} por la coincidencia en el hallazgo.`);
-                }
-            }
-            return {
-                success: false,
-                message: 'Se encontraron posibles coincidencias. Por favor, revisa.',
-                matches: matches,
-            };
-        }
-
-        // Si no hay coincidencias, procedemos a crear el hallazgo
         await db.run('BEGIN TRANSACTION');
 
+        // Paso 1: Insertar el nuevo hallazgo en la tabla principal
         const hallazgoSql = `
             INSERT INTO hallazgos (id_usuario_buscador, id_ubicacion_hallazgo, id_tipo_lugar_hallazgo, fecha_hallazgo, descripcion_general_hallazgo)
             VALUES (?, ?, ?, ?, ?)
@@ -54,7 +35,7 @@ export const createHallazgo = async (data) => {
         );
         const idHallazgo = result.lastID;
 
-        // Insertar características (antes rasgos)
+        // Paso 2: Insertar características (antes rasgos) asociadas al hallazgo
         if (data.caracteristicas_hallazgo && data.caracteristicas_hallazgo.length > 0) {
             const stmtCaracteristicas = await db.prepare(`INSERT INTO hallazgo_caracteristicas (id_hallazgo, id_parte_cuerpo, tipo_caracteristica, descripcion_detalle, foto_evidencia) VALUES (?, ?, ?, ?, ?)`);
             for (const caracteristica of data.caracteristicas_hallazgo) {
@@ -65,7 +46,7 @@ export const createHallazgo = async (data) => {
             await stmtCaracteristicas.finalize();
         }
 
-        // Insertar vestimenta
+        // Paso 3: Insertar vestimenta asociada al hallazgo
         if (data.vestimenta_hallazgo && data.vestimenta_hallazgo.length > 0) {
             const stmtVestimenta = await db.prepare(`INSERT INTO hallazgo_vestimenta (id_hallazgo, id_prenda, color, marca, caracteristica_especial, foto_evidencia) VALUES (?, ?, ?, ?, ?, ?)`);
             for (const prenda of data.vestimenta_hallazgo) {
@@ -78,7 +59,30 @@ export const createHallazgo = async (data) => {
 
         await db.run('COMMIT');
 
-        return { success: true, message: 'Hallazgo creado exitosamente.', id_hallazgo: idHallazgo };
+        logger.info(`✅ Hallazgo con ID ${idHallazgo} creado exitosamente.`);
+
+        // Paso 4: Buscar coincidencias después de la creación
+        // Le pasamos el ID del nuevo hallazgo para que la función de matching lo utilice
+        const matches = await findMatchesForHallazgo({ ...data, id_hallazgo: idHallazgo });
+
+        // Paso 5: Enviar notificaciones si se encontraron coincidencias
+        if (matches && matches.length > 0) {
+            for (const match of matches) {
+                // Obtenemos el email del usuario para enviar la notificación
+                const userEmail = await db.get(`SELECT email FROM usuarios WHERE id_usuario = ?`, [match.id_usuario_reporta]);
+                if (userEmail) {
+                    await sendMatchNotification(userEmail.email, 'Posible Coincidencia de Hallazgo', 'Hemos encontrado una posible coincidencia para la persona que reportaste. Por favor, revisa los detalles.');
+                    logger.info(`📧 Correo de notificación enviado a ${userEmail.email} por la coincidencia en el hallazgo.`);
+                }
+            }
+        }
+
+        return { 
+            success: true, 
+            message: 'Hallazgo creado y procesado exitosamente.', 
+            id_hallazgo: idHallazgo,
+            matches: matches || []
+        };
 
     } catch (error) {
         if (db) {
@@ -90,8 +94,8 @@ export const createHallazgo = async (data) => {
 };
 
 /**
- * Obtiene todos los hallazgos con sus detalles.
- * @returns {Promise<Array<Object>>} Promesa que resuelve con una lista de hallazgos completos.
+ * Obtiene todos los hallazgos con sus detalles completos.
+ * @returns {Promise<Object>} Promesa que resuelve con una lista de hallazgos.
  */
 export const getAllHallazgos = async () => {
     try {
@@ -99,15 +103,17 @@ export const getAllHallazgos = async () => {
         const hallazgos = await db.all(`SELECT * FROM hallazgos`);
 
         const hallazgosCompletos = await Promise.all(hallazgos.map(async (hallazgo) => {
-            const caracteristicas = await db.all(`SELECT h.tipo_caracteristica, h.descripcion_detalle, cpc.nombre_parte 
-                                                  FROM hallazgo_caracteristicas h 
-                                                  JOIN catalogo_partes_cuerpo cpc ON h.id_parte_cuerpo = cpc.id_parte_cuerpo 
-                                                  WHERE h.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
+            const caracteristicas = await db.all(`
+                SELECT h.tipo_caracteristica, h.descripcion_detalle, cpc.nombre_parte 
+                FROM hallazgo_caracteristicas h 
+                JOIN catalogo_partes_cuerpo cpc ON h.id_parte_cuerpo = cpc.id_parte_cuerpo 
+                WHERE h.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
             
-            const vestimenta = await db.all(`SELECT hv.color, hv.marca, hv.caracteristica_especial, cp.tipo_prenda 
-                                             FROM hallazgo_vestimenta hv 
-                                             JOIN catalogo_prendas cp ON hv.id_prenda = cp.id_prenda 
-                                             WHERE hv.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
+            const vestimenta = await db.all(`
+                SELECT hv.color, hv.marca, hv.caracteristica_especial, cp.tipo_prenda 
+                FROM hallazgo_vestimenta hv 
+                JOIN catalogo_prendas cp ON hv.id_prenda = cp.id_prenda 
+                WHERE hv.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
 
             return { ...hallazgo, caracteristicas: caracteristicas, vestimenta: vestimenta };
         }));
@@ -134,15 +140,17 @@ export const getHallazgoById = async (idHallazgo) => {
             return { success: false, message: 'Hallazgo no encontrado.' };
         }
 
-        const caracteristicas = await db.all(`SELECT h.tipo_caracteristica, h.descripcion_detalle, cpc.nombre_parte 
-                                             FROM hallazgo_caracteristicas h 
-                                             JOIN catalogo_partes_cuerpo cpc ON h.id_parte_cuerpo = cpc.id_parte_cuerpo 
-                                             WHERE h.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
+        const caracteristicas = await db.all(`
+            SELECT h.tipo_caracteristica, h.descripcion_detalle, cpc.nombre_parte 
+            FROM hallazgo_caracteristicas h 
+            JOIN catalogo_partes_cuerpo cpc ON h.id_parte_cuerpo = cpc.id_parte_cuerpo 
+            WHERE h.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
         
-        const vestimenta = await db.all(`SELECT hv.color, hv.marca, hv.caracteristica_especial, cp.tipo_prenda 
-                                         FROM hallazgo_vestimenta hv 
-                                         JOIN catalogo_prendas cp ON hv.id_prenda = cp.id_prenda 
-                                         WHERE hv.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
+        const vestimenta = await db.all(`
+            SELECT hv.color, hv.marca, hv.caracteristica_especial, cp.tipo_prenda 
+            FROM hallazgo_vestimenta hv 
+            JOIN catalogo_prendas cp ON hv.id_prenda = cp.id_prenda 
+            WHERE hv.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
 
         return { success: true, data: { ...hallazgo, caracteristicas, vestimenta } };
     } catch (error) {
@@ -193,7 +201,7 @@ export const updateHallazgo = async (idHallazgo, data) => {
             [data.id_ubicacion_hallazgo || null, data.id_tipo_lugar_hallazgo || null, data.fecha_hallazgo, data.descripcion_general_hallazgo || null, idHallazgo]
         );
 
-        // Actualizar características (antes rasgos)
+        // Actualizar características (borrar y reinsertar)
         await db.run('DELETE FROM hallazgo_caracteristicas WHERE id_hallazgo = ?', [idHallazgo]);
         if (data.caracteristicas_hallazgo && data.caracteristicas_hallazgo.length > 0) {
             const stmtCaracteristicas = await db.prepare(`INSERT INTO hallazgo_caracteristicas (id_hallazgo, id_parte_cuerpo, tipo_caracteristica, descripcion_detalle, foto_evidencia) VALUES (?, ?, ?, ?, ?)`);
@@ -203,7 +211,7 @@ export const updateHallazgo = async (idHallazgo, data) => {
             await stmtCaracteristicas.finalize();
         }
 
-        // Actualizar vestimenta
+        // Actualizar vestimenta (borrar y reinsertar)
         await db.run('DELETE FROM hallazgo_vestimenta WHERE id_hallazgo = ?', [idHallazgo]);
         if (data.vestimenta_hallazgo && data.vestimenta_hallazgo.length > 0) {
             const stmtVestimenta = await db.prepare(`INSERT INTO hallazgo_vestimenta (id_hallazgo, id_prenda, color, marca, caracteristica_especial, foto_evidencia) VALUES (?, ?, ?, ?, ?, ?)`);
@@ -270,7 +278,7 @@ export const deleteHallazgo = async (idHallazgo, idUsuarioBuscador) => {
 
 /**
  * @param {Object} query - Objeto de consulta de la URL (req.query) con los parámetros de búsqueda.
- * @returns {Promise<Array<Object>>} Una promesa que resuelve con los hallazgos que coinciden con la búsqueda.
+ * @returns {Promise<Object>} Una promesa que resuelve con los hallazgos que coinciden con la búsqueda.
  */
 export const searchHallazgos = async (query) => {
     try {
@@ -302,15 +310,17 @@ export const searchHallazgos = async (query) => {
         const hallazgos = await db.all(sql, params);
 
         const hallazgosCompletos = await Promise.all(hallazgos.map(async (hallazgo) => {
-            const caracteristicas = await db.all(`SELECT h.tipo_caracteristica, h.descripcion_detalle, cpc.nombre_parte 
-                                                 FROM hallazgo_caracteristicas h 
-                                                 JOIN catalogo_partes_cuerpo cpc ON h.id_parte_cuerpo = cpc.id_parte_cuerpo 
-                                                 WHERE h.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
+            const caracteristicas = await db.all(`
+                SELECT h.tipo_caracteristica, h.descripcion_detalle, cpc.nombre_parte 
+                FROM hallazgo_caracteristicas h 
+                JOIN catalogo_partes_cuerpo cpc ON h.id_parte_cuerpo = cpc.id_parte_cuerpo 
+                WHERE h.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
             
-            const vestimenta = await db.all(`SELECT hv.color, hv.marca, hv.caracteristica_especial, cp.tipo_prenda 
-                                             FROM hallazgo_vestimenta hv 
-                                             JOIN catalogo_prendas cp ON hv.id_prenda = cp.id_prenda 
-                                             WHERE hv.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
+            const vestimenta = await db.all(`
+                SELECT hv.color, hv.marca, hv.caracteristica_especial, cp.tipo_prenda 
+                FROM hallazgo_vestimenta hv 
+                JOIN catalogo_prendas cp ON hv.id_prenda = cp.id_prenda 
+                WHERE hv.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
 
             return { ...hallazgo, caracteristicas, vestimenta };
         }));

@@ -24,6 +24,7 @@ import estadoServicioRoutes from './routes/estadoServicio.js';
 import adminRoutes from './routes/admin.js';
 import fichasRoutes from './routes/fichasRoutes.js';
 import hallazgosRoutes from './routes/hallazgosRoutes.js';
+import matchRoutes from './routes/matchRoutes.js';
 
 import { iniciarExpiracionTrialsJob } from './cron/expireTrialsJob.js';
 import { iniciarLimpiezaUsuariosJob } from './cron/cleanupUsersJob.js';
@@ -69,6 +70,7 @@ async function main() {
         app.use('/public', express.static('public'));
         app.use('/api/fichas', fichasRoutes);
         app.use('/api/hallazgos', hallazgosRoutes);
+        app.use('/api/matches', matchRoutes);
 
         app.get('/', (_req, res) => {
             res.send('<pre>API de gastos y bot de WhatsApp funcionando 🚀</pre>');

@@ -1,0 +1,791 @@
+[2025-08-15 08:41:21] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 08:41:21] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 08:50:06] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 08:50:07] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 08:55:22] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 08:55:23] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 08:55:34] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 08:55:35] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 08:55:53] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 08:55:54] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 09:04:02] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 09:04:03] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 09:05:58] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 09:05:58] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 09:06:04] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 09:06:05] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 11:20:36] INFO: → POST /webhook
+[2025-08-15 11:20:36] INFO: ----------------------------------
+[2025-08-15 11:20:36] INFO: → Mensaje entrante de 16465894168: *Hit the ground running with conversations that drive conversions*
+
+Start meaningful conversations and turn interest into sales with click-to-WhatsApp ads. To get started, you'll need to connect your Facebook Page to a WhatsApp Business Platform phone number. Follow these steps to dive in: https://business.facebook.com/business/help/4631406400243963 . Then, you'll be ready to add a button to your Facebook Page and create ads that lead directly to WhatsApp, helping boost engagement for your business. If you've already connected your Facebook Page to a WhatsApp Business Platform phone number, please get started with the link below.
+
+*Get started now:* https://www.facebook.com/business/m/ctwa
+[2025-08-15 11:20:36] INFO: Número de teléfono normalizado: 6465894168
+[2025-08-15 11:20:36] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 11:20:36] INFO: ❌ Usuario NO encontrado. Iniciando flujo de registro.
+[2025-08-15 11:20:36] INFO: ✅ Estado de conversación reiniciado para 6465894168.
+[2025-08-15 11:20:37] ERROR: ❌ Error en flujo de registro para 16465894168: Request failed with status code 401
+[2025-08-15 11:20:37] ERROR: ❌ Error inesperado en el flujo principal para 16465894168: Request failed with status code 401
+[2025-08-15 11:20:37] INFO: ✅ Estado de conversación reiniciado para 6465894168.
+[2025-08-15 11:20:37] ERROR: ❌ Error al enviar mensaje a 16465894168: Request failed with status code 401
+[2025-08-15 12:00:21] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 12:00:22] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 12:16:43] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 12:16:47] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 12:17:09] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 12:17:10] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 12:17:10] INFO: 🛠️ Columna añadida a la tabla 'gastos': uso_cfdi
+[2025-08-15 12:20:49] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 12:20:49] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 12:34:22] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 12:34:22] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 12:34:54] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 12:34:55] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 13:11:56] INFO: → POST /webhook
+[2025-08-15 13:11:56] INFO: ----------------------------------
+[2025-08-15 13:11:56] INFO: → Mensaje entrante de 5215526689188: Hola
+[2025-08-15 13:11:56] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:11:56] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:11:56] INFO: → La sesión del usuario ha expirado por inactividad. Reiniciando...
+[2025-08-15 13:11:56] INFO: ✅ Estado de conversación reiniciado para 5526689188.
+[2025-08-15 13:11:56] ERROR: ❌ Error al enviar mensaje a 5215526689188: Request failed with status code 401
+[2025-08-15 13:11:56] INFO: Analizando plan(es) del usuario: plan_49
+[2025-08-15 13:11:56] INFO: → El usuario solo tiene planes de registro de gastos. Iniciando flujo de gasto.
+[2025-08-15 13:11:56] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 13:11:56] ERROR: ❌ Error inesperado en el flujo principal para 5215526689188: Request failed with status code 401
+[2025-08-15 13:11:56] INFO: ✅ Estado de conversación reiniciado para 5526689188.
+[2025-08-15 13:11:56] ERROR: ❌ Error al enviar mensaje a 5215526689188: Request failed with status code 401
+[2025-08-15 13:14:49] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 13:14:50] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 13:15:21] INFO: → GET /webhook?hub.mode=subscribe&hub.challenge=133833670&hub.verify_token=harumi
+[2025-08-15 13:15:58] INFO: → POST /webhook
+[2025-08-15 13:15:58] INFO: ----------------------------------
+[2025-08-15 13:15:58] INFO: → Mensaje entrante de 5215526689188: Hola
+[2025-08-15 13:15:58] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:15:58] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:15:58] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 13:15:58] INFO: Analizando plan(es) del usuario: plan_49
+[2025-08-15 13:15:58] INFO: → El usuario solo tiene planes de registro de gastos. Iniciando flujo de gasto.
+[2025-08-15 13:15:58] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 13:16:02] INFO: → POST /webhook
+[2025-08-15 13:16:02] INFO: → POST /webhook
+[2025-08-15 13:16:02] INFO: → POST /webhook
+[2025-08-15 13:16:16] INFO: → POST /webhook
+[2025-08-15 13:16:16] INFO: ----------------------------------
+[2025-08-15 13:16:16] INFO: → Mensaje entrante de 5215526689188: Sin texto
+[2025-08-15 13:16:16] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:16:16] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:16:16] INFO: → Continuando flujo: gasto en el paso: inicio
+[2025-08-15 13:16:16] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 13:16:16] INFO: [handleGastoFlow] → Mensaje con imagen recibido. Iniciando sub-flujo de ticket.
+[2025-08-15 13:16:16] INFO: [handleTicketFlow] → Iniciando procesamiento de ticket para Manuel Alejandro Jimenez.
+[2025-08-15 13:16:16] INFO: [handleTicketFlow] 🖼️ Descargando imagen desde: undefined
+[2025-08-15 13:16:16] ERROR: [handleTicketFlow] ❌ Error en el procesamiento del ticket: Invalid URL
+[2025-08-15 13:16:18] INFO: → POST /webhook
+[2025-08-15 13:16:18] INFO: → POST /webhook
+[2025-08-15 13:16:18] INFO: → POST /webhook
+[2025-08-15 13:25:30] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 13:25:30] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 13:25:40] INFO: → POST /webhook
+[2025-08-15 13:25:40] INFO: ----------------------------------
+[2025-08-15 13:25:40] INFO: → Mensaje entrante de 5215526689188: Hola
+[2025-08-15 13:25:40] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:25:40] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:25:40] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 13:25:40] INFO: Analizando plan(es) del usuario: plan_49
+[2025-08-15 13:25:40] INFO: → El usuario solo tiene planes de registro de gastos. Iniciando flujo de gasto.
+[2025-08-15 13:25:40] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 13:25:41] INFO: → POST /webhook
+[2025-08-15 13:25:41] INFO: → POST /webhook
+[2025-08-15 13:25:42] INFO: → POST /webhook
+[2025-08-15 13:25:57] INFO: → POST /webhook
+[2025-08-15 13:25:57] INFO: ----------------------------------
+[2025-08-15 13:25:57] INFO: → Mensaje entrante de 5215526689188: Sin texto
+[2025-08-15 13:25:57] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:25:57] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:25:57] INFO: → Continuando flujo: gasto en el paso: inicio
+[2025-08-15 13:25:57] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 13:25:57] INFO: [handleGastoFlow] → Mensaje con imagen recibido. Iniciando sub-flujo de ticket.
+[2025-08-15 13:25:57] INFO: [handleTicketFlow] → Iniciando procesamiento de ticket para Manuel Alejandro Jimenez.
+[2025-08-15 13:25:58] INFO: [handleTicketFlow] 🖼️ URL del medio obtenida: https://lookaside.fbsbx.com/whatsapp_business/attachments/?mid=1255605372970448&ext=1755286259&hash=ARnrDYuBDAlzEgVpjRtacT8heST0e1iJA4KJ--5UlIThJA
+[2025-08-15 13:26:00] INFO: → POST /webhook
+[2025-08-15 13:26:00] INFO: [ocrUtils] 💾 Subiendo imagen a Supabase con nombre: gastos/1755285960260_1255605372970448.jpg
+[2025-08-15 13:26:00] INFO: → POST /webhook
+[2025-08-15 13:26:00] INFO: → POST /webhook
+[2025-08-15 13:26:01] INFO: [ocrUtils] 🔎 Iniciando OCR en la imagen...
+[2025-08-15 13:26:01] INFO: 🔎 Enviando imagen a Google Vision...
+[2025-08-15 13:26:02] INFO: 📄 Texto completo detectado. Analizando...
+[2025-08-15 13:26:02] INFO: Store Match:
+[2025-08-15 13:26:02] INFO: Amount Match:
+[2025-08-15 13:26:02] INFO: Date Match:
+[2025-08-15 13:26:02] INFO: [handleTicketFlow] Datos del ticket estructurados: {"storeName":"FARRAM, S.A. DE C.V.","amount":"120.00","date":"No detectada","rawText":"TC\nze\nFARRAM, S.A. DE C.V.\nGeneral Ley Personas Morales\nDOMICILIO FISCAL\nCLL NARCISO MENDOZA No. 68 Col. PILARES CP 52179\nMETEPEC, ESTADO DE MEXICO RFC. FAR-000207-L26\nDOMICILIO DEL ESTABLECIMIENTO, LUGAR Y FECHA DE\nEXPEDICION:\nSucursal: FC2176 CUAUTITLAN IZCALLI 12, ME\nAtendido por: 1917-1917\nAV: NEZAHUALCOYOTL 80, CUMBRIA, CUAUTITLAN IZCALLI\nESTADO DE MEXICO, MEXICO C.P.54740\nsábado 19 jul. 2025 02:05:21 p. n.\n414253-8ee4-4036-9541-c517cedc849b\n1 X 83.00\nja: 1 TC Ticket:\n13 INDOMETACINA/BFTAME/\n80 DICLOFENACO 1.166/10\nódigos: 2\niezos a Entregar: 2\n83.00\n1 X 37.00 37.00\nSubtotal:\n120.00\nDescuentos:\n0.00\n*IVA AL 16 %:\n0.00\nTotal M.N:\n120.00\n(ciento veinte pesos 00/100 MN)\nPagos >> Efectivo:\nCambio:\n120.00\n0.00\nDocumento sin Efectos Fiscales\nNo se aceptan devoluciones en antibióticos, promociones,\ncheques, transferencias y tickets facturados. Para pagos\ncon tarjeta la devolución aplica el mismo día y a la misma\ntarjeta. En efectivo y CoDi dentro de los 4 días\nposteriores y dentro del mismo mes calendario.\nSi requiere factura, favor de solicitarla al momento de efectuar\nsu compra en esta farmacia\nReferencia de Facturación FRANQUICIA: FC2176\nFacturación en línea\nwww.farmaciasdesimileres.com\nQuejas y Sugerencias SIMITEL 600 911 6666\n0608978000017\n**************:\n***\n********************\nPROMOCION 10 % DE\nDESCUENTO EN ANALISIS\nCLINICOS DEL DR. SIMI\nY EN SIMILAB.\nNo aplica con otras promociones.\nVigencia al 30 de septiembre del 2025\nMostrar el ticket original para que aplique el descuento.\n********\n*******\n****\n****\nO"}
+[2025-08-15 13:26:03] INFO: [handleTicketFlow] ✅ Mensaje de confirmación enviado a 5215526689188.
+[2025-08-15 13:26:04] INFO: → POST /webhook
+[2025-08-15 13:26:04] INFO: → POST /webhook
+[2025-08-15 13:26:04] INFO: → POST /webhook
+[2025-08-15 13:26:09] INFO: → POST /webhook
+[2025-08-15 13:26:09] INFO: ----------------------------------
+[2025-08-15 13:26:09] INFO: → Mensaje entrante de 5215526689188: Si
+[2025-08-15 13:26:09] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:26:09] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:26:09] INFO: → Continuando flujo: gasto en el paso: waiting_for_ocr_confirmation
+[2025-08-15 13:26:09] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: waiting_for_ocr_confirmation
+[2025-08-15 13:26:09] INFO: [handleConfirmationFlow] → Procesando mensaje de confirmación de Manuel Alejandro Jimenez. Mensaje: si
+[2025-08-15 13:26:09] INFO: [db/gastos] 💾 Intentando crear un nuevo gasto para el usuario 1...
+[2025-08-15 13:26:09] ERROR: [db/gastos] ❌ Fallo en la función createGasto: SQLITE_CONSTRAINT: NOT NULL constraint failed: gastos.descripcion
+[2025-08-15 13:26:09] ERROR: [handleConfirmationFlow] ❌ Error al guardar el gasto: SQLITE_CONSTRAINT: NOT NULL constraint failed: gastos.descripcion
+[2025-08-15 13:26:11] INFO: → POST /webhook
+[2025-08-15 13:26:11] INFO: → POST /webhook
+[2025-08-15 13:26:11] INFO: → POST /webhook
+[2025-08-15 13:30:48] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 13:30:49] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 13:31:00] INFO: → POST /webhook
+[2025-08-15 13:31:00] INFO: ----------------------------------
+[2025-08-15 13:31:00] INFO: → Mensaje entrante de 5215526689188: Hola
+[2025-08-15 13:31:00] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:31:00] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:31:00] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 13:31:00] INFO: Analizando plan(es) del usuario: plan_49
+[2025-08-15 13:31:00] INFO: → El usuario solo tiene planes de registro de gastos. Iniciando flujo de gasto.
+[2025-08-15 13:31:00] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 13:31:01] INFO: → POST /webhook
+[2025-08-15 13:31:02] INFO: → POST /webhook
+[2025-08-15 13:31:05] INFO: → POST /webhook
+[2025-08-15 13:31:18] INFO: → POST /webhook
+[2025-08-15 13:31:18] INFO: ----------------------------------
+[2025-08-15 13:31:18] INFO: → Mensaje entrante de 5215526689188: Sin texto
+[2025-08-15 13:31:18] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:31:18] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:31:18] INFO: → Continuando flujo: gasto en el paso: inicio
+[2025-08-15 13:31:18] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 13:31:18] INFO: [handleGastoFlow] → Mensaje con imagen recibido. Iniciando sub-flujo de ticket.
+[2025-08-15 13:31:18] INFO: [handleTicketFlow] → Iniciando procesamiento de ticket para Manuel Alejandro Jimenez.
+[2025-08-15 13:31:18] INFO: [handleTicketFlow] 🖼️ URL del medio obtenida: https://lookaside.fbsbx.com/whatsapp_business/attachments/?mid=1392912468438371&ext=1755286580&hash=ARmsgb8OY3m5h-HmkU4bgVkSOjcX2LBEfRLQbyfJlQ6w_w
+[2025-08-15 13:31:20] INFO: [ocrUtils] 💾 Subiendo imagen a Supabase con nombre: gastos/1755286280226_1392912468438371.jpg
+[2025-08-15 13:31:20] INFO: → POST /webhook
+[2025-08-15 13:31:20] INFO: → POST /webhook
+[2025-08-15 13:31:20] INFO: → POST /webhook
+[2025-08-15 13:31:21] INFO: [ocrUtils] 🔎 Iniciando OCR en la imagen...
+[2025-08-15 13:31:21] INFO: 🔎 Enviando imagen a Google Vision...
+[2025-08-15 13:31:21] INFO: 📄 Texto completo detectado. Analizando...
+[2025-08-15 13:31:21] INFO: Store Match:
+[2025-08-15 13:31:21] INFO: Amount Match:
+[2025-08-15 13:31:21] INFO: Date Match:
+[2025-08-15 13:31:21] INFO: [handleTicketFlow] Datos del ticket estructurados: {"storeName":"FARRAM, S.A. DE C.V.","amount":"120.00","date":"No detectada","rawText":"FARRAM, S.A. DE C.V.\nGeneral Ley Personas Morales\nDOMICILIO FISCAL\nCLL. NARCISO MENDOZA No. 68 Col. PILARES CP 52179\nNETEPEC, ESTADO DE MEXICO RFC. FAR-000207-L26\nDOMICILIO DEL ESTABLECIMIENTO, LUGAR Y FECHA DE\nEXPEDICION:\nSucursal: FC2176 CUAUTITLAN IZCALLI 12, NE\nAtendido por: 1917-1917\nAV. NEZAHUALCOYOTL 80, CUMBRIA, CUAUTITLAN IZCALLI\nESTADO DE MEXICO, MEXICO C.P.54740\nsábado 19 jul. 2025 02:05:21 p. m.\nCaja: 1 TC Ticket: a14253-8ee4-4036-9541-c517cedc849b\n1413 INDOMETACINA/BETARE/\n1 X\n83.00\n83.00\n60 DICLOFENACO 1.166/10\n1 X 37.00 37.00\nCódigos: 2\nPiezos a Entregar: 2\nSubtotal:\n120.00\nDescuentos:\n0.00\n*IVA AL 16 %:\n0.00\nTotal M.N:\n120.00\n(ciento veinte pesos 00/100 MN)\nPagos >> Efectivo:\n120.00\nCambio:\n0.00\nDocumento sin Efectos Fiscales\nNo se aceptan devoluciones en antibióticos, promociones,\ncheques, transferencias y tickets facturados. Para pagos\ncon tarjeta la devolución aplica el mismo día y a la misma\ntarjeta. En efectivo y CoDi dentro de los 4 días\nposteriores y dentro del mismo mes calendario.\nSi requiere factura, favor de solicitarla al momento de efectuar\nsu compra en esta farmacia\nReferencia de Facturación FRANQUICIA: FC2176\nFacturación en linea\nwww.farmaciasdesimileres.com\nQuejas y Sugerencias SIMITEL 600 911 6666\n*****\n******\n0608978000017\n*************\n************\nPROMOCION 10 % DE\nDESCUENTO EN ANALISIS\nCLINICOS DEL DR. SIMI\nY EN SIMILAB.\nNo aplica con otras promociones.\nVigencia al 30 de septiembre del 2025\nMostrar el ticket original para que aplique el descuento.\n*****\n*****\n*****\n****"}
+[2025-08-15 13:31:22] INFO: [handleTicketFlow] ✅ Mensaje de confirmación enviado a 5215526689188.
+[2025-08-15 13:31:23] INFO: → POST /webhook
+[2025-08-15 13:31:23] INFO: → POST /webhook
+[2025-08-15 13:31:23] INFO: → POST /webhook
+[2025-08-15 13:31:31] INFO: → POST /webhook
+[2025-08-15 13:31:31] INFO: ----------------------------------
+[2025-08-15 13:31:31] INFO: → Mensaje entrante de 5215526689188: Si
+[2025-08-15 13:31:31] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:31:31] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:31:31] INFO: → Continuando flujo: gasto en el paso: waiting_for_ocr_confirmation
+[2025-08-15 13:31:31] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: waiting_for_ocr_confirmation
+[2025-08-15 13:31:31] INFO: [handleConfirmationFlow] → Procesando mensaje de confirmación de Manuel Alejandro Jimenez. Mensaje: si
+[2025-08-15 13:31:31] INFO: [db/gastos] 💾 Intentando crear un nuevo gasto para el usuario 1...
+[2025-08-15 13:31:31] ERROR: [db/gastos] ❌ Fallo en la función createGasto: SQLITE_CONSTRAINT: NOT NULL constraint failed: gastos.monto
+[2025-08-15 13:31:31] ERROR: [handleConfirmationFlow] ❌ Error al guardar el gasto: SQLITE_CONSTRAINT: NOT NULL constraint failed: gastos.monto
+[2025-08-15 13:31:33] INFO: → POST /webhook
+[2025-08-15 13:31:33] INFO: → POST /webhook
+[2025-08-15 13:31:33] INFO: → POST /webhook
+[2025-08-15 13:36:49] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 13:36:49] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 13:36:57] INFO: → POST /webhook
+[2025-08-15 13:36:57] INFO: ----------------------------------
+[2025-08-15 13:36:57] INFO: → Mensaje entrante de 5215526689188: Hola
+[2025-08-15 13:36:57] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:36:57] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:36:57] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 13:36:57] INFO: Analizando plan(es) del usuario: plan_49
+[2025-08-15 13:36:57] INFO: → El usuario solo tiene planes de registro de gastos. Iniciando flujo de gasto.
+[2025-08-15 13:36:57] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 13:37:03] INFO: → POST /webhook
+[2025-08-15 13:37:03] INFO: → POST /webhook
+[2025-08-15 13:37:03] INFO: → POST /webhook
+[2025-08-15 13:37:17] INFO: → POST /webhook
+[2025-08-15 13:37:17] INFO: ----------------------------------
+[2025-08-15 13:37:17] INFO: → Mensaje entrante de 5215526689188: Sin texto
+[2025-08-15 13:37:17] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:37:17] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:37:17] INFO: → Continuando flujo: gasto en el paso: inicio
+[2025-08-15 13:37:17] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 13:37:17] INFO: [handleGastoFlow] → Mensaje con imagen recibido. Iniciando sub-flujo de ticket.
+[2025-08-15 13:37:17] INFO: [handleTicketFlow] → Iniciando procesamiento de ticket para Manuel Alejandro Jimenez.
+[2025-08-15 13:37:18] INFO: [handleTicketFlow] 🖼️ URL del medio obtenida: https://lookaside.fbsbx.com/whatsapp_business/attachments/?mid=1091408173035129&ext=1755286939&hash=ARkW20XYwYBxCRX7XDMpG5LFnISVnvsyWh97cOHUOPC6gA
+[2025-08-15 13:37:19] INFO: [ocrUtils] 💾 Subiendo imagen a Supabase con nombre: gastos/1755286639584_1091408173035129.jpg
+[2025-08-15 13:37:19] INFO: → POST /webhook
+[2025-08-15 13:37:20] INFO: → POST /webhook
+[2025-08-15 13:37:20] INFO: → POST /webhook
+[2025-08-15 13:37:20] INFO: [ocrUtils] 🔎 Iniciando OCR en la imagen...
+[2025-08-15 13:37:20] INFO: 🔎 Enviando imagen a Google Vision...
+[2025-08-15 13:37:21] INFO: 📄 Texto completo detectado. Analizando...
+[2025-08-15 13:37:21] INFO: Store Match:
+[2025-08-15 13:37:21] INFO: Amount Match:
+[2025-08-15 13:37:21] INFO: Date Match:
+[2025-08-15 13:37:21] INFO: [handleTicketFlow] Datos del ticket estructurados: {"storeName":"FARRAM, S.A. DE C.V.","amount":"120.00","date":"No detectada","rawText":"FARRAM, S.A. DE C.V.\nGeneral Lev Personas Morales\nDOMICILIO FISCAL\nCLL, NARCISO MENDOZA No. 68 COT. PILARES CP 52179\nNETEPEC, ESTADO DE MEXICO RFC, FAR-000207-126\nDOMICILIO DEL ESTABLECIMIENTO, LUGAR Y FECHA DE\nEXPEDICION:\nSucursal: FC2176 CUAUTITLAN IZCALLI 12. NE\nAtendido por: 1917-1917\nAV: NEZAHUALCOYOTL 80, CUMBRIA, CUAUTITLAN IZCALLI\nESTADO DE MEXICO, MEXICO C.P.54740\nsábado 19 jul. 2025 02:05:21 p. M.\n14253-8ee4-4036-9541-c517cedc849b\n1 X\nja: 1 TC Ticket:\n1S INDONETACINA BETARE\n80 DICLOFENACO 1.168/10\ndigos: 2\nezos a Entregar: 2\n83.00\n83.00\n1X 37.00 37.00\nSubtotal:\n120.00\nDescuentos:\n0.00\n*IVA AL 16 8:\n0.00\nTotal N.N:\n120.00\nciento veinte pesos 00/100 MN)\nPagos >> Efectivo:\n120.00\nCambio:\n0.001\nDocumento sin Efectos Fiscales\nNo se aceptan devoluciones en antibióticos, promociones.\ncheques, transferencias y tickets facturados. Para pagos\ncon tarjeta la devolución aplica el mismo día y a la misma\ntarjeta. En efectivo y CoDi dentro de los 4 días\nposteriores y dentro del mismo mes calendario.\nSi requiere factura, favor de solicitarla al momento de efectuar\nsu compra en esta farmacia\nReferencia de Facturación FRANQUICIA: FC2176\nFacturación en linea\nwww.farmaciasdesimileres.com\nQuejas y Sugerencias SIMITEL 600 911 6666\n0608978000017\n***********\n**************\n**\n***\nPROMOCION 10 % DE\nDESCUENTO EN ANALISIS\nCLINICOS DEL DR. SIMI\nY EN SIMILAB.\nNo aplica con otras promociones.\nVigencia al 30 de septiembre del 2025\nMostrar el ticket original para que aplique el descuento.\n****\n****\n******\n****\nD"}
+[2025-08-15 13:37:22] INFO: [handleTicketFlow] ✅ Mensaje de confirmación enviado a 5215526689188.
+[2025-08-15 13:37:23] INFO: → POST /webhook
+[2025-08-15 13:37:23] INFO: → POST /webhook
+[2025-08-15 13:37:23] INFO: → POST /webhook
+[2025-08-15 13:37:30] INFO: → POST /webhook
+[2025-08-15 13:37:30] INFO: ----------------------------------
+[2025-08-15 13:37:30] INFO: → Mensaje entrante de 5215526689188: Si
+[2025-08-15 13:37:30] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:37:30] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:37:30] INFO: → Continuando flujo: gasto en el paso: waiting_for_ocr_confirmation
+[2025-08-15 13:37:30] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: waiting_for_ocr_confirmation
+[2025-08-15 13:37:30] INFO: [handleConfirmationFlow] → Procesando mensaje de confirmación de Manuel Alejandro Jimenez. Mensaje: si
+[2025-08-15 13:37:30] INFO: [db/gastos] 💾 Intentando crear un nuevo gasto para el usuario 1...
+[2025-08-15 13:37:30] ERROR: [db/gastos] ❌ Fallo en la función createGasto: SQLITE_CONSTRAINT: NOT NULL constraint failed: gastos.fecha
+[2025-08-15 13:37:30] ERROR: [handleConfirmationFlow] ❌ Error al guardar el gasto: SQLITE_CONSTRAINT: NOT NULL constraint failed: gastos.fecha
+[2025-08-15 13:37:31] INFO: → POST /webhook
+[2025-08-15 13:37:31] INFO: → POST /webhook
+[2025-08-15 13:37:31] INFO: → POST /webhook
+[2025-08-15 13:43:04] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 13:43:05] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 13:43:14] INFO: → POST /webhook
+[2025-08-15 13:43:14] INFO: ----------------------------------
+[2025-08-15 13:43:14] INFO: → Mensaje entrante de 5215526689188: Hola
+[2025-08-15 13:43:14] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:43:14] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:43:14] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 13:43:14] INFO: Analizando plan(es) del usuario: plan_49
+[2025-08-15 13:43:14] INFO: → El usuario solo tiene planes de registro de gastos. Iniciando flujo de gasto.
+[2025-08-15 13:43:14] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 13:43:16] INFO: → POST /webhook
+[2025-08-15 13:43:16] INFO: → POST /webhook
+[2025-08-15 13:43:16] INFO: → POST /webhook
+[2025-08-15 13:43:28] INFO: → POST /webhook
+[2025-08-15 13:43:28] INFO: ----------------------------------
+[2025-08-15 13:43:28] INFO: → Mensaje entrante de 5215526689188: Sin texto
+[2025-08-15 13:43:28] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:43:28] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:43:28] INFO: → Continuando flujo: gasto en el paso: inicio
+[2025-08-15 13:43:28] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 13:43:28] INFO: [handleGastoFlow] → Mensaje con imagen recibido. Iniciando sub-flujo de ticket.
+[2025-08-15 13:43:29] INFO: [handleTicketFlow] → Iniciando procesamiento de ticket para Manuel Alejandro Jimenez.
+[2025-08-15 13:43:29] INFO: [handleTicketFlow] 🖼️ URL del medio obtenida: https://lookaside.fbsbx.com/whatsapp_business/attachments/?mid=1950039005755975&ext=1755287312&hash=ARn9JDcXiikIzWKgt09h4zDcf9J_lOqG_Sx08JgZLhlMvA
+[2025-08-15 13:43:30] INFO: [ocrUtils] 💾 Subiendo imagen a Supabase con nombre: gastos/1755287010667_1950039005755975.jpg
+[2025-08-15 13:43:31] INFO: → POST /webhook
+[2025-08-15 13:43:31] INFO: → POST /webhook
+[2025-08-15 13:43:31] INFO: → POST /webhook
+[2025-08-15 13:43:31] INFO: [ocrUtils] 🔎 Iniciando OCR en la imagen...
+[2025-08-15 13:43:31] INFO: 🔎 Enviando imagen a Google Vision...
+[2025-08-15 13:43:35] INFO: 📄 Texto completo detectado. Analizando...
+[2025-08-15 13:43:35] INFO: Store Match:
+[2025-08-15 13:43:35] INFO: Amount Match:
+[2025-08-15 13:43:35] INFO: Date Match:
+[2025-08-15 13:43:35] INFO: [handleTicketFlow] Datos del ticket estructurados: {"storeName":"FARRAM, S.A. DE C.V.","amount":"120.00","date":"No detectada","rawText":"FARRAM, S.A. DE C.V.\nGeneral Ley Personas Morales\nDOMICILIO FISCAL\nCLL. NARCISO MENDOZA No. 68 Col. PILARES CP 52179\nMETEPEC, ESTADO DE MEXICO RFC. FAR-000207-L26\nDOMICILIO DEL ESTABLECIMIENTO, LUGAR Y FECHA DE\nEXPEDICION:\nSucursal: FC2176 CUAUTITLAN IZCALLI 12, ME\nAtendido por: 1917 - 1917\nAV: NEZAHUALCOYOTL 80, CUMBRIA, CUAUTITLAN IZCALLI\nESTADO DE MEXICO, MEXICO C.P.54740\nsábado 19 jul. 2025 02:05:21 p. m.\nCaja: 1 TC Ticket: a0414253-8ee4-4036-9541-c517cedc849b\n1413 INDOMETACINA/BFTAME/\n80 DICLOFENACO 1.166/10\n- Códigos: 2\nPiezos a Entregar: 2\n1 X\n83.00\n83.00\n1 X 37.00 37.00\nSubtotal:\n120.00\nDescuentos:\n0.00\n*IVA AL 16 %:\n0.00\nTotal M.N:\n120.00\n(ciento veinte pesos 00/100 MN)\nPagos >> Efectivo:\n120.00\nCambio:\n0.00\nP\nre\nPr\ng\nDocumento sin Efectos Fiscales\nNo se aceptan devoluciones en antibióticos, promociones,\ncheques, transferencias y tickets facturados. Para pagos\ncon tarjeta la devolución aplica el mismo día y a la misma\ntarjeta. En efectivo y CoDi dentro de los 4 días\nposteriores y dentro del mismo mes calendario.\nSi requiere factura, favor de solicitarla al momento de efectuar\nsu compra en esta farmacia\nReferencia de Facturación FRANQUICIA: FC2176\nFacturación en línea\nwww.farmaciasdesimileres.com\nQuejas y Sugerencias SIMITEL 600 911 6666\n0608978000017\n********** ****\n******\n****\n**\n****\nPROMOCION 10 % DE\nDESCUENTO EN ANALISIS\nCLINICOS DEL DR. SIMI\nY EN SIMILAB.\nNo aplica con otras promociones.\nVigencia al 30 de septiembre del 2025\nMostrar el ticket original para que aplique el descuento.\n****\n****\n*******\n*****"}
+[2025-08-15 13:43:36] INFO: [handleTicketFlow] ✅ Mensaje de confirmación enviado a 5215526689188.
+[2025-08-15 13:43:37] INFO: → POST /webhook
+[2025-08-15 13:43:37] INFO: → POST /webhook
+[2025-08-15 13:43:37] INFO: → POST /webhook
+[2025-08-15 13:43:42] INFO: → POST /webhook
+[2025-08-15 13:43:42] INFO: ----------------------------------
+[2025-08-15 13:43:42] INFO: → Mensaje entrante de 5215526689188: Si
+[2025-08-15 13:43:42] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 13:43:42] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 13:43:42] INFO: → Continuando flujo: gasto en el paso: waiting_for_ocr_confirmation
+[2025-08-15 13:43:42] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: waiting_for_ocr_confirmation
+[2025-08-15 13:43:42] INFO: [handleConfirmationFlow] → Procesando mensaje de confirmación de Manuel Alejandro Jimenez. Mensaje: si
+[2025-08-15 13:43:42] INFO: [db/gastos] 💾 Intentando crear un nuevo gasto para el usuario 1...
+[2025-08-15 13:43:42] INFO: [db/gastos] ✅ Gasto creado exitosamente con ID: 7
+[2025-08-15 13:43:45] INFO: [handleConfirmationFlow] ✅ Gasto guardado con éxito. ID: undefined
+[2025-08-15 13:43:46] INFO: → POST /webhook
+[2025-08-15 13:43:46] INFO: → POST /webhook
+[2025-08-15 13:43:46] INFO: → POST /webhook
+[2025-08-15 13:46:11] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 13:46:12] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 13:51:36] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 13:51:36] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 13:53:18] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 13:53:18] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 13:54:13] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 13:54:13] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 13:56:11] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 13:56:11] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 13:56:31] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 13:56:31] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 13:57:01] INFO: → GET /api/estado-servicio
+[2025-08-15 13:57:01] INFO: → GET /api/gastos/resumen
+[2025-08-15 13:57:01] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:01] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:01] INFO: → GET /api/estado-servicio
+[2025-08-15 13:57:01] INFO: → GET /api/gastos/resumen
+[2025-08-15 13:57:01] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:01] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:01] INFO: → GET /api/gastos/facturables/usuario
+[2025-08-15 13:57:01] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:01] INFO: → GET /api/gastos/facturables/usuario
+[2025-08-15 13:57:01] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:20] INFO: → GET /api/usuarios/fiscales
+[2025-08-15 13:57:20] INFO: → GET /api/usuarios/1
+[2025-08-15 13:57:20] INFO: → GET /api/usuarios/fiscales-servicio
+[2025-08-15 13:57:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:20] INFO: [fiscalesController] obtenerDatosFiscales > userId: 1
+[2025-08-15 13:57:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:20] INFO: [fiscalesController] obtenerDatosFiscalesServicio > userId: 1
+[2025-08-15 13:57:20] INFO: 📦 getFiscalesByUserId: datos obtenidos para userId=1
+[2025-08-15 13:57:20] INFO: [fiscalesController] Datos fiscales tickets obtenidos para userId: 1 > {"razon_social":"Manuel Alejandro Jimenez","rfc":"JIFM86032017A","uso_cfdi":"G03","cp_fiscal":"54740","email_fiscal":"alejandro.agenciah@gmail.com"}
+[2025-08-15 13:57:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:20] INFO: 📦 getFiscalesServicioByUserId: datos obtenidos para userId=1
+[2025-08-15 13:57:20] INFO: [fiscalesController] Datos fiscales servicio obtenidos para userId: 1 > {"razon_social_servicio":"Manuel Alejandro jimenez","rfc_servicio":"JIFM86032017A","cp_fiscal_servicio":"54740","uso_cfdi_servicio":"g03","email_fiscal_servicio":"alejandro.agenciah@gmail.com"}
+[2025-08-15 13:57:20] INFO: → GET /api/usuarios/fiscales
+[2025-08-15 13:57:20] INFO: → GET /api/usuarios/1
+[2025-08-15 13:57:20] INFO: → GET /api/usuarios/fiscales-servicio
+[2025-08-15 13:57:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:20] INFO: [fiscalesController] obtenerDatosFiscales > userId: 1
+[2025-08-15 13:57:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:20] INFO: [fiscalesController] obtenerDatosFiscalesServicio > userId: 1
+[2025-08-15 13:57:20] INFO: 📦 getFiscalesByUserId: datos obtenidos para userId=1
+[2025-08-15 13:57:20] INFO: [fiscalesController] Datos fiscales tickets obtenidos para userId: 1 > {"razon_social":"Manuel Alejandro Jimenez","rfc":"JIFM86032017A","uso_cfdi":"G03","cp_fiscal":"54740","email_fiscal":"alejandro.agenciah@gmail.com"}
+[2025-08-15 13:57:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:20] INFO: 📦 getFiscalesServicioByUserId: datos obtenidos para userId=1
+[2025-08-15 13:57:20] INFO: [fiscalesController] Datos fiscales servicio obtenidos para userId: 1 > {"razon_social_servicio":"Manuel Alejandro jimenez","rfc_servicio":"JIFM86032017A","cp_fiscal_servicio":"54740","uso_cfdi_servicio":"g03","email_fiscal_servicio":"alejandro.agenciah@gmail.com"}
+[2025-08-15 13:57:21] INFO: → GET /api/gastos/resumen
+[2025-08-15 13:57:21] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:21] INFO: → GET /api/gastos/resumen
+[2025-08-15 13:57:21] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:21] INFO: → GET /api/gastos/facturables/usuario
+[2025-08-15 13:57:21] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:21] INFO: → GET /api/gastos/facturables/usuario
+[2025-08-15 13:57:21] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:31] INFO: → GET /api/gastos
+[2025-08-15 13:57:31] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:31] INFO: → GET /api/gastos
+[2025-08-15 13:57:31] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:41] INFO: → PUT /api/gastos/7
+[2025-08-15 13:57:41] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:41] INFO: → GET /api/gastos
+[2025-08-15 13:57:41] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:56] INFO: → GET /api/usuarios/fiscales
+[2025-08-15 13:57:56] INFO: → GET /api/usuarios/1
+[2025-08-15 13:57:56] INFO: → GET /api/usuarios/fiscales-servicio
+[2025-08-15 13:57:56] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:56] INFO: [fiscalesController] obtenerDatosFiscales > userId: 1
+[2025-08-15 13:57:56] INFO: 📦 getFiscalesByUserId: datos obtenidos para userId=1
+[2025-08-15 13:57:56] INFO: [fiscalesController] Datos fiscales tickets obtenidos para userId: 1 > {"razon_social":"Manuel Alejandro Jimenez","rfc":"JIFM86032017A","uso_cfdi":"G03","cp_fiscal":"54740","email_fiscal":"alejandro.agenciah@gmail.com"}
+[2025-08-15 13:57:56] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:56] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:56] INFO: [fiscalesController] obtenerDatosFiscalesServicio > userId: 1
+[2025-08-15 13:57:56] INFO: → GET /api/usuarios/fiscales
+[2025-08-15 13:57:56] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:56] INFO: 📦 getFiscalesServicioByUserId: datos obtenidos para userId=1
+[2025-08-15 13:57:56] INFO: [fiscalesController] Datos fiscales servicio obtenidos para userId: 1 > {"razon_social_servicio":"Manuel Alejandro jimenez","rfc_servicio":"JIFM86032017A","cp_fiscal_servicio":"54740","uso_cfdi_servicio":"g03","email_fiscal_servicio":"alejandro.agenciah@gmail.com"}
+[2025-08-15 13:57:56] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:56] INFO: [fiscalesController] obtenerDatosFiscales > userId: 1
+[2025-08-15 13:57:56] INFO: → GET /api/usuarios/1
+[2025-08-15 13:57:56] INFO: → GET /api/usuarios/fiscales-servicio
+[2025-08-15 13:57:56] INFO: 📦 getFiscalesByUserId: datos obtenidos para userId=1
+[2025-08-15 13:57:56] INFO: [fiscalesController] Datos fiscales tickets obtenidos para userId: 1 > {"razon_social":"Manuel Alejandro Jimenez","rfc":"JIFM86032017A","uso_cfdi":"G03","cp_fiscal":"54740","email_fiscal":"alejandro.agenciah@gmail.com"}
+[2025-08-15 13:57:56] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:56] INFO: [fiscalesController] obtenerDatosFiscalesServicio > userId: 1
+[2025-08-15 13:57:56] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 13:57:56] INFO: 📦 getFiscalesServicioByUserId: datos obtenidos para userId=1
+[2025-08-15 13:57:56] INFO: [fiscalesController] Datos fiscales servicio obtenidos para userId: 1 > {"razon_social_servicio":"Manuel Alejandro jimenez","rfc_servicio":"JIFM86032017A","cp_fiscal_servicio":"54740","uso_cfdi_servicio":"g03","email_fiscal_servicio":"alejandro.agenciah@gmail.com"}
+[2025-08-15 13:57:56] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:09] INFO: → POST /api/auth/login
+[2025-08-15 16:08:09] INFO: → GET /api/estado-servicio
+[2025-08-15 16:08:09] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:09] INFO: → GET /api/gastos/resumen
+[2025-08-15 16:08:09] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:09] INFO: → GET /api/estado-servicio
+[2025-08-15 16:08:09] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:09] INFO: → GET /api/gastos/resumen
+[2025-08-15 16:08:09] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:09] INFO: → GET /api/gastos/facturables/usuario
+[2025-08-15 16:08:09] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:09] INFO: → GET /api/gastos/facturables/usuario
+[2025-08-15 16:08:09] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:13] INFO: → GET /api/usuarios/fiscales-servicio
+[2025-08-15 16:08:13] INFO: → GET /api/usuarios/fiscales
+[2025-08-15 16:08:13] INFO: → GET /api/usuarios/3
+[2025-08-15 16:08:13] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:13] INFO: [fiscalesController] obtenerDatosFiscalesServicio > userId: 3
+[2025-08-15 16:08:13] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:13] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:13] INFO: [fiscalesController] obtenerDatosFiscales > userId: 3
+[2025-08-15 16:08:13] INFO: 📦 getFiscalesServicioByUserId: datos obtenidos para userId=3
+[2025-08-15 16:08:13] INFO: [fiscalesController] Datos fiscales servicio obtenidos para userId: 3 > {"razon_social_servicio":null,"rfc_servicio":null,"cp_fiscal_servicio":null,"uso_cfdi_servicio":null,"email_fiscal_servicio":null}
+[2025-08-15 16:08:13] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:13] INFO: 📦 getFiscalesByUserId: datos obtenidos para userId=3
+[2025-08-15 16:08:13] INFO: [fiscalesController] Datos fiscales tickets obtenidos para userId: 3 > {"razon_social":null,"rfc":null,"uso_cfdi":null,"cp_fiscal":null,"email_fiscal":null}
+[2025-08-15 16:08:13] INFO: → GET /api/usuarios/3
+[2025-08-15 16:08:13] INFO: → GET /api/usuarios/fiscales
+[2025-08-15 16:08:13] INFO: → GET /api/usuarios/fiscales-servicio
+[2025-08-15 16:08:13] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:13] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:13] INFO: [fiscalesController] obtenerDatosFiscales > userId: 3
+[2025-08-15 16:08:13] INFO: 📦 getFiscalesByUserId: datos obtenidos para userId=3
+[2025-08-15 16:08:13] INFO: [fiscalesController] Datos fiscales tickets obtenidos para userId: 3 > {"razon_social":null,"rfc":null,"uso_cfdi":null,"cp_fiscal":null,"email_fiscal":null}
+[2025-08-15 16:08:13] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:13] INFO: [fiscalesController] obtenerDatosFiscalesServicio > userId: 3
+[2025-08-15 16:08:13] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:13] INFO: 📦 getFiscalesServicioByUserId: datos obtenidos para userId=3
+[2025-08-15 16:08:13] INFO: [fiscalesController] Datos fiscales servicio obtenidos para userId: 3 > {"razon_social_servicio":null,"rfc_servicio":null,"cp_fiscal_servicio":null,"uso_cfdi_servicio":null,"email_fiscal_servicio":null}
+[2025-08-15 16:08:27] INFO: → PUT /api/usuarios/perfil
+[2025-08-15 16:08:27] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:29] INFO: → GET /api/estado-servicio
+[2025-08-15 16:08:30] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:30] INFO: → GET /api/gastos/resumen
+[2025-08-15 16:08:30] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:30] INFO: → GET /api/gastos/resumen
+[2025-08-15 16:08:30] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:30] INFO: → GET /api/gastos/facturables/usuario
+[2025-08-15 16:08:30] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:30] INFO: → GET /api/gastos/facturables/usuario
+[2025-08-15 16:08:30] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:37] INFO: → GET /api/gastos
+[2025-08-15 16:08:37] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:37] INFO: → GET /api/gastos
+[2025-08-15 16:08:37] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:40] INFO: → GET /api/gastos/resumen
+[2025-08-15 16:08:40] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:40] INFO: → GET /api/gastos/resumen
+[2025-08-15 16:08:40] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:40] INFO: → GET /api/gastos/facturables/usuario
+[2025-08-15 16:08:40] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:08:40] INFO: → GET /api/gastos/facturables/usuario
+[2025-08-15 16:08:40] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-15 16:48:32] INFO: → POST /webhook
+[2025-08-15 16:48:32] INFO: → POST /webhook
+[2025-08-15 16:48:35] INFO: → POST /webhook
+[2025-08-15 16:48:45] INFO: → POST /webhook
+[2025-08-15 16:48:45] INFO: ----------------------------------
+[2025-08-15 16:48:45] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 16:48:45] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 16:48:45] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 16:48:45] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 16:48:45] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 16:48:45] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 16:48:46] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 401
+[2025-08-15 16:48:46] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 401
+[2025-08-15 16:48:46] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 16:48:46] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 401
+[2025-08-15 16:50:47] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 16:50:47] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 16:51:35] INFO: → GET /webhook?hub.mode=subscribe&hub.challenge=837167113&hub.verify_token=harumi
+[2025-08-15 16:52:14] INFO: → POST /webhook
+[2025-08-15 16:52:14] INFO: ----------------------------------
+[2025-08-15 16:52:14] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 16:52:14] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 16:52:14] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 16:52:14] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 16:52:14] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 16:52:14] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 16:52:16] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 16:52:16] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 400
+[2025-08-15 16:52:16] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 16:52:16] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 16:55:08] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 16:55:08] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 16:55:16] INFO: → POST /webhook
+[2025-08-15 16:55:16] INFO: ----------------------------------
+[2025-08-15 16:55:16] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 16:55:16] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 16:55:16] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 16:55:16] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 16:55:16] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 16:55:16] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 16:55:17] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 16:55:17] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 400
+[2025-08-15 16:55:17] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 16:55:17] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 16:57:20] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 16:57:20] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 16:57:24] INFO: → POST /webhook
+[2025-08-15 16:57:24] INFO: ----------------------------------
+[2025-08-15 16:57:24] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 16:57:24] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 16:57:24] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 16:57:24] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 16:57:24] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 16:57:24] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 16:57:25] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 16:57:25] INFO: BOTONES A ENVIAR:
+[2025-08-15 16:57:25] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 400
+[2025-08-15 16:57:25] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 16:57:25] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:07:42] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 17:07:43] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 17:08:16] INFO: → POST /webhook
+[2025-08-15 17:08:16] INFO: ----------------------------------
+[2025-08-15 17:08:16] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 17:08:16] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 17:08:16] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 17:08:16] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 17:08:16] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 17:08:16] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 17:08:17] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:08:17] INFO: BOTONES A ENVIAR:
+[2025-08-15 17:08:17] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 400
+[2025-08-15 17:08:17] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 17:08:17] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:09:50] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 17:09:50] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 17:09:59] INFO: → POST /webhook
+[2025-08-15 17:09:59] INFO: ----------------------------------
+[2025-08-15 17:09:59] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 17:09:59] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 17:09:59] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 17:09:59] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 17:09:59] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 17:09:59] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 17:09:59] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:09:59] INFO: BUTTONS TO BE SENT (from messageHandler):
+[2025-08-15 17:09:59] INFO: BOTONES A ENVIAR:
+[2025-08-15 17:10:00] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 400
+[2025-08-15 17:10:00] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 17:10:00] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:10:47] INFO: → POST /webhook
+[2025-08-15 17:10:47] INFO: ----------------------------------
+[2025-08-15 17:10:47] INFO: → Mensaje entrante de 5215526689188: Hola
+[2025-08-15 17:10:47] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 17:10:47] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 17:10:47] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 17:10:47] INFO: Analizando plan(es) del usuario: plan_49
+[2025-08-15 17:10:47] INFO: → El usuario solo tiene planes de registro de gastos. Iniciando flujo de gasto.
+[2025-08-15 17:10:47] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 17:10:49] INFO: → POST /webhook
+[2025-08-15 17:10:49] INFO: → POST /webhook
+[2025-08-15 17:10:49] INFO: → POST /webhook
+[2025-08-15 17:10:53] INFO: → POST /webhook
+[2025-08-15 17:10:53] INFO: ----------------------------------
+[2025-08-15 17:10:53] INFO: → Mensaje entrante de 5215526689188: Manual
+[2025-08-15 17:10:53] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 17:10:53] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 17:10:53] INFO: → Continuando flujo: gasto en el paso: inicio
+[2025-08-15 17:10:53] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: inicio
+[2025-08-15 17:10:53] INFO: [handleGastoFlow] → Mensaje manual recibido. Iniciando sub-flujo manual.
+[2025-08-15 17:10:53] INFO: [handleManualFlow] → Procesando flujo manual para Manuel Alejandro Jimenez. Paso: manual_inicio
+[2025-08-15 17:10:59] INFO: → POST /webhook
+[2025-08-15 17:10:59] INFO: → POST /webhook
+[2025-08-15 17:10:59] INFO: → POST /webhook
+[2025-08-15 17:11:03] INFO: → POST /webhook
+[2025-08-15 17:11:03] INFO: ----------------------------------
+[2025-08-15 17:11:03] INFO: → Mensaje entrante de 5215526689188: 200
+[2025-08-15 17:11:03] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 17:11:03] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 17:11:03] INFO: → Continuando flujo: gasto en el paso: waiting_for_manual_amount
+[2025-08-15 17:11:03] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: waiting_for_manual_amount
+[2025-08-15 17:11:03] INFO: [handleManualFlow] → Procesando flujo manual para Manuel Alejandro Jimenez. Paso: waiting_for_manual_amount
+[2025-08-15 17:11:04] INFO: → POST /webhook
+[2025-08-15 17:11:04] INFO: → POST /webhook
+[2025-08-15 17:11:04] INFO: → POST /webhook
+[2025-08-15 17:11:13] INFO: → POST /webhook
+[2025-08-15 17:11:13] INFO: ----------------------------------
+[2025-08-15 17:11:13] INFO: → Mensaje entrante de 5215526689188: Garrafones de agua
+[2025-08-15 17:11:13] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 17:11:13] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 17:11:13] INFO: → Continuando flujo: gasto en el paso: waiting_for_manual_establishment
+[2025-08-15 17:11:13] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: waiting_for_manual_establishment
+[2025-08-15 17:11:13] INFO: [handleManualFlow] → Procesando flujo manual para Manuel Alejandro Jimenez. Paso: waiting_for_manual_establishment
+[2025-08-15 17:11:14] INFO: → POST /webhook
+[2025-08-15 17:11:14] INFO: → POST /webhook
+[2025-08-15 17:11:14] INFO: → POST /webhook
+[2025-08-15 17:11:28] INFO: → POST /webhook
+[2025-08-15 17:11:28] INFO: ----------------------------------
+[2025-08-15 17:11:28] INFO: → Mensaje entrante de 5215526689188: 15/08/2025
+[2025-08-15 17:11:28] INFO: Número de teléfono normalizado: 5526689188
+[2025-08-15 17:11:28] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 17:11:28] INFO: → Continuando flujo: gasto en el paso: waiting_for_manual_date
+[2025-08-15 17:11:28] INFO: [handleGastoFlow] → Iniciando flujo de gasto para 5526689188. Paso: waiting_for_manual_date
+[2025-08-15 17:11:28] INFO: [handleManualFlow] → Procesando flujo manual para Manuel Alejandro Jimenez. Paso: waiting_for_manual_date
+[2025-08-15 17:11:28] INFO: [db/gastos] 💾 Intentando crear un nuevo gasto para el usuario 1...
+[2025-08-15 17:11:28] ERROR: [db/gastos] ❌ Fallo en la función createGasto: SQLITE_CONSTRAINT: NOT NULL constraint failed: gastos.descripcion
+[2025-08-15 17:11:28] ERROR: [handleManualFlow] ❌ Error al guardar el gasto manual: SQLITE_CONSTRAINT: NOT NULL constraint failed: gastos.descripcion
+[2025-08-15 17:11:29] INFO: → POST /webhook
+[2025-08-15 17:11:29] INFO: → POST /webhook
+[2025-08-15 17:11:29] INFO: → POST /webhook
+[2025-08-15 17:11:49] INFO: → POST /webhook
+[2025-08-15 17:11:49] INFO: ----------------------------------
+[2025-08-15 17:11:49] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 17:11:49] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 17:11:49] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 17:11:49] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 17:11:49] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 17:11:49] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 17:11:49] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:11:49] INFO: BUTTONS TO BE SENT (from messageHandler):
+[2025-08-15 17:11:49] INFO: BOTONES A ENVIAR:
+[2025-08-15 17:11:50] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 400
+[2025-08-15 17:11:50] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 17:11:50] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:13:17] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 17:13:21] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 17:13:29] INFO: → POST /webhook
+[2025-08-15 17:13:29] INFO: ----------------------------------
+[2025-08-15 17:13:29] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 17:13:29] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 17:13:29] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 17:13:29] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 17:13:29] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 17:13:29] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 17:13:29] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:13:29] INFO: BUTTONS TO BE SENT (from messageHandler):
+[2025-08-15 17:13:29] INFO: BOTONES A ENVIAR:
+[2025-08-15 17:13:30] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 400
+[2025-08-15 17:13:30] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 17:13:30] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:17:02] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 17:17:02] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 17:17:12] INFO: → POST /webhook
+[2025-08-15 17:17:12] INFO: ----------------------------------
+[2025-08-15 17:17:12] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 17:17:12] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 17:17:12] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 17:17:12] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 17:17:12] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 17:17:12] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 17:17:12] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:17:12] INFO: BUTTONS TO BE SENT (from messageHandler):
+[2025-08-15 17:17:12] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 400
+[2025-08-15 17:17:12] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 17:17:13] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:19:42] INFO: → POST /webhook
+[2025-08-15 17:19:42] INFO: ----------------------------------
+[2025-08-15 17:19:42] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 17:19:42] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 17:19:42] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 17:19:42] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 17:19:42] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 17:19:42] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 17:19:43] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:19:43] INFO: BUTTONS TO BE SENT (from messageHandler):
+[2025-08-15 17:19:44] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 400
+[2025-08-15 17:19:44] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 17:19:44] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:26:36] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 17:26:36] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 17:26:39] INFO: → POST /webhook
+[2025-08-15 17:26:39] INFO: ----------------------------------
+[2025-08-15 17:26:39] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 17:26:39] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 17:26:39] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 17:26:39] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 17:26:39] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 17:26:39] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 17:26:39] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 17:26:39] INFO: BUTTONS TO BE SENT (from messageHandler):
+[2025-08-15 17:26:40] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 400
+[2025-08-15 17:26:40] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 17:26:40] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 18:55:09] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 18:55:10] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 18:55:14] INFO: → POST /webhook
+[2025-08-15 18:55:14] INFO: ----------------------------------
+[2025-08-15 18:55:14] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 18:55:14] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 18:55:14] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 18:55:14] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 18:55:14] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 18:55:14] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 18:55:15] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 18:55:15] INFO: BUTTONS TO BE SENT (from messageHandler):
+[2025-08-15 18:55:15] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 400
+[2025-08-15 18:55:15] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 18:55:16] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 18:55:35] INFO: → POST /webhook
+[2025-08-15 18:55:35] INFO: ----------------------------------
+[2025-08-15 18:55:35] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 18:55:35] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 18:55:35] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 18:55:35] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 18:55:35] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 18:55:35] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 18:55:35] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 18:55:35] INFO: BUTTONS TO BE SENT (from messageHandler):
+[2025-08-15 18:55:36] ERROR: ❌ Error inesperado en el flujo principal para 525539727009: Request failed with status code 400
+[2025-08-15 18:55:36] INFO: ✅ Estado de conversación reiniciado para 5539727009.
+[2025-08-15 18:55:36] ERROR: ❌ Error al enviar mensaje a 525539727009: Request failed with status code 400
+[2025-08-15 18:57:50] INFO: → POST /webhook
+[2025-08-15 18:57:50] INFO: ----------------------------------
+[2025-08-15 18:57:50] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 18:57:50] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 18:57:50] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 18:57:50] INFO: → No hay un flujo activo. Determinando flujo inicial basado en el plan.
+[2025-08-15 18:57:50] INFO: Analizando plan(es) del usuario: plan_450_chatbot
+[2025-08-15 18:57:50] INFO: → El usuario tiene un plan con facturación. Activando menú principal.
+[2025-08-15 18:57:51] INFO: BUTTONS TO BE SENT (from messageHandler):
+[2025-08-15 18:57:52] INFO: → POST /webhook
+[2025-08-15 18:57:52] INFO: → POST /webhook
+[2025-08-15 18:57:52] INFO: → POST /webhook
+[2025-08-15 18:57:53] INFO: → POST /webhook
+[2025-08-15 18:57:53] INFO: → POST /webhook
+[2025-08-15 18:57:53] INFO: → POST /webhook
+[2025-08-15 18:57:57] INFO: → POST /webhook
+[2025-08-15 18:57:57] INFO: ----------------------------------
+[2025-08-15 18:57:57] INFO: → Mensaje entrante de 525539727009: Sin texto
+[2025-08-15 18:57:57] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 18:57:57] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 18:57:57] INFO: → Continuando flujo: menu_principal en el paso: presentar_opciones
+[2025-08-15 18:57:57] INFO: BUTTONS TO BE SENT (from messageHandler):
+[2025-08-15 18:57:58] INFO: → POST /webhook
+[2025-08-15 18:57:58] INFO: → POST /webhook
+[2025-08-15 18:57:59] INFO: → POST /webhook
+[2025-08-15 18:58:04] INFO: → POST /webhook
+[2025-08-15 18:58:04] INFO: ----------------------------------
+[2025-08-15 18:58:04] INFO: → Mensaje entrante de 525539727009: Sin texto
+[2025-08-15 18:58:04] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 18:58:04] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 18:58:04] INFO: → Continuando flujo: menu_principal en el paso: presentar_opciones
+[2025-08-15 18:58:04] INFO: BUTTONS TO BE SENT (from messageHandler):
+[2025-08-15 18:58:05] INFO: → POST /webhook
+[2025-08-15 18:58:05] INFO: → POST /webhook
+[2025-08-15 18:58:05] INFO: → POST /webhook
+[2025-08-15 18:58:08] INFO: → POST /webhook
+[2025-08-15 18:58:08] INFO: ----------------------------------
+[2025-08-15 18:58:08] INFO: → Mensaje entrante de 525539727009: Sin texto
+[2025-08-15 18:58:08] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 18:58:08] INFO: --- Buscando usuario en la base de datos...
+[2025-08-15 18:58:08] INFO: → Continuando flujo: menu_principal en el paso: presentar_opciones
+[2025-08-15 18:58:08] INFO: BUTTONS TO BE SENT (from messageHandler):
+[2025-08-15 18:58:09] INFO: → POST /webhook
+[2025-08-15 18:58:10] INFO: → POST /webhook
+[2025-08-15 18:58:10] INFO: → POST /webhook
+[2025-08-15 19:00:04] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 19:00:04] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 19:00:06] INFO: → POST /webhook
+[2025-08-15 19:00:06] INFO: ----------------------------------
+[2025-08-15 19:00:06] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 19:00:06] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 19:00:06] INFO: --- Buscando usuario en la base de datos... 
+[2025-08-15 19:00:06] INFO: → Continuando flujo: menu_principal en el paso: presentar_opciones
+[2025-08-15 19:00:08] INFO: → POST /webhook
+[2025-08-15 19:00:08] INFO: → POST /webhook
+[2025-08-15 19:00:08] INFO: → POST /webhook
+[2025-08-15 19:00:12] INFO: → POST /webhook
+[2025-08-15 19:00:12] INFO: ----------------------------------
+[2025-08-15 19:00:12] INFO: → Mensaje entrante de 525539727009: Sin texto
+[2025-08-15 19:00:12] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 19:00:12] INFO: --- Buscando usuario en la base de datos... 
+[2025-08-15 19:00:14] INFO: → POST /webhook
+[2025-08-15 19:00:14] INFO: → POST /webhook
+[2025-08-15 19:00:14] INFO: → POST /webhook
+[2025-08-15 19:05:32] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 19:05:32] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-15 19:05:39] INFO: → POST /webhook
+[2025-08-15 19:05:39] INFO: ----------------------------------
+[2025-08-15 19:05:39] INFO: → Mensaje entrante de 525539727009: Hola
+[2025-08-15 19:05:39] INFO: Número de teléfono normalizado: 5539727009
+[2025-08-15 19:05:39] INFO: 🔍 Objeto de mensaje completo: {
+  "from": "525539727009",
+  "id": "wamid.HBgMNTI1NTM5NzI3MDA5FQIAEhggRThFRUVGMzUxNDM1NjY5MzlCRUQwN0Y1RTBDRTE1MTMA",
+  "timestamp": "1755306338",
+  "text": {
+    "body": "Hola"
+  },
+  "type": "text"
+}
+[2025-08-15 19:05:39] INFO: --- Buscando usuario en la base de datos... 
+[2025-08-15 19:05:39] INFO: → Continuando flujo: factura en el paso: greeting
+[2025-08-15 19:05:41] INFO: → POST /webhook
+[2025-08-15 19:05:41] INFO: → POST /webhook
+[2025-08-15 19:05:41] INFO: → POST /webhook
+[2025-08-15 19:05:50] INFO: Usando ruta de credenciales de Google Vision: /home/alex1986/test_gastos_bot/gastos_bot/backend/whatsapp/credentials/ocrTickets.json
+[2025-08-15 19:05:51] INFO: 🚀 Servidor corriendo en http://localhost:3001

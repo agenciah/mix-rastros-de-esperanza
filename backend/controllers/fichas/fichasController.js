@@ -3,6 +3,7 @@
 import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 import { findMatchesForFicha } from './matchingService.js';
+import { getFichaCompletaById } from '../../db/queries/fichasAndHallazgosQueries.js';
 
 /**
  * @fileoverview Controlador para la gestión de Fichas de Desaparición.
@@ -75,11 +76,11 @@ export const createFichaDesaparicion = async (req, res) => {
 
         const idFicha = fichaResult.lastID;
 
-        // 3. Insertar rasgos físicos (ficha_caracteristicas)
+        // 3. Insertar rasgos físicos
         if (rasgos_fisicos && rasgos_fisicos.length > 0) {
             const rasgosPromises = rasgos_fisicos.map(rasgo =>
                 db.run(
-                    `INSERT INTO ficha_caracteristicas (id_ficha, id_parte_cuerpo, tipo_caracteristica, descripcion)
+                    `INSERT INTO ficha_rasgos_fisicos (id_ficha, id_parte_cuerpo, tipo_rasgo, descripcion_detalle)
                      VALUES (?, ?, ?, ?)`,
                     [idFicha, rasgo.id_parte_cuerpo, rasgo.tipo_rasgo, rasgo.descripcion_detalle]
                 )
@@ -87,7 +88,7 @@ export const createFichaDesaparicion = async (req, res) => {
             await Promise.all(rasgosPromises);
         }
 
-        // 4. Insertar vestimenta (ficha_vestimenta)
+        // 4. Insertar vestimenta
         if (vestimenta && vestimenta.length > 0) {
             const vestimentaPromises = vestimenta.map(prenda =>
                 db.run(
@@ -193,13 +194,13 @@ export const actualizarFicha = async (req, res) => {
         );
 
         // 4. Eliminar y reinsertar rasgos y vestimenta
-        await db.run(`DELETE FROM ficha_caracteristicas WHERE id_ficha = ?`, [id]);
+        await db.run(`DELETE FROM ficha_rasgos_fisicos WHERE id_ficha = ?`, [id]);
         await db.run(`DELETE FROM ficha_vestimenta WHERE id_ficha = ?`, [id]);
 
         if (rasgos_fisicos && rasgos_fisicos.length > 0) {
             const rasgosPromises = rasgos_fisicos.map(rasgo =>
                 db.run(
-                    `INSERT INTO ficha_caracteristicas (id_ficha, id_parte_cuerpo, tipo_caracteristica, descripcion)
+                    `INSERT INTO ficha_rasgos_fisicos (id_ficha, id_parte_cuerpo, tipo_rasgo, descripcion_detalle)
                      VALUES (?, ?, ?, ?)`,
                     [id, rasgo.id_parte_cuerpo, rasgo.tipo_rasgo, rasgo.descripcion_detalle]
                 )
@@ -229,36 +230,67 @@ export const actualizarFicha = async (req, res) => {
 
 /**
  * Obtiene todas las fichas de desaparición con sus detalles.
+ * Versión optimizada para el feed principal.
  */
 export const getAllFichas = async (req, res) => {
     try {
         const db = await openDb();
-        const fichas = await db.all(
-            `SELECT fd.*, u.estado, u.municipio, u.localidad, ctl.nombre_tipo
-             FROM fichas_desaparicion AS fd
-             LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
-             LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar`
-        );
 
-        const fichasCompletas = await Promise.all(fichas.map(async (ficha) => {
-            const rasgos = await db.all(
-                `SELECT frf.tipo_caracteristica, frf.descripcion, cpc.nombre_parte
-                 FROM ficha_caracteristicas frf
-                 JOIN catalogo_partes_cuerpo cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
-                 WHERE frf.id_ficha = ?`,
-                [ficha.id_ficha]
-            );
+        const fichasSql = `
+            SELECT 
+                fd.id_ficha,
+                fd.id_usuario_creador,
+                fd.nombre,
+                fd.segundo_nombre,
+                fd.apellido_paterno,
+                fd.apellido_materno,
+                fd.fecha_desaparicion,
+                fd.foto_perfil,
+                fd.estado_ficha,
+                u.estado,
+                u.municipio,
+                ctl.nombre_tipo AS tipo_lugar,
+                -- Agregamos los rasgos y vestimenta como JSON
+                json_group_array(DISTINCT json_object(
+                    'tipo_rasgo', frf.tipo_rasgo, 
+                    'descripcion_detalle', frf.descripcion_detalle,
+                    'nombre_parte', cpc.nombre_parte
+                )) FILTER (WHERE frf.id_rasgo IS NOT NULL) AS rasgos_fisicos_json,
+                json_group_array(DISTINCT json_object(
+                    'color', fv.color, 
+                    'marca', fv.marca, 
+                    'caracteristica_especial', fv.caracteristica_especial,
+                    'tipo_prenda', cp.tipo_prenda
+                )) FILTER (WHERE fv.id_vestimenta IS NOT NULL) AS vestimenta_json
+            FROM fichas_desaparicion AS fd
+            LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
+            LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
+            LEFT JOIN ficha_rasgos_fisicos AS frf ON fd.id_ficha = frf.id_ficha
+            LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
+            LEFT JOIN ficha_vestimenta AS fv ON fd.id_ficha = fv.id_ficha
+            LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
+            GROUP BY fd.id_ficha
+            ORDER BY fd.fecha_desaparicion DESC
+            LIMIT 20;
+        `;
+        
+        const fichasResult = await db.all(fichasSql);
 
-            const vestimenta = await db.all(
-                `SELECT fv.color, fv.marca, fv.caracteristica_especial, cp.tipo_prenda
-                 FROM ficha_vestimenta fv
-                 JOIN catalogo_prendas cp ON fv.id_prenda = cp.id_prenda
-                 WHERE fv.id_ficha = ?`,
-                [ficha.id_ficha]
-            );
+        // Parsear los resultados JSON
+        const fichasCompletas = fichasResult.map(ficha => {
+            const rasgos_fisicos = JSON.parse(ficha.rasgos_fisicos_json);
+            const vestimenta = JSON.parse(ficha.vestimenta_json);
+            
+            // Eliminar los campos JSON crudos
+            delete ficha.rasgos_fisicos_json;
+            delete ficha.vestimenta_json;
 
-            return { ...ficha, rasgos_fisicos: rasgos, vestimenta };
-        }));
+            return {
+                ...ficha,
+                rasgos_fisicos: rasgos_fisicos[0] === null ? [] : rasgos_fisicos,
+                vestimenta: vestimenta[0] === null ? [] : vestimenta
+            };
+        });
 
         res.json({ success: true, data: fichasCompletas });
     } catch (error) {
@@ -267,50 +299,30 @@ export const getAllFichas = async (req, res) => {
     }
 };
 
+
 /**
  * Obtiene una ficha de desaparición específica por su ID.
+ * Versión actualizada para usar el módulo de queries.
  */
-export const getFichaById = async (id) => {
+export const getFichaById = async (req, res) => {
     try {
-        const db = await openDb();
-        const ficha = await db.get(
-            `SELECT fd.*, u.estado, u.municipio, u.localidad, ctl.nombre_tipo
-             FROM fichas_desaparicion AS fd
-             LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
-             LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
-             WHERE fd.id_ficha = ?`,
-            [id]
-        );
+        const { id } = req.params;
+        const fichaCompleta = await getFichaCompletaById(id);
 
-        if (!ficha) {
-            return { success: false, message: 'Ficha no encontrada.' };
+        if (!fichaCompleta) {
+            return res.status(404).json({ success: false, message: 'Ficha no encontrada.' });
         }
-
-        const rasgos = await db.all(
-            `SELECT frf.tipo_caracteristica, frf.descripcion, cpc.nombre_parte
-             FROM ficha_caracteristicas frf
-             JOIN catalogo_partes_cuerpo cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
-             WHERE frf.id_ficha = ?`,
-            [ficha.id_ficha]
-        );
-
-        const vestimenta = await db.all(
-            `SELECT fv.color, fv.marca, fv.caracteristica_especial, cp.tipo_prenda
-             FROM ficha_vestimenta fv
-             JOIN catalogo_prendas cp ON fv.id_prenda = cp.id_prenda
-             WHERE fv.id_ficha = ?`,
-            [ficha.id_ficha]
-        );
-
-        return { success: true, data: { ...ficha, rasgos_fisicos: rasgos, vestimenta } };
+        
+        res.json({ success: true, data: fichaCompleta });
     } catch (error) {
         logger.error(`❌ Error al obtener la ficha por ID: ${error.message}`);
-        throw new Error('Error al obtener la ficha.');
+        res.status(500).json({ success: false, message: 'Error al obtener la ficha.' });
     }
 };
 
 /**
  * Elimina la ficha de desaparición y los registros asociados
+ * (La eliminación en cascada es manejada por la DB)
  */
 export const deleteFichaDesaparicion = async (req, res) => {
     const db = await openDb();
@@ -330,6 +342,7 @@ export const deleteFichaDesaparicion = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Ficha no encontrada o no autorizado' });
         }
 
+        // La eliminación de rasgos y vestimenta se hará en cascada gracias a la FOREIGN KEY
         await db.run(`DELETE FROM fichas_desaparicion WHERE id_ficha = ?`, [id]);
         await db.run(`DELETE FROM ubicaciones WHERE id_ubicacion = ?`, [ficha.id_ubicacion_desaparicion]);
 
@@ -344,6 +357,7 @@ export const deleteFichaDesaparicion = async (req, res) => {
 
 /**
  * Busca fichas de desaparición por un término de búsqueda.
+ * Versión optimizada.
  */
 export const searchFichas = async (req, res) => {
     try {
@@ -358,43 +372,45 @@ export const searchFichas = async (req, res) => {
         const queryTerm = `%${searchTerm.toLowerCase()}%`;
         const selectFields = resumen
             ? 'fd.id_ficha, fd.nombre, fd.segundo_nombre, fd.apellido_paterno, fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, u.estado, u.municipio'
-            : 'fd.*, u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.latitud, u.longitud, u.codigo_postal, ctl.nombre_tipo';
+            : `fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno, fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha, u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.latitud, u.longitud, u.codigo_postal, ctl.nombre_tipo AS tipo_lugar,
+                json_group_array(DISTINCT json_object('tipo_rasgo', frf.tipo_rasgo, 'descripcion_detalle', frf.descripcion_detalle, 'nombre_parte', cpc.nombre_parte)) FILTER (WHERE frf.id_rasgo IS NOT NULL) AS rasgos_fisicos_json,
+                json_group_array(DISTINCT json_object('color', fv.color, 'marca', fv.marca, 'caracteristica_especial', fv.caracteristica_especial, 'tipo_prenda', cp.tipo_prenda)) FILTER (WHERE fv.id_vestimenta IS NOT NULL) AS vestimenta_json
+            `;
 
         const fichasSql = `
             SELECT ${selectFields}
             FROM fichas_desaparicion AS fd
             LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
             LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
+            LEFT JOIN ficha_rasgos_fisicos AS frf ON fd.id_ficha = frf.id_ficha
+            LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
+            LEFT JOIN ficha_vestimenta AS fv ON fd.id_ficha = fv.id_ficha
+            LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
             WHERE LOWER(fd.nombre || ' ' || IFNULL(fd.segundo_nombre, '') || ' ' || fd.apellido_paterno || ' ' || IFNULL(fd.apellido_materno, '')) LIKE LOWER(?)
+            GROUP BY fd.id_ficha
             ORDER BY ${safeOrderBy} ${safeOrderDir}
             LIMIT ? OFFSET ?
         `;
 
-        const fichas = await db.all(fichasSql, [queryTerm, limit, offset]);
+        const fichasResult = await db.all(fichasSql, [queryTerm, limit, offset]);
 
         if (resumen) {
-            return res.json({ success: true, data: fichas });
+             return res.json({ success: true, data: fichasResult });
         }
 
-        const fichasCompletas = await Promise.all(fichas.map(async (ficha) => {
-            const rasgos = await db.all(
-                `SELECT frf.tipo_caracteristica, frf.descripcion, cpc.nombre_parte
-                 FROM ficha_caracteristicas frf
-                 JOIN catalogo_partes_cuerpo cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
-                 WHERE frf.id_ficha = ?`,
-                [ficha.id_ficha]
-            );
+        const fichasCompletas = fichasResult.map(ficha => {
+            const rasgos_fisicos = JSON.parse(ficha.rasgos_fisicos_json);
+            const vestimenta = JSON.parse(ficha.vestimenta_json);
+            
+            delete ficha.rasgos_fisicos_json;
+            delete ficha.vestimenta_json;
 
-            const vestimenta = await db.all(
-                `SELECT fv.color, fv.marca, fv.caracteristica_especial, cp.tipo_prenda
-                 FROM ficha_vestimenta fv
-                 JOIN catalogo_prendas cp ON fv.id_prenda = cp.id_prenda
-                 WHERE fv.id_ficha = ?`,
-                [ficha.id_ficha]
-            );
-
-            return { ...ficha, rasgos_fisicos: rasgos, vestimenta };
-        }));
+            return {
+                ...ficha,
+                rasgos_fisicos: rasgos_fisicos[0] === null ? [] : rasgos_fisicos,
+                vestimenta: vestimenta[0] === null ? [] : vestimenta
+            };
+        });
 
         res.json({ success: true, data: fichasCompletas });
     } catch (error) {
@@ -424,9 +440,8 @@ export const obtenerCatalogoPartesCuerpo = async (req, res) => {
     try {
         const db = await openDb();
         const partes = await db.all(`SELECT * FROM catalogo_partes_cuerpo`);
-        // Mapeamos los campos para estandarizar
         const partesNormalizadas = partes.map(p => ({
-            id: p.id_parte_cuerpo,       // <- importante
+            id: p.id_parte_cuerpo,
             nombre: p.nombre_parte,
             categoria: p.categoria_principal
         }));

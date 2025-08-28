@@ -24,10 +24,9 @@ router.use((req, res, next) => {
 // POST /api/hallazgos/
 router.post('/', authenticateToken, async (req, res) => {
     try {
+        // La lógica de coincidencia y notificación se maneja ahora dentro del controlador.
+        // La respuesta del controlador siempre incluirá el hallazgo creado y, si las hay, las coincidencias.
         const result = await createHallazgo(req.body);
-        if (!result.success && result.matches) {
-            return res.status(200).json(result); // Devolver coincidencias al cliente
-        }
         res.status(201).json(result);
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
