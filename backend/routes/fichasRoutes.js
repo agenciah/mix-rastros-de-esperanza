@@ -28,14 +28,9 @@ router.use((req, res, next) => {
 router.post('/', authenticateToken, createFichaDesaparicion);
 
 // GET /api/fichas/
-router.get('/', authenticateToken, async (req, res) => {
-    try {
-        const result = await getAllFichas();
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
+// GET /api/fichas/
+// GET /api/fichas/ - Obtener todas las fichas
+router.get('/', authenticateToken, getAllFichas);
 
 // GET /api/fichas/buscar
 router.get('/buscar', authenticateToken, async (req, res) => {
@@ -48,32 +43,10 @@ router.get('/buscar', authenticateToken, async (req, res) => {
 });
 
 // GET /api/fichas/:id
-router.get('/:id', authenticateToken, async (req, res) => {
-    try {
-        const result = await getFichaById(req.params.id);
-        if (!result.success) {
-            return res.status(404).json(result);
-        }
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
+router.get('/:id', authenticateToken, getFichaById)
 
 // PUT /api/fichas/:id
-router.put('/:id', authenticateToken, async (req, res) => {
-    try {
-        // Se cambió el nombre de la función a 'actualizarFicha' para uniformidad.
-        const result = await actualizarFicha(req.params.id, req.body);
-        if (!result.success) {
-            const statusCode = result.message.includes('encontrado') ? 404 : 403;
-            return res.status(statusCode).json(result);
-        }
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
+router.put('/:id', authenticateToken, actualizarFicha);
 
 // DELETE /api/fichas/:id
 router.delete('/:id', authenticateToken, async (req, res) => {

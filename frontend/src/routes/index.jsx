@@ -17,6 +17,7 @@ import ForgotPassword from '@/pages/auth/ForgotPassword';
 import ResetPassword from '@/pages/auth/ResetPassword';
 import AdminLogin from '@/pages/admin/AdminLogin';
 
+
 // Importa la configuración de rutas de administrador
 import { adminRoutesConfig } from './adminRoutesConfig';
 
@@ -27,6 +28,8 @@ import Dashboard from '../pages/Dashboard';
 import FichaFormLayout from '@/pages/dashboard/fichas/FichaFormLayout';
 import Configuracion from '../pages/dashboard/Configuracion';
 import Contacto from '@/pages/public/Contacto';
+import FichasList from '@/pages/dashboard/fichas/fichasEdit/FichasList';
+import FichaEditLayout from '@/pages/dashboard/fichas/fichasEdit/FichaEditLayout';
 
 const RoutesApp = () => {
   const { user, loading } = useAuth();
@@ -63,8 +66,10 @@ const RoutesApp = () => {
           path: "/dashboard",
           element: <DashboardLayout />, // Este es el layout del dashboard
           children: [
-            { index: true, element: <Dashboard /> }, // Ruta index para /dashboard
-            { path: "fichas", element: <FichaFormLayout /> },
+            { index: true, element: <Dashboard /> },
+            { path: "fichas", element: <FichasList/>},
+            { path: "fichas/crear", element: <FichaFormLayout /> },
+            { path: "fichas/editar/:id", element: <FichaEditLayout /> },
             { path: "configuracion", element: <Configuracion /> },
           ],
         },

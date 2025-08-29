@@ -134,8 +134,11 @@ export const createFichaDesaparicion = async (req, res) => {
 
 /**
  * Actualiza una ficha existente, verificando la propiedad del usuario.
+ * Se ha mejorado para que la consulta UPDATE sea dinámica,
+ * actualizando solo los campos que se envían desde el frontend.
  */
 export const actualizarFicha = async (req, res) => {
+    // Abre la conexión a la base de datos SQLite
     const db = await openDb();
     await db.exec('BEGIN TRANSACTION');
 
@@ -150,6 +153,7 @@ export const actualizarFicha = async (req, res) => {
 
         const id_usuario_creador = req.user.id;
 
+        // 1. Verifica la propiedad de la ficha y obtiene el ID de la ubicación
         const ficha = await db.get(
             `SELECT id_ficha, id_ubicacion_desaparicion FROM fichas_desaparicion WHERE id_ficha = ? AND id_usuario_creador = ?`,
             [id, id_usuario_creador]
@@ -160,40 +164,50 @@ export const actualizarFicha = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Ficha no encontrada o no autorizado' });
         }
 
-        // 2. Actualizar la ubicación asociada a la ficha
-        await db.run(
-            `UPDATE ubicaciones SET
-                estado = ?, municipio = ?, localidad = ?, calle = ?, referencias = ?,
-                latitud = ?, longitud = ?, codigo_postal = ?
-             WHERE id_ubicacion = ?`,
-            [
-                ubicacion_desaparicion.estado,
-                ubicacion_desaparicion.municipio,
-                ubicacion_desaparicion.localidad,
-                ubicacion_desaparicion.calle,
-                ubicacion_desaparicion.referencias,
-                ubicacion_desaparicion.latitud,
-                ubicacion_desaparicion.longitud,
-                ubicacion_desaparicion.codigo_postal,
-                ficha.id_ubicacion_desaparicion,
-            ]
-        );
+        // 2. Construye la consulta de actualización de la ubicación de forma dinámica
+        const ubicacionUpdateData = {};
+        // Filtra los datos de ubicacion para solo incluir los que tienen un valor
+        for (const key in ubicacion_desaparicion) {
+            if (ubicacion_desaparicion[key] !== undefined && ubicacion_desaparicion[key] !== null) {
+                ubicacionUpdateData[key] = ubicacion_desaparicion[key];
+            }
+        }
 
-        // 3. Actualizar la ficha de desaparición
-        await db.run(
-            `UPDATE fichas_desaparicion SET
-                nombre = ?, segundo_nombre = ?, apellido_paterno = ?, apellido_materno = ?,
-                fecha_desaparicion = ?, id_tipo_lugar_desaparicion = ?, foto_perfil = ?,
-                estado_ficha = ?, fecha_registro_encontrado = ?
-             WHERE id_ficha = ?`,
-            [
-                nombre, segundo_nombre, apellido_paterno, apellido_materno,
-                fecha_desaparicion, id_tipo_lugar_desaparicion, foto_perfil,
-                estado_ficha, fecha_registro_encontrado, id,
-            ]
-        );
+        if (Object.keys(ubicacionUpdateData).length > 0) {
+            const ubicacionSetClause = Object.keys(ubicacionUpdateData).map(key => `${key} = ?`).join(', ');
+            const ubicacionValues = Object.values(ubicacionUpdateData);
 
-        // 4. Eliminar y reinsertar rasgos y vestimenta
+            await db.run(
+                `UPDATE ubicaciones SET ${ubicacionSetClause} WHERE id_ubicacion = ?`,
+                [...ubicacionValues, ficha.id_ubicacion_desaparicion]
+            );
+        }
+
+        // 3. Construye la consulta de actualización de la ficha de forma dinámica
+        const fichaUpdateData = {};
+        // Filtra los datos principales para solo incluir los que tienen un valor
+        const mainFields = {
+            nombre, segundo_nombre, apellido_paterno, apellido_materno,
+            fecha_desaparicion, id_tipo_lugar_desaparicion, foto_perfil,
+            estado_ficha, fecha_registro_encontrado
+        };
+        for (const key in mainFields) {
+            if (mainFields[key] !== undefined && mainFields[key] !== null) {
+                fichaUpdateData[key] = mainFields[key];
+            }
+        }
+
+        if (Object.keys(fichaUpdateData).length > 0) {
+            const fichaSetClause = Object.keys(fichaUpdateData).map(key => `${key} = ?`).join(', ');
+            const fichaValues = Object.values(fichaUpdateData);
+
+            await db.run(
+                `UPDATE fichas_desaparicion SET ${fichaSetClause} WHERE id_ficha = ?`,
+                [...fichaValues, id]
+            );
+        }
+
+        // 4. Eliminar y reinsertar rasgos y vestimenta (esta lógica ya era correcta)
         await db.run(`DELETE FROM ficha_rasgos_fisicos WHERE id_ficha = ?`, [id]);
         await db.run(`DELETE FROM ficha_vestimenta WHERE id_ficha = ?`, [id]);
 
@@ -223,7 +237,7 @@ export const actualizarFicha = async (req, res) => {
         res.json({ success: true, message: 'Ficha actualizada correctamente' });
     } catch (error) {
         await db.exec('ROLLBACK');
-        logger.error(`❌ Error al actualizar ficha: ${error.message}`);
+        console.error(`❌ Error al actualizar ficha: ${error.message}`);
         res.status(500).json({ success: false, message: 'Error interno del servidor al actualizar ficha' });
     }
 };

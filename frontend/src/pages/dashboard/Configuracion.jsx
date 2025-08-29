@@ -10,9 +10,6 @@ const Configuracion = () => {
       <h1 className="text-2xl font-bold text-center">Configuración de cuenta</h1>
 
       <PerfilSection />
-      <DatosFiscalesSection />
-      <PlanSection />
-      <DatosFiscalesServicio/>
       <CancelarCuentaSection />
     </div>
   )

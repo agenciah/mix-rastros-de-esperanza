@@ -16,17 +16,31 @@ export const getFichaCompletaById = async (id) => {
         SELECT
             fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,
             fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha,
-            u.estado, u.municipio, u.localidad, ctl.nombre_tipo AS tipo_lugar,
+            -- Agregamos todos los campos de la tabla de ubicaciones en un objeto JSON
+            json_object(
+                'id_ubicacion', u.id_ubicacion,
+                'estado', u.estado,
+                'municipio', u.municipio,
+                'localidad', u.localidad,
+                'calle', u.calle,
+                'referencias', u.referencias,
+                'latitud', u.latitud,
+                'longitud', u.longitud,
+                'codigo_postal', u.codigo_postal
+            ) AS ubicacion_desaparicion,
+            ctl.nombre_tipo AS tipo_lugar,
             json_group_array(DISTINCT json_object(
                 'tipo_rasgo', frf.tipo_rasgo,
                 'descripcion_detalle', frf.descripcion_detalle,
-                'nombre_parte', cpc.nombre_parte
+                'nombre_parte', cpc.nombre_parte,
+                'id_parte_cuerpo', cpc.id_parte_cuerpo
             )) FILTER (WHERE frf.id_rasgo IS NOT NULL) AS rasgos_fisicos_json,
             json_group_array(DISTINCT json_object(
                 'color', fv.color,
                 'marca', fv.marca,
                 'caracteristica_especial', fv.caracteristica_especial,
-                'tipo_prenda', cp.tipo_prenda
+                'tipo_prenda', cp.tipo_prenda,
+                'id_prenda', cp.id_prenda
             )) FILTER (WHERE fv.id_vestimenta IS NOT NULL) AS vestimenta_json
         FROM fichas_desaparicion AS fd
         LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
@@ -38,6 +52,7 @@ export const getFichaCompletaById = async (id) => {
         WHERE fd.id_ficha = ?
         GROUP BY fd.id_ficha;
     `;
+    
     const fichaResult = await db.get(fichaSql, [id]);
 
     if (!fichaResult) {
@@ -47,10 +62,13 @@ export const getFichaCompletaById = async (id) => {
     // Parsear los campos JSON a arrays de objetos
     const fichaCompleta = {
         ...fichaResult,
+        ubicacion_desaparicion: JSON.parse(fichaResult.ubicacion_desaparicion),
         rasgos_fisicos: JSON.parse(fichaResult.rasgos_fisicos_json)[0] === null ? [] : JSON.parse(fichaResult.rasgos_fisicos_json),
         vestimenta: JSON.parse(fichaResult.vestimenta_json)[0] === null ? [] : JSON.parse(fichaResult.vestimenta_json)
     };
+
     // Limpiar los campos JSON crudos
+    delete fichaCompleta.ubicacion_desaparicion_json; // Este ya no existe, pero lo dejo por si acaso
     delete fichaCompleta.rasgos_fisicos_json;
     delete fichaCompleta.vestimenta_json;
 
