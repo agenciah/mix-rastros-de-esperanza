@@ -5,33 +5,47 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, Edit } from "lucide-react";
+import { Terminal, Edit, Trash2 } from "lucide-react"; // Importamos el ícono de la papelera
 import api from "@/lib/axios";
+
+// --- Importaciones para el modal de confirmación ---
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 
 /**
  * Custom hook para obtener todas las fichas del usuario.
+ * Se ha mejorado para permitir la recarga de datos.
  * @returns {object} Un objeto con la lista de fichas, el estado de carga y cualquier error.
  */
 function useFetchFichas() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastFetch, setLastFetch] = useState(Date.now()); // Estado para forzar la recarga
+
+  const refetch = () => {
+    setLastFetch(Date.now());
+  };
 
   useEffect(() => {
     const fetchFichas = async () => {
       setLoading(true);
       setError(null);
       setData([]);
-      
+
       try {
-        // Asume que esta API devuelve una lista de fichas del usuario autenticado
         const res = await api.get("/api/fichas");
         console.log('Lista de fichas obtenida con éxito:', res.data);
-        
-        // CORRECCIÓN: Accede a la propiedad 'data' de la respuesta para obtener el array
-        setData(res.data.data); 
-
+        setData(res.data.data);
       } catch (err) {
         const errorMessage = err.response?.data?.message || err.message || "Error al cargar las fichas.";
         console.log('Error al obtener la lista de fichas:', errorMessage);
@@ -40,28 +54,61 @@ function useFetchFichas() {
         setLoading(false);
       }
     };
-    
-    fetchFichas();
-  }, []);
 
-  return { data, loading, error };
+    fetchFichas();
+  }, [lastFetch]); // El efecto se ejecuta cuando lastFetch cambia
+
+  return { data, loading, error, refetch };
 }
 
 export default function FichasList() {
-  const { data: fichas, loading, error } = useFetchFichas();
+  const { data: fichas, loading, error, refetch } = useFetchFichas();
   const navigate = useNavigate();
+
+  // --- Nuevos estados para el modal de confirmación ---
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [fichaToDelete, setFichaToDelete] = useState(null);
 
   // Función para manejar la navegación a la página de edición
   const handleEditClick = (id) => {
     navigate(`/dashboard/fichas/editar/${id}`);
   };
 
-  // Muestra un mensaje de carga mientras se obtienen los datos
+  // --- Nueva función para manejar la eliminación de la ficha ---
+  const handleDeleteClick = (ficha) => {
+    // 1. Guarda la ficha a eliminar en el estado
+    setFichaToDelete(ficha);
+    // 2. Muestra el modal de confirmación
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!fichaToDelete) return;
+
+    try {
+      // 3. Envía la solicitud DELETE al backend
+      await api.delete(`/api/fichas/${fichaToDelete.id_ficha}`);
+      
+      // 4. Recarga la lista de fichas después de una eliminación exitosa
+      refetch();
+
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || "Error al eliminar la ficha.";
+      console.log('Error al eliminar la ficha:', errorMessage);
+      // Aquí podrías mostrar un toast o una alerta de error al usuario
+      alert(errorMessage);
+    } finally {
+      // 5. Oculta el modal y limpia el estado de la ficha a eliminar
+      setShowConfirm(false);
+      setFichaToDelete(null);
+    }
+  };
+
+
   if (loading) {
     return <div className="text-center p-8">Cargando fichas...</div>;
   }
 
-  // Muestra un mensaje de error si la carga falla
   if (error) {
     return (
       <Alert variant="destructive">
@@ -90,9 +137,15 @@ export default function FichasList() {
                 <CardTitle>
                   {ficha.nombre} {ficha.apellido_paterno}
                 </CardTitle>
-                <Button variant="outline" size="sm" onClick={() => handleEditClick(ficha.id_ficha)}>
-                  <Edit size={16} className="mr-2" /> Editar
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => handleEditClick(ficha.id_ficha)}>
+                    <Edit size={16} className="mr-2" /> Editar
+                  </Button>
+                  {/* --- Nuevo botón para eliminar --- */}
+                  <Button variant="destructive" size="sm" onClick={() => handleDeleteClick(ficha)}>
+                    <Trash2 size={16} className="mr-2" /> Eliminar
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="space-y-2">
                 <p><strong>Fecha de desaparición:</strong> {ficha.fecha_desaparicion}</p>
@@ -103,6 +156,25 @@ export default function FichasList() {
           ))}
         </div>
       )}
+      
+      {/* --- Modal de confirmación --- */}
+      <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. Esto eliminará permanentemente la ficha de la persona 
+              "{fichaToDelete?.nombre} {fichaToDelete?.apellido_paterno}".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete}>
+              Sí, eliminar ficha
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

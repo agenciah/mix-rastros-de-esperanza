@@ -1416,3 +1416,109 @@
 [2025-08-28 20:12:24] INFO: → GET /api/fichas
 [2025-08-28 20:12:24] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
 [2025-08-28 20:12:24] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:17:59] INFO: → GET /api/fichas
+[2025-08-28 20:17:59] INFO: → GET /api/fichas
+[2025-08-28 20:17:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:17:59] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:18:02] INFO: → GET /api/fichas
+[2025-08-28 20:18:02] INFO: → GET /api/fichas
+[2025-08-28 20:18:02] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:18:02] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:18:02] INFO: → GET /api/fichas
+[2025-08-28 20:18:02] INFO: → GET /api/fichas
+[2025-08-28 20:18:02] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:18:02] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:18:15] INFO: → DELETE /api/fichas/4
+[2025-08-28 20:18:15] INFO: → DELETE /api/fichas/4
+[2025-08-28 20:18:15] INFO: 🚨 Solicitud en la ruta de fichas: DELETE /api/fichas/4
+[2025-08-28 20:18:15] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:18:15] ERROR: ❌ Error al eliminar ficha: Cannot destructure property 'id' of 'req.params' as it is undefined.
+[2025-08-28 20:19:04] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-28 20:19:07] INFO: → DELETE /api/fichas/4
+[2025-08-28 20:19:07] INFO: → DELETE /api/fichas/4
+[2025-08-28 20:19:07] INFO: 🚨 Solicitud en la ruta de fichas: DELETE /api/fichas/4
+[2025-08-28 20:19:07] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:07] INFO: → GET /api/fichas
+[2025-08-28 20:19:07] INFO: → GET /api/fichas
+[2025-08-28 20:19:07] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:19:07] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:11] INFO: → DELETE /api/fichas/5
+[2025-08-28 20:19:11] INFO: → DELETE /api/fichas/5
+[2025-08-28 20:19:11] INFO: 🚨 Solicitud en la ruta de fichas: DELETE /api/fichas/5
+[2025-08-28 20:19:11] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:11] INFO: → GET /api/fichas
+[2025-08-28 20:19:11] INFO: → GET /api/fichas
+[2025-08-28 20:19:11] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:19:11] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:13] INFO: → DELETE /api/fichas/6
+[2025-08-28 20:19:13] INFO: → DELETE /api/fichas/6
+[2025-08-28 20:19:13] INFO: 🚨 Solicitud en la ruta de fichas: DELETE /api/fichas/6
+[2025-08-28 20:19:13] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:13] INFO: → GET /api/fichas
+[2025-08-28 20:19:13] INFO: → GET /api/fichas
+[2025-08-28 20:19:13] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:19:13] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:15] INFO: → DELETE /api/fichas/7
+[2025-08-28 20:19:15] INFO: → DELETE /api/fichas/7
+[2025-08-28 20:19:15] INFO: 🚨 Solicitud en la ruta de fichas: DELETE /api/fichas/7
+[2025-08-28 20:19:15] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:15] INFO: → GET /api/fichas
+[2025-08-28 20:19:15] INFO: → GET /api/fichas
+[2025-08-28 20:19:15] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:19:15] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:16] INFO: → DELETE /api/fichas/8
+[2025-08-28 20:19:16] INFO: → DELETE /api/fichas/8
+[2025-08-28 20:19:16] INFO: 🚨 Solicitud en la ruta de fichas: DELETE /api/fichas/8
+[2025-08-28 20:19:16] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:16] INFO: → GET /api/fichas
+[2025-08-28 20:19:16] INFO: → GET /api/fichas
+[2025-08-28 20:19:16] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:19:16] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:18] INFO: → DELETE /api/fichas/9
+[2025-08-28 20:19:18] INFO: → DELETE /api/fichas/9
+[2025-08-28 20:19:18] INFO: 🚨 Solicitud en la ruta de fichas: DELETE /api/fichas/9
+[2025-08-28 20:19:18] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:18] INFO: → GET /api/fichas
+[2025-08-28 20:19:18] INFO: → GET /api/fichas
+[2025-08-28 20:19:18] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:19:18] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:19] INFO: → DELETE /api/fichas/11
+[2025-08-28 20:19:19] INFO: → DELETE /api/fichas/11
+[2025-08-28 20:19:19] INFO: 🚨 Solicitud en la ruta de fichas: DELETE /api/fichas/11
+[2025-08-28 20:19:19] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:19] INFO: → GET /api/fichas
+[2025-08-28 20:19:19] INFO: → GET /api/fichas
+[2025-08-28 20:19:19] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:19:19] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:21] INFO: → DELETE /api/fichas/10
+[2025-08-28 20:19:21] INFO: → DELETE /api/fichas/10
+[2025-08-28 20:19:21] INFO: 🚨 Solicitud en la ruta de fichas: DELETE /api/fichas/10
+[2025-08-28 20:19:21] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:21] INFO: → GET /api/fichas
+[2025-08-28 20:19:21] INFO: → GET /api/fichas
+[2025-08-28 20:19:21] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:19:21] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:23] INFO: → DELETE /api/fichas/12
+[2025-08-28 20:19:23] INFO: → DELETE /api/fichas/12
+[2025-08-28 20:19:23] INFO: 🚨 Solicitud en la ruta de fichas: DELETE /api/fichas/12
+[2025-08-28 20:19:23] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:23] INFO: → GET /api/fichas
+[2025-08-28 20:19:23] INFO: → GET /api/fichas
+[2025-08-28 20:19:23] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:19:23] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:24] INFO: → DELETE /api/fichas/1
+[2025-08-28 20:19:24] INFO: → DELETE /api/fichas/1
+[2025-08-28 20:19:24] INFO: 🚨 Solicitud en la ruta de fichas: DELETE /api/fichas/1
+[2025-08-28 20:19:24] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:24] INFO: → GET /api/fichas
+[2025-08-28 20:19:24] INFO: → GET /api/fichas
+[2025-08-28 20:19:24] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:19:24] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:25] INFO: → DELETE /api/fichas/2
+[2025-08-28 20:19:25] INFO: → DELETE /api/fichas/2
+[2025-08-28 20:19:25] INFO: 🚨 Solicitud en la ruta de fichas: DELETE /api/fichas/2
+[2025-08-28 20:19:25] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-28 20:19:25] INFO: → GET /api/fichas
+[2025-08-28 20:19:25] INFO: → GET /api/fichas
+[2025-08-28 20:19:25] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-28 20:19:25] INFO: 📦 Usuario encontrado y parseado:

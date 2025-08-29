@@ -49,18 +49,7 @@ router.get('/:id', authenticateToken, getFichaById)
 router.put('/:id', authenticateToken, actualizarFicha);
 
 // DELETE /api/fichas/:id
-router.delete('/:id', authenticateToken, async (req, res) => {
-    try {
-        const result = await deleteFichaDesaparicion(req.params.id, req.user.id_usuario);
-        if (!result.success) {
-            const statusCode = result.message.includes('encontrado') ? 404 : 403;
-            return res.status(statusCode).json(result);
-        }
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
+router.delete('/:id', authenticateToken, deleteFichaDesaparicion);
 
 // GET /api/fichas/catalogos/tipos-lugar
 router.get('/catalogos/tipos-lugar', async (req, res) => {
