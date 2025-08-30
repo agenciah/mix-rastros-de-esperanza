@@ -3,7 +3,7 @@
 
 import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { LogOut } from 'lucide-react';
+import { Edit, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Home,
@@ -72,9 +72,30 @@ const DashboardLayout = () => {
         }`
       }
     >
-      <List size={18} /> Ver Fichas
+      <Edit size={18} /> Ver Fichas
     </NavLink>
     
+     <NavLink
+        to="/dashboard/hallazgos/crear"
+        className={({ isActive }) =>
+        `flex items-center gap-3 px-3 py-2 rounded-md transition ${
+            isActive ? 'bg-gray-200 text-black font-semibold' : 'text-gray-700 hover:bg-gray-100 hover:text-black'
+        }`
+        }
+    >
+    <PlusCircle size={18} /> Crear Hallazgo
+    </NavLink>
+    <NavLink
+        to="/dashboard/hallazgos" // Apunta a la nueva lista de hallazgos
+        className={({ isActive }) =>
+        `flex items-center gap-3 px-3 py-2 rounded-md transition ${
+            isActive ? 'bg-gray-200 text-black font-semibold' : 'text-gray-700 hover:bg-gray-100 hover:text-black'
+        }`
+        }
+    >
+        <List size={18} /> Ver Hallazgos
+    </NavLink>
+
     <NavLink
       to="/dashboard/configuracion"
       className={({ isActive }) =>

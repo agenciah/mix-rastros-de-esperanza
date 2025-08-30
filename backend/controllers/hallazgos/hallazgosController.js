@@ -18,79 +18,107 @@ import logger from '../../utils/logger.js';
  * @param {Array<Object>} [data.vestimenta_hallazgo] - Lista de prendas.
  * @returns {Promise<Object>} Promesa que resuelve con el ID del nuevo hallazgo y posibles coincidencias.
  */
-export const createHallazgo = async (data) => {
-    let db;
-    try {
-        db = await openDb();
-        await db.run('BEGIN TRANSACTION');
+export const createHallazgoHandler = async (req, res) => {
+  let db;
+  try {
+    const data = req.body;
 
-        // Paso 1: Insertar el nuevo hallazgo en la tabla principal
-        const hallazgoSql = `
-            INSERT INTO hallazgos (id_usuario_buscador, id_ubicacion_hallazgo, id_tipo_lugar_hallazgo, fecha_hallazgo, descripcion_general_hallazgo)
-            VALUES (?, ?, ?, ?, ?)
-        `;
-        const result = await db.run(
-            hallazgoSql,
-            [data.id_usuario_buscador, data.id_ubicacion_hallazgo || null, data.id_tipo_lugar_hallazgo || null, data.fecha_hallazgo, data.descripcion_general_hallazgo || null]
-        );
-        const idHallazgo = result.lastID;
+    // Log para verificar payload recibido
+    logger.info('📤 Payload recibido en backend:', data);
 
-        // Paso 2: Insertar características (antes rasgos) asociadas al hallazgo
-        if (data.caracteristicas_hallazgo && data.caracteristicas_hallazgo.length > 0) {
-            const stmtCaracteristicas = await db.prepare(`INSERT INTO hallazgo_caracteristicas (id_hallazgo, id_parte_cuerpo, tipo_caracteristica, descripcion_detalle, foto_evidencia) VALUES (?, ?, ?, ?, ?)`);
-            for (const caracteristica of data.caracteristicas_hallazgo) {
-                await stmtCaracteristicas.run(
-                    [idHallazgo, caracteristica.id_parte_cuerpo, caracteristica.tipo_caracteristica || 'N/A', caracteristica.descripcion_detalle || null, caracteristica.foto_evidencia || null]
-                );
-            }
-            await stmtCaracteristicas.finalize();
-        }
-
-        // Paso 3: Insertar vestimenta asociada al hallazgo
-        if (data.vestimenta_hallazgo && data.vestimenta_hallazgo.length > 0) {
-            const stmtVestimenta = await db.prepare(`INSERT INTO hallazgo_vestimenta (id_hallazgo, id_prenda, color, marca, caracteristica_especial, foto_evidencia) VALUES (?, ?, ?, ?, ?, ?)`);
-            for (const prenda of data.vestimenta_hallazgo) {
-                await stmtVestimenta.run(
-                    [idHallazgo, prenda.id_prenda || null, prenda.color || null, prenda.marca || null, prenda.caracteristica_especial || null, prenda.foto_evidencia || null]
-                );
-            }
-            await stmtVestimenta.finalize();
-        }
-
-        await db.run('COMMIT');
-
-        logger.info(`✅ Hallazgo con ID ${idHallazgo} creado exitosamente.`);
-
-        // Paso 4: Buscar coincidencias después de la creación
-        // Le pasamos el ID del nuevo hallazgo para que la función de matching lo utilice
-        const matches = await findMatchesForHallazgo({ ...data, id_hallazgo: idHallazgo });
-
-        // Paso 5: Enviar notificaciones si se encontraron coincidencias
-        if (matches && matches.length > 0) {
-            for (const match of matches) {
-                // Obtenemos el email del usuario para enviar la notificación
-                const userEmail = await db.get(`SELECT email FROM usuarios WHERE id_usuario = ?`, [match.id_usuario_reporta]);
-                if (userEmail) {
-                    await sendMatchNotification(userEmail.email, 'Posible Coincidencia de Hallazgo', 'Hemos encontrado una posible coincidencia para la persona que reportaste. Por favor, revisa los detalles.');
-                    logger.info(`📧 Correo de notificación enviado a ${userEmail.email} por la coincidencia en el hallazgo.`);
-                }
-            }
-        }
-
-        return { 
-            success: true, 
-            message: 'Hallazgo creado y procesado exitosamente.', 
-            id_hallazgo: idHallazgo,
-            matches: matches || []
-        };
-
-    } catch (error) {
-        if (db) {
-            await db.run('ROLLBACK');
-        }
-        logger.error(`❌ Error al crear hallazgo: ${error.message}`);
-        throw new Error('Error interno del servidor al crear el hallazgo.');
+    // Validación mínima para evitar NOT NULL constraint
+    if (!data.id_usuario_buscador) {
+      return res.status(400).json({ error: 'id_usuario_buscador es obligatorio' });
     }
+    if (!data.fecha_hallazgo) {
+      return res.status(400).json({ error: 'fecha_hallazgo es obligatorio' });
+    }
+
+    db = await openDb();
+    await db.run('BEGIN TRANSACTION');
+
+    // Insertar hallazgo principal
+    const hallazgoSql = `
+      INSERT INTO hallazgos (id_usuario_buscador, id_ubicacion_hallazgo, id_tipo_lugar_hallazgo, fecha_hallazgo, descripcion_general_hallazgo)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    const result = await db.run(
+      hallazgoSql,
+      [
+        data.id_usuario_buscador,
+        data.id_ubicacion_hallazgo || null,
+        data.id_tipo_lugar_hallazgo || null,
+        data.fecha_hallazgo,
+        data.descripcion_general_hallazgo || null,
+      ]
+    );
+    const idHallazgo = result.lastID;
+
+    // Insertar características
+    if (data.caracteristicas_hallazgo?.length) {
+      const stmtCaract = await db.prepare(`
+        INSERT INTO hallazgo_caracteristicas (id_hallazgo, id_parte_cuerpo, tipo_caracteristica, descripcion, foto_evidencia)
+        VALUES (?, ?, ?, ?, ?)
+      `);
+      for (const c of data.caracteristicas_hallazgo) {
+        await stmtCaract.run([
+          idHallazgo,
+          c.id_parte_cuerpo,
+          c.tipo_caracteristica || 'N/A',
+          c.descripcion || null,
+          c.foto_evidencia || null,
+        ]);
+      }
+      await stmtCaract.finalize();
+    }
+
+    // Insertar vestimenta
+    if (data.vestimenta_hallazgo?.length) {
+      const stmtVest = await db.prepare(`
+        INSERT INTO hallazgo_vestimenta (id_hallazgo, id_prenda, color, marca, caracteristica_especial, foto_evidencia)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `);
+      for (const v of data.vestimenta_hallazgo) {
+        await stmtVest.run([
+          idHallazgo,
+          v.id_prenda || null,
+          v.color || null,
+          v.marca || null,
+          v.caracteristica_especial || null,
+          v.foto_evidencia || null,
+        ]);
+      }
+      await stmtVest.finalize();
+    }
+
+    await db.run('COMMIT');
+
+    logger.info(`✅ Hallazgo con ID ${idHallazgo} creado exitosamente.`);
+
+    // Matching y notificaciones
+    const matches = await findMatchesForHallazgo({ ...data, id_hallazgo: idHallazgo });
+    if (matches?.length) {
+      for (const match of matches) {
+        const userEmail = await db.get(`SELECT email FROM usuarios WHERE id_usuario = ?`, [match.id_usuario_reporta]);
+        if (userEmail) {
+          await sendMatchNotification(userEmail.email, 'Posible Coincidencia de Hallazgo', 'Hemos encontrado una posible coincidencia para la persona que reportaste.');
+          logger.info(`📧 Correo enviado a ${userEmail.email} por coincidencia en hallazgo.`);
+        }
+      }
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: 'Hallazgo creado y procesado exitosamente.',
+      id_hallazgo: idHallazgo,
+      matches: matches || [],
+    });
+
+  } catch (error) {
+    if (db) await db.run('ROLLBACK');
+    logger.error(`❌ Error al crear hallazgo: ${error.message}`);
+    return res.status(500).json({ error: 'Error interno del servidor al crear el hallazgo.' });
+  }
 };
 
 /**
@@ -104,7 +132,7 @@ export const getAllHallazgos = async () => {
 
         const hallazgosCompletos = await Promise.all(hallazgos.map(async (hallazgo) => {
             const caracteristicas = await db.all(`
-                SELECT h.tipo_caracteristica, h.descripcion_detalle, cpc.nombre_parte 
+                SELECT h.tipo_caracteristica, h.descripcion, cpc.nombre_parte 
                 FROM hallazgo_caracteristicas h 
                 JOIN catalogo_partes_cuerpo cpc ON h.id_parte_cuerpo = cpc.id_parte_cuerpo 
                 WHERE h.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
@@ -141,7 +169,7 @@ export const getHallazgoById = async (idHallazgo) => {
         }
 
         const caracteristicas = await db.all(`
-            SELECT h.tipo_caracteristica, h.descripcion_detalle, cpc.nombre_parte 
+            SELECT h.tipo_caracteristica, h.descripcion, cpc.nombre_parte 
             FROM hallazgo_caracteristicas h 
             JOIN catalogo_partes_cuerpo cpc ON h.id_parte_cuerpo = cpc.id_parte_cuerpo 
             WHERE h.id_hallazgo = ?`, [hallazgo.id_hallazgo]);
@@ -204,9 +232,9 @@ export const updateHallazgo = async (idHallazgo, data) => {
         // Actualizar características (borrar y reinsertar)
         await db.run('DELETE FROM hallazgo_caracteristicas WHERE id_hallazgo = ?', [idHallazgo]);
         if (data.caracteristicas_hallazgo && data.caracteristicas_hallazgo.length > 0) {
-            const stmtCaracteristicas = await db.prepare(`INSERT INTO hallazgo_caracteristicas (id_hallazgo, id_parte_cuerpo, tipo_caracteristica, descripcion_detalle, foto_evidencia) VALUES (?, ?, ?, ?, ?)`);
+            const stmtCaracteristicas = await db.prepare(`INSERT INTO hallazgo_caracteristicas (id_hallazgo, id_parte_cuerpo, tipo_caracteristica, descripcion, foto_evidencia) VALUES (?, ?, ?, ?, ?)`);
             for (const caracteristica of data.caracteristicas_hallazgo) {
-                await stmtCaracteristicas.run([idHallazgo, caracteristica.id_parte_cuerpo, caracteristica.tipo_caracteristica, caracteristica.descripcion_detalle, caracteristica.foto_evidencia]);
+                await stmtCaracteristicas.run([idHallazgo, caracteristica.id_parte_cuerpo, caracteristica.tipo_caracteristica, caracteristica.descripcion, caracteristica.foto_evidencia]);
             }
             await stmtCaracteristicas.finalize();
         }
@@ -311,7 +339,7 @@ export const searchHallazgos = async (query) => {
 
         const hallazgosCompletos = await Promise.all(hallazgos.map(async (hallazgo) => {
             const caracteristicas = await db.all(`
-                SELECT h.tipo_caracteristica, h.descripcion_detalle, cpc.nombre_parte 
+                SELECT h.tipo_caracteristica, h.descripcion, cpc.nombre_parte 
                 FROM hallazgo_caracteristicas h 
                 JOIN catalogo_partes_cuerpo cpc ON h.id_parte_cuerpo = cpc.id_parte_cuerpo 
                 WHERE h.id_hallazgo = ?`, [hallazgo.id_hallazgo]);

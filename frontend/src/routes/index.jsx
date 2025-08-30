@@ -30,6 +30,9 @@ import Configuracion from '../pages/dashboard/Configuracion';
 import Contacto from '@/pages/public/Contacto';
 import FichasList from '@/pages/dashboard/fichas/fichasEdit/FichasList';
 import FichaEditLayout from '@/pages/dashboard/fichas/fichasEdit/FichaEditLayout';
+import HallazgoCreateLayout from '@/pages/dashboard/hallazgos/hallazgosCreateLayout';
+import HallazgoEditLayout from '@/pages/dashboard/hallazgos/hallazgosEditLayout';
+import HallazgosList from '@/pages/dashboard/hallazgos/hallazgosList';
 
 const RoutesApp = () => {
   const { user, loading } = useAuth();
@@ -70,6 +73,9 @@ const RoutesApp = () => {
             { path: "fichas", element: <FichasList/>},
             { path: "fichas/crear", element: <FichaFormLayout /> },
             { path: "fichas/editar/:id", element: <FichaEditLayout /> },
+            { path: "hallazgos", element: <HallazgosList /> },
+            { path: "hallazgos/crear", element: <HallazgoCreateLayout /> },
+            { path: "hallazgos/editar/:id", element: <HallazgoEditLayout /> },
             { path: "configuracion", element: <Configuracion /> },
           ],
         },

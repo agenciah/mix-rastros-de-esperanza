@@ -241,3 +241,35 @@ Error: ENOENT: no such file or directory, open '/home/alex1986/test_gastos_bot/g
 [2025-08-28 20:08:25] ERROR: ❌ Error al obtener la ficha por ID: Cannot destructure property 'id' of 'req.params' as it is undefined.
 [2025-08-28 20:08:25] ERROR: ❌ Error al obtener la ficha por ID: Cannot destructure property 'id' of 'req.params' as it is undefined.
 [2025-08-28 20:18:15] ERROR: ❌ Error al eliminar ficha: Cannot destructure property 'id' of 'req.params' as it is undefined.
+[2025-08-29 11:05:15] ERROR: ❌ Error al crear hallazgo: SQLITE_CONSTRAINT: NOT NULL constraint failed: hallazgos.id_usuario_buscador
+[2025-08-29 11:05:15] ERROR: POST /api/hallazgos - Error interno del servidor al crear el hallazgo.
+[2025-08-29 14:15:22] ERROR: ❌ Error al crear hallazgo: SQLITE_CONSTRAINT: NOT NULL constraint failed: hallazgos.id_usuario_buscador
+[2025-08-29 14:15:22] ERROR: POST /api/hallazgos - Error interno del servidor al crear el hallazgo.
+[2025-08-29 14:22:52] ERROR: ❌ Error al crear hallazgo: SQLITE_CONSTRAINT: NOT NULL constraint failed: hallazgos.id_usuario_buscador
+[2025-08-29 14:22:52] ERROR: POST /api/hallazgos - Error interno del servidor al crear el hallazgo.
+[2025-08-29 14:26:32] ERROR: ❌ Error al crear hallazgo: SQLITE_CONSTRAINT: NOT NULL constraint failed: hallazgos.id_usuario_buscador
+[2025-08-29 14:26:32] ERROR: POST /api/hallazgos - Error interno del servidor al crear el hallazgo.
+[2025-08-29 15:37:43] ERROR: ❌ Error al crear hallazgo: SQLITE_CONSTRAINT: NOT NULL constraint failed: hallazgos.id_usuario_buscador
+[2025-08-29 15:37:43] ERROR: POST /api/hallazgos - Error interno del servidor al crear el hallazgo.
+[2025-08-29 15:37:49] ERROR: ❌ Error al crear hallazgo: SQLITE_CONSTRAINT: NOT NULL constraint failed: hallazgos.id_usuario_buscador
+[2025-08-29 15:37:49] ERROR: POST /api/hallazgos - Error interno del servidor al crear el hallazgo.
+[2025-08-29 15:48:41] ERROR: ❌ Error al crear hallazgo: SQLITE_CONSTRAINT: NOT NULL constraint failed: hallazgos.id_usuario_buscador
+[2025-08-29 15:48:41] ERROR: POST /api/hallazgos - Error interno del servidor al crear el hallazgo.
+[2025-08-29 17:14:17] ERROR: ❌ Error al crear hallazgo: SQLITE_CONSTRAINT: NOT NULL constraint failed: hallazgos.id_usuario_buscador
+[2025-08-29 17:14:17] ERROR: POST /api/hallazgos - Error interno del servidor al crear el hallazgo.
+[2025-08-29 17:18:56] ERROR: ❌ Error al crear hallazgo: SQLITE_CONSTRAINT: NOT NULL constraint failed: hallazgos.id_usuario_buscador
+[2025-08-29 17:18:56] ERROR: POST /api/hallazgos - Error interno del servidor al crear el hallazgo.
+[2025-08-29 17:21:00] ERROR: ❌ Error al crear hallazgo: SQLITE_CONSTRAINT: NOT NULL constraint failed: hallazgos.id_usuario_buscador
+[2025-08-29 17:21:00] ERROR: POST /api/hallazgos - Error interno del servidor al crear el hallazgo.
+[2025-08-29 17:22:22] ERROR: ❌ Error al crear hallazgo: SQLITE_CONSTRAINT: NOT NULL constraint failed: hallazgos.id_usuario_buscador
+[2025-08-29 17:22:22] ERROR: POST /api/hallazgos - Error interno del servidor al crear el hallazgo.
+[2025-08-29 17:27:43] ERROR: ❌ Error al crear hallazgo: SQLITE_CONSTRAINT: NOT NULL constraint failed: hallazgos.id_usuario_buscador
+[2025-08-29 17:27:43] ERROR: POST /api/hallazgos - Error interno del servidor al crear el hallazgo.
+[2025-08-29 17:33:26] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgo_caracteristicas has no column named descripcion_detalle
+[2025-08-29 17:34:51] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgo_caracteristicas has no column named descripcion_detalle
+[2025-08-29 17:50:29] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgo_caracteristicas has no column named descripcion_detalle
+[2025-08-29 17:54:53] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgo_caracteristicas has no column named descripcion_detalle
+[2025-08-29 17:57:24] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgo_caracteristicas has no column named descripcion_detalle
+[2025-08-29 17:58:37] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgo_caracteristicas has no column named descripcion_detalle
+[2025-08-29 17:59:13] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgo_caracteristicas has no column named descripcion_detalle
+[2025-08-29 18:07:34] ERROR: ❌ Error al buscar coincidencias para hallazgo: SQLITE_ERROR: no such column: fc.descripcion_detalle
