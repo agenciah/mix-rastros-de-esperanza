@@ -16,34 +16,33 @@ export default function useFetchFicha(id) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Si no hay un ID, no hacemos la llamada
-    if (!id) {
+  if (!id) {
+    setLoading(false);
+    return;
+  }
+
+  const fetchFicha = async () => {
+    console.log("useFetchFicha - Traer ficha con ID:", id);
+    setLoading(true);
+    setError(null);
+    setData(null);
+
+    try {
+      const res = await api.get(`/api/fichas/${id}`);
+      console.log('Datos de la ficha obtenidos con éxito:', res.data);
+      setData(res.data);
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || "Error al cargar la ficha.";
+      console.error('Error al obtener la ficha:', errorMessage);
+      setError(errorMessage);
+    } finally {
       setLoading(false);
-      return;
     }
+  };
 
-    const fetchFicha = async () => {
-      setLoading(true);
-      setError(null);
-      setData(null);
+  fetchFicha();
+}, [id]);
 
-      try {
-        const res = await api.get(`/api/fichas/${id}`);
-        // Log de éxito para saber que la llamada funcionó
-        console.log('Datos de la ficha obtenidos con éxito:', res.data);
-        setData(res.data);
-      } catch (err) {
-        const errorMessage = err.response?.data?.message || err.message || "Error al cargar la ficha.";
-        // Log de error para identificar problemas
-        console.error('Error al obtener la ficha:', errorMessage);
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFicha();
-  }, [id]); // El efecto se ejecuta de nuevo si el ID cambia
 
   return { data, loading, error };
 }

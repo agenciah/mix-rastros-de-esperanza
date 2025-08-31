@@ -1,13 +1,13 @@
 // src/hooks/hallazgos/useHallazgosForm.js
-
 import { useState, useEffect } from 'react';
-import { initialHallazgoFormState } from '@/lib/initialFormState'; // Importa un estado inicial
+import { initialHallazgoFormState } from '@/lib/initialFormState';
 
 export default function useHallazgosForm(initialData = null) {
   const [form, setForm] = useState(initialData || initialHallazgoFormState);
 
-  // Sincroniza el formulario si los datos iniciales cambian
+  // Log inicial
   useEffect(() => {
+    console.log("useHallazgosForm - Datos iniciales recibidos:", initialData);
     if (initialData) {
       setForm(initialData);
     }
@@ -15,6 +15,7 @@ export default function useHallazgosForm(initialData = null) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log("handleChange - Campo:", name, "Valor:", value);
     setForm(prevForm => ({
       ...prevForm,
       [name]: value,
@@ -23,6 +24,7 @@ export default function useHallazgosForm(initialData = null) {
 
   const handleCaracteristicaChange = (index, e) => {
     const { name, value } = e.target;
+    console.log(`handleCaracteristicaChange - Index: ${index}, Campo: ${name}, Valor: ${value}`);
     const nuevasCaracteristicas = [...form.caracteristicas_hallazgo];
     nuevasCaracteristicas[index] = {
       ...nuevasCaracteristicas[index],
@@ -31,7 +33,19 @@ export default function useHallazgosForm(initialData = null) {
     setForm(prevForm => ({ ...prevForm, caracteristicas_hallazgo: nuevasCaracteristicas }));
   };
 
+  const handleVestimentaChange = (index, e) => {
+    const { name, value } = e.target;
+    console.log(`handleVestimentaChange - Index: ${index}, Campo: ${name}, Valor: ${value}`);
+    const nuevaVestimenta = [...form.vestimenta_hallazgo];
+    nuevaVestimenta[index] = {
+      ...nuevaVestimenta[index],
+      [name]: value,
+    };
+    setForm(prevForm => ({ ...prevForm, vestimenta_hallazgo: nuevaVestimenta }));
+  };
+
   const addCaracteristica = () => {
+    console.log("addCaracteristica");
     setForm(prevForm => ({
       ...prevForm,
       caracteristicas_hallazgo: [...prevForm.caracteristicas_hallazgo, {
@@ -43,21 +57,13 @@ export default function useHallazgosForm(initialData = null) {
   };
 
   const removeCaracteristica = (index) => {
+    console.log("removeCaracteristica - Index:", index);
     const nuevasCaracteristicas = form.caracteristicas_hallazgo.filter((_, i) => i !== index);
     setForm(prevForm => ({ ...prevForm, caracteristicas_hallazgo: nuevasCaracteristicas }));
   };
 
-  const handleVestimentaChange = (index, e) => {
-    const { name, value } = e.target;
-    const nuevaVestimenta = [...form.vestimenta_hallazgo];
-    nuevaVestimenta[index] = {
-      ...nuevaVestimenta[index],
-      [name]: value,
-    };
-    setForm(prevForm => ({ ...prevForm, vestimenta_hallazgo: nuevaVestimenta }));
-  };
-
   const addVestimenta = () => {
+    console.log("addVestimenta");
     setForm(prevForm => ({
       ...prevForm,
       vestimenta_hallazgo: [...prevForm.vestimenta_hallazgo, {
@@ -70,6 +76,7 @@ export default function useHallazgosForm(initialData = null) {
   };
 
   const removeVestimenta = (index) => {
+    console.log("removeVestimenta - Index:", index);
     const nuevaVestimenta = form.vestimenta_hallazgo.filter((_, i) => i !== index);
     setForm(prevForm => ({ ...prevForm, vestimenta_hallazgo: nuevaVestimenta }));
   };

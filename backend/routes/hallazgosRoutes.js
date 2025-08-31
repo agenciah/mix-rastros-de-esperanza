@@ -1,13 +1,14 @@
-// backend/routes/hallazgos/hallazgosRoutes.js
-
 import express from 'express';
 import {
-    createHallazgoHandler,
+    createHallazgo,
     getAllHallazgos,
     getHallazgoById,
-    updateHallazgo,
+    actualizarHallazgo,
     deleteHallazgo,
-    searchHallazgos
+    searchHallazgos,
+    obtenerCatalogoTiposLugar,
+    obtenerCatalogoPartesCuerpo,
+    obtenerCatalogoPrendas,
 } from '../controllers/hallazgos/hallazgosController.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 import logger from '../utils/logger.js';
@@ -20,28 +21,33 @@ router.use((req, res, next) => {
     next();
 });
 
-// Ruta para crear un nuevo hallazgo
+// Rutas para Hallazgos
 // POST /api/hallazgos/
-router.post('/', authenticateToken, createHallazgoHandler);
+router.post('/', authenticateToken, createHallazgo);
 
-// Ruta para obtener todos los hallazgos
 // GET /api/hallazgos/
 router.get('/', authenticateToken, getAllHallazgos);
 
-// Ruta para buscar hallazgos por varios criterios
-// GET /api/hallazgos/buscar?id_usuario_buscador=...&...
+// GET /api/hallazgos/buscar
 router.get('/buscar', authenticateToken, searchHallazgos);
 
-// Ruta para obtener un hallazgo por ID
 // GET /api/hallazgos/:id
 router.get('/:id', authenticateToken, getHallazgoById);
 
-// Ruta para actualizar un hallazgo por ID
 // PUT /api/hallazgos/:id
-router.put('/:id', authenticateToken, updateHallazgo);
+router.put('/:id', authenticateToken, actualizarHallazgo);
 
-// Ruta para eliminar un hallazgo por ID
 // DELETE /api/hallazgos/:id
 router.delete('/:id', authenticateToken, deleteHallazgo);
+
+// Rutas para catálogos
+// GET /api/hallazgos/catalogos/tipos-lugar
+router.get('/catalogos/tipos-lugar', obtenerCatalogoTiposLugar);
+
+// GET /api/hallazgos/catalogos/partes-cuerpo
+router.get('/catalogos/partes-cuerpo', obtenerCatalogoPartesCuerpo);
+
+// GET /api/hallazgos/catalogos/prendas
+router.get('/catalogos/prendas', obtenerCatalogoPrendas);
 
 export default router;

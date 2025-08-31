@@ -368,6 +368,10 @@ export async function ensureAllTables() {
         id_usuario_buscador INTEGER NOT NULL,
         id_ubicacion_hallazgo INTEGER,
         id_tipo_lugar_hallazgo INTEGER,
+        nombre TEXT NOT NULL,
+        segundo_nombre TEXT,
+        apellido_paterno TEXT NOT NULL,
+        apellido_materno TEXT,
         fecha_hallazgo TEXT NOT NULL,
         descripcion_general_hallazgo TEXT,
         estado_hallazgo TEXT NOT NULL DEFAULT 'encontrado',
@@ -386,7 +390,6 @@ export async function ensureAllTables() {
         id_prenda INTEGER,
         tipo_caracteristica TEXT,
         descripcion TEXT,
-        foto_evidencia TEXT,
         FOREIGN KEY (id_hallazgo) REFERENCES hallazgos (id_hallazgo) ON DELETE CASCADE,
         FOREIGN KEY (id_parte_cuerpo) REFERENCES catalogo_partes_cuerpo (id_parte_cuerpo),
         FOREIGN KEY (id_prenda) REFERENCES catalogo_prendas (id_prenda)
@@ -402,7 +405,6 @@ export async function ensureAllTables() {
         color TEXT,
         marca TEXT,
         caracteristica_especial TEXT,
-        foto_evidencia TEXT,
         FOREIGN KEY (id_hallazgo) REFERENCES hallazgos (id_hallazgo),
         FOREIGN KEY (id_prenda) REFERENCES catalogo_prendas (id_prenda)
       );
