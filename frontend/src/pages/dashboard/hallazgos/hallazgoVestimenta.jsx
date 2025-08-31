@@ -1,5 +1,3 @@
-// src/components/forms/hallazgos/HallazgoVestimenta.jsx
-
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -10,9 +8,9 @@ import useCatalogos from "@/hooks/useCatalogos";
 
 export default function HallazgoVestimenta({
     vestimenta,
-    handleVestimentaChange,
-    addVestimenta,
-    removeVestimenta,
+    handleArrayChange,  // Propiedad corregida que ahora es la función principal de cambio
+    addArrayItem,     // Propiedad corregida para agregar elementos al array
+    removeArrayItem,  // Propiedad corregida para eliminar elementos del array
 }) {
     const { prendas, loadingCatalogos, errorCatalogos } = useCatalogos();
 
@@ -31,7 +29,7 @@ export default function HallazgoVestimenta({
                         type="button"
                         variant="ghost"
                         size="sm"
-                        onClick={() => removeVestimenta(index)}
+                        onClick={() => removeArrayItem(index)}
                         className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                     >
                         <MinusCircle size={20} />
@@ -39,7 +37,7 @@ export default function HallazgoVestimenta({
                     <div className="space-y-2">
                         <Label htmlFor={`prenda_${index}`}>Tipo de Prenda</Label>
                         <Select
-                            onValueChange={(value) => handleVestimentaChange(index, { target: { name: 'id_prenda', value: parseInt(value, 10) } })}
+                            onValueChange={(value) => handleArrayChange(index, 'id_prenda', parseInt(value, 10))}
                             value={prenda.id_prenda ? prenda.id_prenda.toString() : ""}
                         >
                             <SelectTrigger>
@@ -60,7 +58,7 @@ export default function HallazgoVestimenta({
                             id={`color_${index}`}
                             name="color"
                             value={prenda.color || ""}
-                            onChange={(e) => handleVestimentaChange(index, e)}
+                            onChange={(e) => handleArrayChange(index, e.target.name, e.target.value)}
                             placeholder="Ej: Negro"
                         />
                     </div>
@@ -70,7 +68,7 @@ export default function HallazgoVestimenta({
                             id={`marca_${index}`}
                             name="marca"
                             value={prenda.marca || ""}
-                            onChange={(e) => handleVestimentaChange(index, e)}
+                            onChange={(e) => handleArrayChange(index, e.target.name, e.target.value)}
                             placeholder="Ej: Nike"
                         />
                     </div>
@@ -80,13 +78,13 @@ export default function HallazgoVestimenta({
                             id={`caracteristica_especial_${index}`}
                             name="caracteristica_especial"
                             value={prenda.caracteristica_especial || ""}
-                            onChange={(e) => handleVestimentaChange(index, e)}
+                            onChange={(e) => handleArrayChange(index, e.target.name, e.target.value)}
                             placeholder="Ej: Logo de Batman en la espalda"
                         />
                     </div>
                 </div>
             ))}
-            <Button type="button" variant="outline" size="sm" onClick={() => addVestimenta({ id_prenda: '', color: '', marca: '', caracteristica_especial: '' })}>
+            <Button type="button" variant="outline" size="sm" onClick={() => addArrayItem({ id_prenda: '', color: '', marca: '', caracteristica_especial: '' })}>
                 + Agregar Vestimenta
             </Button>
         </div>

@@ -16,6 +16,8 @@ import { sendMatchNotification } from '../../utils/emailService.js'; // Asume qu
  * y busca automáticamente coincidencias con fichas de desaparición.
  */
 export const createHallazgo = async (req, res) => {
+    console.log("📥 Datos recibidos en el backend (crear):", req.body);
+
     const db = await openDb();
     await db.exec('BEGIN TRANSACTION');
 
@@ -36,21 +38,24 @@ export const createHallazgo = async (req, res) => {
         const id_usuario_buscador = req.user.id;
 
         // 1. Insertar la ubicación
+        const estado = ubicacion_hallazgo.estado || null;
+        const municipio = ubicacion_hallazgo.municipio || null;
+        const localidad = ubicacion_hallazgo.localidad || null;
+        const calle = ubicacion_hallazgo.calle || null;
+        const referencias = ubicacion_hallazgo.referencias || null;
+        const latitud = ubicacion_hallazgo.latitud || null;
+        const longitud = ubicacion_hallazgo.longitud || null;
+        const codigo_postal = ubicacion_hallazgo.codigo_postal || null;
+
+        console.log("🛠️  Valores para insertar en 'ubicaciones':", [estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal]);
+
         const ubicacionResult = await db.run(
             `INSERT INTO ubicaciones (estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-                ubicacion_hallazgo.estado,
-                ubicacion_hallazgo.municipio,
-                ubicacion_hallazgo.localidad,
-                ubicacion_hallazgo.calle,
-                ubicacion_hallazgo.referencias,
-                ubicacion_hallazgo.latitud,
-                ubicacion_hallazgo.longitud,
-                ubicacion_hallazgo.codigo_postal,
-            ]
+            [estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal]
         );
-
+        console.log("🟢 Resultado de la inserción de 'ubicaciones':", { lastID: ubicacionResult.lastID, changes: ubicacionResult.changes });
+        
         const id_ubicacion_hallazgo = ubicacionResult.lastID;
 
         // 2. Insertar el hallazgo principal
@@ -72,11 +77,18 @@ export const createHallazgo = async (req, res) => {
                 descripcion_general_hallazgo,
             ]
         );
+        console.log("🟢 Resultado de la inserción de 'hallazgos':", { lastID: hallazgoResult.lastID, changes: hallazgoResult.changes });
 
         const idHallazgo = hallazgoResult.lastID;
 
         // 3. Insertar características (rasgos)
         if (caracteristicas && caracteristicas.length > 0) {
+            console.log("🛠️  Valores para insertar en 'hallazgo_caracteristicas':", caracteristicas.map(c => [
+                idHallazgo, 
+                c.id_parte_cuerpo, 
+                c.tipo_caracteristica, 
+                c.descripcion
+            ]));
             const caracteristicasPromises = caracteristicas.map(caracteristica =>
                 db.run(
                     `INSERT INTO hallazgo_caracteristicas (id_hallazgo, id_parte_cuerpo, tipo_caracteristica, descripcion)
@@ -84,11 +96,19 @@ export const createHallazgo = async (req, res) => {
                     [idHallazgo, caracteristica.id_parte_cuerpo, caracteristica.tipo_caracteristica, caracteristica.descripcion]
                 )
             );
-            await Promise.all(caracteristicasPromises);
+            const results = await Promise.all(caracteristicasPromises);
+            console.log("🟢 Resultados de inserción de 'caracteristicas':", results.map(r => ({ lastID: r.lastID, changes: r.changes })));
         }
 
         // 4. Insertar vestimenta
         if (vestimenta && vestimenta.length > 0) {
+            console.log("🛠️  Valores para insertar en 'hallazgo_vestimenta':", vestimenta.map(v => [
+                idHallazgo, 
+                v.id_prenda, 
+                v.color, 
+                v.marca, 
+                v.caracteristica_especial
+            ]));
             const vestimentaPromises = vestimenta.map(prenda =>
                 db.run(
                     `INSERT INTO hallazgo_vestimenta (id_hallazgo, id_prenda, color, marca, caracteristica_especial)
@@ -96,7 +116,8 @@ export const createHallazgo = async (req, res) => {
                     [idHallazgo, prenda.id_prenda, prenda.color, prenda.marca, prenda.caracteristica_especial]
                 )
             );
-            await Promise.all(vestimentaPromises);
+            const results = await Promise.all(vestimentaPromises);
+            console.log("🟢 Resultados de inserción de 'vestimenta':", results.map(r => ({ lastID: r.lastID, changes: r.changes })));
         }
 
         await db.exec('COMMIT');
@@ -229,15 +250,18 @@ export const getHallazgoById = async (req, res) => {
                 h.fecha_hallazgo,
                 h.descripcion_general_hallazgo,
                 h.estado_hallazgo,
+                h.id_tipo_lugar_hallazgo, -- ⬅️ ¡Agregamos el ID aquí!
                 u.id_ubicacion AS id_ubicacion_hallazgo,
                 u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.latitud, u.longitud, u.codigo_postal,
                 ctl.nombre_tipo AS tipo_lugar,
                 json_group_array(DISTINCT json_object(
+                    'id_parte_cuerpo', hc.id_parte_cuerpo,  -- ⬅️ ¡Agrega el ID aquí!
                     'tipo_caracteristica', hc.tipo_caracteristica, 
                     'descripcion', hc.descripcion,
                     'nombre_parte', cpc.nombre_parte
                 )) FILTER (WHERE hc.id_hallazgo_caracteristica IS NOT NULL) AS caracteristicas_json,
                 json_group_array(DISTINCT json_object(
+                    'id_prenda', hv.id_prenda,  -- ⬅️ ¡Agrega el ID aquí!
                     'color', hv.color, 
                     'marca', hv.marca, 
                     'caracteristica_especial', hv.caracteristica_especial,
@@ -259,20 +283,39 @@ export const getHallazgoById = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Hallazgo no encontrado.' });
         }
         
+        console.log('SQL Raw Result:', hallazgoCompleto);
+
+        const { 
+            id_ubicacion_hallazgo, estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal,
+            caracteristicas_json, vestimenta_json,
+            id_tipo_lugar_hallazgo, // ⬅️ ¡Agregamos el ID aquí!
+            ...restOfData // Aquí se capturan todos los demás campos (nombre, fecha, etc.)
+        } = hallazgoCompleto;
+
         const caracteristicas = JSON.parse(hallazgoCompleto.caracteristicas_json);
         const vestimenta = JSON.parse(hallazgoCompleto.vestimenta_json);
         
-        delete hallazgoCompleto.caracteristicas_json;
-        delete hallazgoCompleto.vestimenta_json;
+         // Formatear la respuesta para que coincida con el formato del formulario en el frontend
+        const formattedData = {
+            ...restOfData, // Usamos los campos restantes
+            ubicacion_hallazgo: {
+                id_ubicacion_hallazgo,
+                estado,
+                municipio,
+                localidad,
+                calle,
+                referencias,
+                latitud,
+                longitud,
+                codigo_postal,
+            },
+            id_tipo_lugar_hallazgo, // ⬅️ ¡Lo agregamos a la respuesta!
+            caracteristicas: caracteristicas[0] === null ? [] : caracteristicas,
+            vestimenta: vestimenta[0] === null ? [] : vestimenta
+        };
 
-        res.json({ 
-            success: true, 
-            data: {
-                ...hallazgoCompleto,
-                caracteristicas: caracteristicas[0] === null ? [] : caracteristicas,
-                vestimenta: vestimenta[0] === null ? [] : vestimenta
-            }
-        });
+        res.json({ success: true, data: formattedData });
+        
     } catch (error) {
         logger.error(`❌ Error al obtener el hallazgo por ID: ${error.message}`);
         res.status(500).json({ success: false, message: 'Error al obtener el hallazgo.' });
@@ -289,9 +332,10 @@ export const actualizarHallazgo = async (req, res) => {
 
     try {
         const { id } = req.params;
+        console.log("📥 Datos recibidos en el backend (editar):", req.body);
         const {
             nombre, segundo_nombre, apellido_paterno, apellido_materno,
-            fecha_hallazgo, descripcion_general_hallazgo,
+            fecha_hallazgo, descripcion_general_hallazgo, id_tipo_lugar_hallazgo,
             ubicacion_hallazgo, caracteristicas, vestimenta,
         } = req.body;
 
@@ -308,45 +352,38 @@ export const actualizarHallazgo = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Hallazgo no encontrado o no autorizado' });
         }
 
-        // 2. Construye y ejecuta la actualización de la ubicación de forma dinámica
-        const ubicacionUpdateData = {};
-        for (const key in ubicacion_hallazgo) {
-            if (ubicacion_hallazgo[key] !== undefined && ubicacion_hallazgo[key] !== null) {
-                ubicacionUpdateData[key] = ubicacion_hallazgo[key];
-            }
-        }
+        // 2. Actualiza la ubicación con los datos que se reciben
+        await db.run(
+            `UPDATE ubicaciones SET 
+             estado = ?, municipio = ?, localidad = ?, calle = ?, referencias = ?, 
+             latitud = ?, longitud = ?, codigo_postal = ?
+             WHERE id_ubicacion = ?`,
+            [
+                ubicacion_hallazgo.estado,
+                ubicacion_hallazgo.municipio,
+                ubicacion_hallazgo.localidad,
+                ubicacion_hallazgo.calle,
+                ubicacion_hallazgo.referencias,
+                ubicacion_hallazgo.latitud,
+                ubicacion_hallazgo.longitud,
+                ubicacion_hallazgo.codigo_postal,
+                hallazgo.id_ubicacion_hallazgo,
+            ]
+        );
 
-        if (Object.keys(ubicacionUpdateData).length > 0) {
-            const ubicacionSetClause = Object.keys(ubicacionUpdateData).map(key => `${key} = ?`).join(', ');
-            const ubicacionValues = Object.values(ubicacionUpdateData);
-
-            await db.run(
-                `UPDATE ubicaciones SET ${ubicacionSetClause} WHERE id_ubicacion = ?`,
-                [...ubicacionValues, hallazgo.id_ubicacion_hallazgo]
-            );
-        }
-
-        // 3. Construye y ejecuta la actualización del hallazgo de forma dinámica
-        const hallazgoUpdateData = {};
-        const mainFields = {
+        // 3. Actualiza el hallazgo principal
+        const hallazgoUpdateData = {
             nombre, segundo_nombre, apellido_paterno, apellido_materno,
-            fecha_hallazgo, descripcion_general_hallazgo
+            fecha_hallazgo, descripcion_general_hallazgo, id_tipo_lugar_hallazgo
         };
-        for (const key in mainFields) {
-            if (mainFields[key] !== undefined && mainFields[key] !== null) {
-                hallazgoUpdateData[key] = mainFields[key];
-            }
-        }
-
-        if (Object.keys(hallazgoUpdateData).length > 0) {
-            const hallazgoSetClause = Object.keys(hallazgoUpdateData).map(key => `${key} = ?`).join(', ');
-            const hallazgoValues = Object.values(hallazgoUpdateData);
-
-            await db.run(
-                `UPDATE hallazgos SET ${hallazgoSetClause} WHERE id_hallazgo = ?`,
-                [...hallazgoValues, id]
-            );
-        }
+        
+        const hallazgoSetClause = Object.keys(hallazgoUpdateData).map(key => `${key} = ?`).join(', ');
+        const hallazgoValues = Object.values(hallazgoUpdateData);
+        
+        await db.run(
+            `UPDATE hallazgos SET ${hallazgoSetClause} WHERE id_hallazgo = ?`,
+            [...hallazgoValues, id]
+        );
 
         // 4. Eliminar y reinsertar caracteristicas y vestimenta
         await db.run(`DELETE FROM hallazgo_caracteristicas WHERE id_hallazgo = ?`, [id]);
@@ -382,8 +419,6 @@ export const actualizarHallazgo = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error interno del servidor al actualizar hallazgo' });
     }
 };
-
-
 /**
  * Elimina el hallazgo y los registros asociados
  */

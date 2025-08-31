@@ -16,7 +16,7 @@ export default function HallazgoDatosPrincipales({ form, handleChange, handleNes
 
     // Función para manejar el cambio en el selector de tipo de lugar
     const handleTipoLugarChange = (value) => {
-        handleChange({ target: { name: "id_tipo_lugar", value: parseInt(value, 10) } });
+        handleChange({ target: { name: "id_tipo_lugar_hallazgo", value: parseInt(value, 10) } });
     };
 
     return (
@@ -88,8 +88,9 @@ export default function HallazgoDatosPrincipales({ form, handleChange, handleNes
                         name="ubicacion_hallazgo.estado"
                         type="text"
                         placeholder="Ej: Ciudad de México, Jalisco, Nuevo León..."
-                        value={form.ubicacion_hallazgo.estado || ""}
-                        onChange={(e) => handleNestedChange(e.target.name, e.target.value)}
+                        // CORRECCIÓN: Usa encadenamiento opcional para prevenir el error.
+                        value={form.ubicacion_hallazgo?.estado || ""}
+                        onChange={(e) => handleNestedChange('ubicacion_hallazgo.estado', e.target.value)}
                         required
                     />
                 </div>
@@ -100,8 +101,9 @@ export default function HallazgoDatosPrincipales({ form, handleChange, handleNes
                         name="ubicacion_hallazgo.municipio"
                         type="text"
                         placeholder="Ej: Cuauhtémoc, Zapopan, San Nicolás de los Garza..."
-                        value={form.ubicacion_hallazgo.municipio || ""}
-                        onChange={(e) => handleNestedChange(e.target.name, e.target.value)}
+                        // CORRECCIÓN: Usa encadenamiento opcional para prevenir el error.
+                        value={form.ubicacion_hallazgo?.municipio || ""}
+                        onChange={(e) => handleNestedChange('ubicacion_hallazgo.municipio', e.target.value)}
                         required
                     />
                 </div>
@@ -112,7 +114,7 @@ export default function HallazgoDatosPrincipales({ form, handleChange, handleNes
                 <Label htmlFor="tipo_lugar_hallazgo">Tipo de lugar donde se encontró</Label>
                 <Select 
                     onValueChange={handleTipoLugarChange}
-                    value={form.id_tipo_lugar ? form.id_tipo_lugar.toString() : ""}
+                    value={form.id_tipo_lugar_hallazgo ? form.id_tipo_lugar_hallazgo.toString() : ""}
                     disabled={catalogosLoading || catalogosError}
                 >
                     <SelectTrigger>

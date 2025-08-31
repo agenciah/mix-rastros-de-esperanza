@@ -21,7 +21,7 @@ const INITIAL_FORM_STATE = {
     apellido_materno: "",
     fecha_hallazgo: "",
     descripcion_general_hallazgo: "",
-    id_tipo_lugar: null, // Asumimos que es un ID numérico
+    id_tipo_lugar_hallazgo: null, // Asumimos que es un ID numérico
     ubicacion_hallazgo: {
         estado: "",
         municipio: "",
@@ -56,7 +56,6 @@ export default function HallazgoCreateLayout() {
         e.preventDefault();
 
         // Obtener el ID del usuario del contexto
-        // CORRECCIÓN: Se usa user.id en lugar de user.uid
         const idUsuario = user?.id ?? null;
 
         console.log("👤 user en handleSubmit:", user);
@@ -84,8 +83,7 @@ export default function HallazgoCreateLayout() {
             })),
         };
 
-        // 👀 Log para verificar qué se envía al backend
-        console.log("🛰️ Payload /api/hallazgos =>", hallazgoDataToSend);
+        console.log("✈️ Datos enviados al backend:", hallazgoDataToSend);
 
         try {
             const result = await createHallazgo(hallazgoDataToSend);
@@ -97,7 +95,7 @@ export default function HallazgoCreateLayout() {
         }
     }, [formData, user, authLoading, createHallazgo, navigate]);
 
-    // 2. Muestra un estado de carga mientras los datos de auth se cargan
+    // Muestra un estado de carga mientras los datos de auth se cargan
     if (authLoading) {
         return <div>Cargando...</div>;
     }
@@ -128,9 +126,9 @@ export default function HallazgoCreateLayout() {
                     <CardContent>
                         <HallazgoCaracteristicas
                             caracteristicas={formData.caracteristicas}
-                            handleCaracteristicaChange={(index, e) => handleArrayChange('caracteristicas', index, e.target.name, e.target.value)}
-                            addCaracteristica={() => addArrayItem('caracteristicas', { id_parte_cuerpo: '', tipo_caracteristica: '', descripcion: '' })}
-                            removeCaracteristica={(index) => removeArrayItem('caracteristicas', index)}
+                            handleArrayChange={(index, fieldName, value) => handleArrayChange('caracteristicas', index, fieldName, value)}
+                            addArrayItem={(newItem) => addArrayItem('caracteristicas', newItem)}
+                            removeArrayItem={(index) => removeArrayItem('caracteristicas', index)}
                         />
                     </CardContent>
                 </Card>
@@ -142,9 +140,9 @@ export default function HallazgoCreateLayout() {
                     <CardContent>
                         <HallazgoVestimenta
                             vestimenta={formData.vestimenta}
-                            handleVestimentaChange={(index, e) => handleArrayChange('vestimenta', index, e.target.name, e.target.value)}
-                            addVestimenta={() => addArrayItem('vestimenta', { id_prenda: '', color: '', marca: '', caracteristica_especial: '' })}
-                            removeVestimenta={(index) => removeArrayItem('vestimenta', index)}
+                            handleArrayChange={(index, fieldName, value) => handleArrayChange('vestimenta', index, fieldName, value)}
+                            addArrayItem={(newItem) => addArrayItem('vestimenta', newItem)}
+                            removeArrayItem={(index) => removeArrayItem('vestimenta', index)}
                         />
                     </CardContent>
                 </Card>

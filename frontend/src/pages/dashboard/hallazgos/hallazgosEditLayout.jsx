@@ -17,6 +17,16 @@ export default function HallazgoEditLayout() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user, loading: authLoading } = useAuth();
+    const initialState = {
+    nombre: '',
+    // ... otros campos
+    ubicacion_hallazgo: {
+        estado: '',
+        municipio: ''
+    },
+    caracteristicas: [],
+    vestimenta: [],
+};
     
     const { 
         getHallazgoById, 
@@ -37,33 +47,31 @@ export default function HallazgoEditLayout() {
 
     // 1. Hook para cargar los datos del hallazgo
     useEffect(() => {
-        const fetchHallazgo = async () => {
+        const fetchHallazgoData = async () => {
             if (id) {
-                const fetchedHallazgo = await getHallazgoById(id);
-                if (fetchedHallazgo) {
-                    // Formatear la fecha para que el input de tipo 'date' la acepte
-                    fetchedHallazgo.fecha_hallazgo = fetchedHallazgo.fecha_hallazgo.split('T')[0];
-                    setFormData(fetchedHallazgo);
+                const data = await getHallazgoById(id);
+                if (data) {
+                    // Aquí la magia ocurre:
+                    // Si el backend ya tiene el formato correcto, esto funcionará:
+                    setFormData(data);
                 }
             }
         };
-        fetchHallazgo();
+        fetchHallazgoData();
     }, [id, getHallazgoById, setFormData]);
 
     // 2. Manejador para el envío del formulario de edición
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
 
-        const idUsuario = user?.uid ?? null;
-
-        if (authLoading || !user || !idUsuario) {
+        if (authLoading || !user) {
             console.error("Error: Usuario no autenticado o no disponible. Intente de nuevo.");
             return;
         }
 
         const hallazgoDataToSend = {
             ...formData,
-            id_usuario_buscador: idUsuario,
+            id_usuario_buscador: user.id, // Se usa user.id, corregido para consistencia
             caracteristicas: formData.caracteristicas.map(car => ({
                 id_parte_cuerpo: parseInt(car.id_parte_cuerpo),
                 tipo_caracteristica: car.tipo_caracteristica,
@@ -77,7 +85,7 @@ export default function HallazgoEditLayout() {
             })),
         };
 
-        console.log("🛰️ Payload /api/hallazgos/edit =>", hallazgoDataToSend);
+        console.log("✈️ Datos enviados al backend:", hallazgoDataToSend);
 
         try {
             const result = await actualizarHallazgo(id, hallazgoDataToSend);
@@ -87,11 +95,22 @@ export default function HallazgoEditLayout() {
         } catch (err) {
             console.error("Error al actualizar hallazgo:", err);
         }
-    }, [formData, user, authLoading, actualizarHallazgo, id, navigate]);
+    }, [formData, user, actualizarHallazgo, id, navigate, authLoading]);
 
     // Estados de carga y error
-    if (isLoading) {
+    if (isLoading || authLoading) {
         return <div className="text-center p-8">Cargando detalles del hallazgo...</div>;
+    }
+    
+    // Si el usuario no está autenticado después de cargar
+    if (!user) {
+      return (
+        <Alert variant="destructive">
+          <Terminal className="h-4 w-4" />
+          <AlertTitle>Error de Autenticación</AlertTitle>
+          <AlertDescription>No se pudo cargar la información del usuario. Intenta recargar la página.</AlertDescription>
+        </Alert>
+      )
     }
 
     if (error) {
@@ -133,9 +152,9 @@ export default function HallazgoEditLayout() {
                     <CardContent>
                         <HallazgoCaracteristicas
                             caracteristicas={formData.caracteristicas}
-                            handleCaracteristicaChange={(index, e) => handleArrayChange('caracteristicas', index, e.target.name, e.target.value)}
-                            addCaracteristica={() => addArrayItem('caracteristicas', { id_parte_cuerpo: '', tipo_caracteristica: '', descripcion: '' })}
-                            removeCaracteristica={(index) => removeArrayItem('caracteristicas', index)}
+                            handleArrayChange={(index, fieldName, value) => handleArrayChange('caracteristicas', index, fieldName, value)}
+                            addArrayItem={(newItem) => addArrayItem('caracteristicas', newItem)}
+                            removeArrayItem={(index) => removeArrayItem('caracteristicas', index)}
                         />
                     </CardContent>
                 </Card>
@@ -147,9 +166,9 @@ export default function HallazgoEditLayout() {
                     <CardContent>
                         <HallazgoVestimenta
                             vestimenta={formData.vestimenta}
-                            handleVestimentaChange={(index, e) => handleArrayChange('vestimenta', index, e.target.name, e.target.value)}
-                            addVestimenta={() => addArrayItem('vestimenta', { id_prenda: '', color: '', marca: '', caracteristica_especial: '' })}
-                            removeVestimenta={(index) => removeArrayItem('vestimenta', index)}
+                            handleArrayChange={(index, fieldName, value) => handleArrayChange('vestimenta', index, fieldName, value)}
+                            addArrayItem={(newItem) => addArrayItem('vestimenta', newItem)}
+                            removeArrayItem={(index) => removeArrayItem('vestimenta', index)}
                         />
                     </CardContent>
                 </Card>
@@ -165,7 +184,7 @@ export default function HallazgoEditLayout() {
                 <Button 
                     type="submit" 
                     className="w-full" 
-                    disabled={isLoading || authLoading}
+                    disabled={isLoading}
                 >
                     {isLoading ? "Guardando..." : "Guardar Cambios"}
                 </Button>

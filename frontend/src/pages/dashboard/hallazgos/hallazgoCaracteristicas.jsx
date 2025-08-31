@@ -8,9 +8,9 @@ import useCatalogos from "@/hooks/useCatalogos";
 
 export default function HallazgoCaracteristicas({
     caracteristicas,
-    handleCaracteristicaChange,
-    addCaracteristica,
-    removeCaracteristica,
+    handleArrayChange, // Propiedad corregida que ahora es la función principal de cambio
+    addArrayItem,    // Propiedad corregida para agregar elementos al array
+    removeArrayItem, // Propiedad corregida para eliminar elementos del array
 }) {
     const { partesCuerpo, loading: catalogosLoading, error: catalogosError } = useCatalogos();
 
@@ -26,7 +26,7 @@ export default function HallazgoCaracteristicas({
                         type="button"
                         variant="ghost"
                         size="sm"
-                        onClick={() => removeCaracteristica(index)}
+                        onClick={() => removeArrayItem(index)}
                         className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                     >
                         <MinusCircle size={20} />
@@ -36,7 +36,7 @@ export default function HallazgoCaracteristicas({
                     <div className="space-y-2">
                         <Label htmlFor={`parte_cuerpo_${index}`}>Parte del Cuerpo</Label>
                         <Select
-                            onValueChange={(value) => handleCaracteristicaChange(index, { target: { name: 'id_parte_cuerpo', value: parseInt(value, 10) } })}
+                            onValueChange={(value) => handleArrayChange(index, 'id_parte_cuerpo', parseInt(value, 10))}
                             value={caracteristica.id_parte_cuerpo ? caracteristica.id_parte_cuerpo.toString() : ""}
                         >
                             <SelectTrigger>
@@ -61,7 +61,7 @@ export default function HallazgoCaracteristicas({
                             id={`tipo_caracteristica_${index}`}
                             name="tipo_caracteristica"
                             value={caracteristica.tipo_caracteristica || ""}
-                            onChange={(e) => handleCaracteristicaChange(index, e)}
+                            onChange={(e) => handleArrayChange(index, e.target.name, e.target.value)}
                             placeholder="Ej: Tatuaje, Cicatriz, Marca de nacimiento..."
                         />
                     </div>
@@ -73,14 +73,14 @@ export default function HallazgoCaracteristicas({
                             id={`descripcion_${index}`}
                             name="descripcion"
                             value={caracteristica.descripcion || ""}
-                            onChange={(e) => handleCaracteristicaChange(index, e)}
+                            onChange={(e) => handleArrayChange(index, e.target.name, e.target.value)}
                             placeholder="Ej: Tatuaje de rosa roja en el brazo izquierdo."
                         />
                     </div>
                 </div>
             ))}
 
-            <Button type="button" variant="outline" size="sm" onClick={() => addCaracteristica({ id_parte_cuerpo: '', tipo_caracteristica: '', descripcion: '' })}>
+            <Button type="button" variant="outline" size="sm" onClick={() => addArrayItem({ id_parte_cuerpo: '', tipo_caracteristica: '', descripcion: '' })}>
                 + Agregar Característica
             </Button>
         </div>
