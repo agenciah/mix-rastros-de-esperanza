@@ -496,6 +496,7 @@ export async function ensureAllTables() {
       CREATE TABLE IF NOT EXISTS mensajes_administrador (
         id_mensaje INTEGER PRIMARY KEY AUTOINCREMENT,
         id_admin INTEGER,
+        titulo TEXT NOT NULL,
         tipo_mensaje TEXT DEFAULT 'info',
         contenido TEXT NOT NULL,
         fecha_creacion TEXT NOT NULL DEFAULT (datetime('now')),

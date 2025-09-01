@@ -281,3 +281,29 @@ Error: ENOENT: no such file or directory, open '/home/alex1986/test_gastos_bot/g
 [2025-08-31 11:11:59] ERROR: POST /api/fichas - SQLITE_ERROR: cannot rollback - no transaction is active
 [2025-08-31 11:19:17] ERROR: ❌ Error al buscar coincidencias para hallazgo: SQLITE_ERROR: no such table: ficha_caracteristicas
 [2025-08-31 11:33:12] ERROR: ❌ Error al buscar coincidencias para hallazgo: SQLITE_ERROR: no such table: ficha_caracteristicas
+[2025-08-31 20:21:02] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:02] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:02] ERROR: ❌ Error al obtener estadísticas del feed: SQLITE_ERROR: no such column: fecha_encontrado
+[2025-08-31 20:21:02] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: titulo
+[2025-08-31 20:21:02] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:02] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:02] ERROR: ❌ Error al obtener estadísticas del feed: SQLITE_ERROR: no such column: fecha_encontrado
+[2025-08-31 20:21:02] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: titulo
+[2025-08-31 20:21:32] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:32] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:32] ERROR: ❌ Error al obtener estadísticas del feed: SQLITE_ERROR: no such column: fecha_encontrado
+[2025-08-31 20:21:32] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: titulo
+[2025-08-31 20:21:32] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:32] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:32] ERROR: ❌ Error al obtener estadísticas del feed: SQLITE_ERROR: no such column: fecha_encontrado
+[2025-08-31 20:21:32] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: titulo
+[2025-09-01 08:16:17] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:16:17] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:16:17] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: titulo
+[2025-09-01 08:16:18] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:16:18] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:16:18] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: titulo
+[2025-09-01 08:22:29] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:22:29] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:22:29] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:22:29] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')

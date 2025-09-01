@@ -79,6 +79,7 @@ const RoutesApp = () => {
             { path: "configuracion", element: <Configuracion /> },
           ],
         },
+        
       ],
     },
 

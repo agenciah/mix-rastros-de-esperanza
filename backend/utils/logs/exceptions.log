@@ -406,3 +406,21 @@ TypeError: argument handler must be a function
     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-08-31 20:03:31] ERROR: uncaughtException: router is not defined
+ReferenceError: router is not defined
+    at file:///home/alex1986/mix-rastros-de-esperanza/gastos_bot/backend/routes/feedRoutes.js:7:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-08-31 20:04:00] ERROR: uncaughtException: router is not defined
+ReferenceError: router is not defined
+    at file:///home/alex1986/mix-rastros-de-esperanza/gastos_bot/backend/routes/feedRoutes.js:8:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-08-31 20:04:24] ERROR: uncaughtException: auth is not defined
+ReferenceError: auth is not defined
+    at file:///home/alex1986/mix-rastros-de-esperanza/gastos_bot/backend/routes/feedRoutes.js:10:31
+    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)

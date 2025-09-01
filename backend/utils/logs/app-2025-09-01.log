@@ -1,0 +1,81 @@
+[2025-09-01 08:07:59] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-01 08:15:16] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-01 08:16:17] INFO: → GET /api/feed/dashboard
+[2025-09-01 08:16:17] INFO: → GET /api/feed/dashboard
+[2025-09-01 08:16:17] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-01 08:16:17] INFO: 🔍 Buscando coincidencias para la ficha: 1
+[2025-09-01 08:16:17] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:16:17] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:16:17] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: titulo
+[2025-09-01 08:16:17] INFO: → GET /api/feed/dashboard
+[2025-09-01 08:16:17] INFO: → GET /api/feed/dashboard
+[2025-09-01 08:16:17] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-01 08:16:18] INFO: 🔍 Buscando coincidencias para la ficha: 1
+[2025-09-01 08:16:18] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:16:18] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:16:18] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: titulo
+[2025-09-01 08:22:29] INFO: → GET /api/feed/dashboard
+[2025-09-01 08:22:29] INFO: → GET /api/feed/dashboard
+[2025-09-01 08:22:29] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-01 08:22:29] INFO: 🔍 Buscando coincidencias para la ficha: 1
+[2025-09-01 08:22:29] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:22:29] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:22:29] INFO: → GET /api/feed/dashboard
+[2025-09-01 08:22:29] INFO: → GET /api/feed/dashboard
+[2025-09-01 08:22:29] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-01 08:22:29] INFO: 🔍 Buscando coincidencias para la ficha: 1
+[2025-09-01 08:22:29] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:22:29] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-09-01 08:38:56] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-01 08:39:26] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-01 08:39:35] INFO: → GET /api/feed/dashboard
+[2025-09-01 08:39:35] INFO: → GET /api/feed/dashboard
+[2025-09-01 08:39:35] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-01 08:39:35] INFO: 🔍 Buscando coincidencias para la ficha: 1
+[2025-09-01 08:39:35] INFO: 🔍 Buscando coincidencias para la ficha: 2
+[2025-09-01 08:39:35] INFO: 🔍 Buscando coincidencias para la ficha: 3
+[2025-09-01 08:39:35] INFO: → GET /api/feed/dashboard
+[2025-09-01 08:39:35] INFO: → GET /api/feed/dashboard
+[2025-09-01 08:39:35] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-01 08:39:35] INFO: 🔍 Buscando coincidencias para la ficha: 1
+[2025-09-01 08:39:35] INFO: 🔍 Buscando coincidencias para la ficha: 2
+[2025-09-01 08:39:35] INFO: 🔍 Buscando coincidencias para la ficha: 3
+[2025-09-01 14:22:48] INFO: → GET /api/feed/dashboard
+[2025-09-01 14:22:48] INFO: → GET /api/feed/dashboard
+[2025-09-01 14:22:48] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-01 14:22:48] INFO: 🔍 Buscando coincidencias para la ficha: 1
+[2025-09-01 14:22:48] INFO: 🔍 Buscando coincidencias para la ficha: 2
+[2025-09-01 14:22:48] INFO: 🔍 Buscando coincidencias para la ficha: 3
+[2025-09-01 14:22:48] INFO: → GET /api/feed/dashboard
+[2025-09-01 14:22:48] INFO: → GET /api/feed/dashboard
+[2025-09-01 14:22:48] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-01 14:22:48] INFO: 🔍 Buscando coincidencias para la ficha: 1
+[2025-09-01 14:22:48] INFO: 🔍 Buscando coincidencias para la ficha: 2
+[2025-09-01 14:22:48] INFO: 🔍 Buscando coincidencias para la ficha: 3
+[2025-09-01 14:23:09] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-01 14:24:59] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-01 14:34:50] INFO: → GET /api/feed/dashboard
+[2025-09-01 14:34:50] INFO: → GET /api/feed/dashboard
+[2025-09-01 14:34:50] INFO: → GET /api/feed/dashboard
+[2025-09-01 14:34:50] INFO: → GET /api/feed/dashboard
+[2025-09-01 16:22:06] INFO: → GET /api/feed/dashboard
+[2025-09-01 16:22:06] INFO: → GET /api/feed/dashboard
+[2025-09-01 16:22:06] INFO: → GET /api/feed/dashboard
+[2025-09-01 16:22:06] INFO: → GET /api/feed/dashboard
+[2025-09-01 16:23:00] INFO: → GET /api/feed/dashboard
+[2025-09-01 16:23:00] INFO: → GET /api/feed/dashboard
+[2025-09-01 16:23:00] INFO: → GET /api/feed/dashboard
+[2025-09-01 16:23:00] INFO: → GET /api/feed/dashboard
+[2025-09-01 16:23:49] INFO: → GET /api/feed/dashboard
+[2025-09-01 16:23:49] INFO: → GET /api/feed/dashboard
+[2025-09-01 16:23:49] INFO: → GET /api/feed/dashboard
+[2025-09-01 16:23:49] INFO: → GET /api/feed/dashboard
+[2025-09-01 17:08:50] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-01 17:08:54] INFO: → GET /api/feed/dashboard
+[2025-09-01 17:08:54] INFO: → GET /api/feed/dashboard
+[2025-09-01 17:08:54] INFO: → GET /api/feed/dashboard
+[2025-09-01 17:08:54] INFO: → GET /api/feed/dashboard
+[2025-09-01 17:09:02] INFO: → GET /api/feed/dashboard
+[2025-09-01 17:09:02] INFO: → GET /api/feed/dashboard
+[2025-09-01 17:09:02] INFO: → GET /api/feed/dashboard
+[2025-09-01 17:09:02] INFO: → GET /api/feed/dashboard

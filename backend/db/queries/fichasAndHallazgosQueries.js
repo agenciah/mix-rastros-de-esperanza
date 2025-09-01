@@ -63,22 +63,30 @@ export const getAllHallazgosCompletos = async () => {
     const db = await openDb();
     const hallazgosQuery = `
         SELECT
-            h.id_hallazgo, h.id_usuario_buscador, h.estado_hallazgo,
-            u.estado AS estado_ubicacion, u.municipio AS municipio_ubicacion, u.localidad AS localidad_ubicacion,
-            u.latitud, u.longitud,
+            h.id_hallazgo, 
+            h.id_usuario_buscador, 
+            h.estado_hallazgo,
+            u.estado, 
+            u.municipio, 
+            u.localidad,
+            u.latitud, 
+            u.longitud,
             json_group_array(DISTINCT json_object(
-                'id_parte_cuerpo', hrf.id_parte_cuerpo, 'tipo_caracteristica', hrf.tipo_caracteristica,
+                'id_parte_cuerpo', hrf.id_parte_cuerpo, 
+                'tipo_caracteristica', hrf.tipo_caracteristica,
                 'descripcion', hrf.descripcion
             )) FILTER (WHERE hrf.id_hallazgo_caracteristica IS NOT NULL) AS rasgos_fisicos_json,
             json_group_array(DISTINCT json_object(
-                'id_prenda', hv.id_prenda, 'color', hv.color, 'marca', hv.marca,
+                'id_prenda', hv.id_prenda, 
+                'color', hv.color, 
+                'marca', hv.marca,
                 'caracteristica_especial', hv.caracteristica_especial
             )) FILTER (WHERE hv.id_hallazgo_vestimenta IS NOT NULL) AS vestimenta_json
         FROM hallazgos AS h
-        JOIN ubicaciones AS u ON h.id_ubicacion_hallazgo = u.id_ubicacion
+        LEFT JOIN ubicaciones AS u ON h.id_ubicacion_hallazgo = u.id_ubicacion
         LEFT JOIN hallazgo_caracteristicas AS hrf ON h.id_hallazgo = hrf.id_hallazgo
         LEFT JOIN hallazgo_vestimenta AS hv ON h.id_hallazgo = hv.id_hallazgo
-        WHERE h.estado_hallazgo = 'encontrado'
+        WHERE h.estado_hallazgo = 'activo'
         GROUP BY h.id_hallazgo;
     `;
     logger.debug(`Consulta de hallazgos a ejecutar: ${hallazgosQuery}`);

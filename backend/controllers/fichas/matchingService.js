@@ -92,33 +92,33 @@ export async function findMatchesForFicha(fichaData) {
 
 /**
  * Lógica para verificar la coincidencia de ubicación.
+ * @param {object} ubicacionFicha - El objeto de ubicación de la ficha.
+ * @param {object} hallazgo - El objeto de hallazgo completo, incluyendo los datos de ubicación.
  */
-function checkLocationMatch(ubicacionFicha, ubicacionHallazgo) {
+function checkLocationMatch(ubicacionFicha, hallazgo) {
     let score = 0;
     let criteria = [];
 
-    // Puntos por coincidencia de estado
-    if (ubicacionFicha.estado === ubicacionHallazgo.estado_ubicacion) {
+    // ✅ La lógica ya está correcta, ya que ahora 'hallazgo' trae los campos 'estado', 'municipio', etc.
+    if (ubicacionFicha.estado === hallazgo.estado) {
         score += 50;
         criteria.push('Coincidencia de Estado');
     }
 
-    // Puntos por coincidencia de municipio
-    if (ubicacionFicha.municipio === ubicacionHallazgo.municipio_ubicacion) {
+    if (ubicacionFicha.municipio === hallazgo.municipio) {
         score += 100;
         criteria.push('Coincidencia de Municipio');
     }
 
-    // Puntos por proximidad geográfica (usando la fórmula de la distancia)
     const distance = calculateDistance(
         ubicacionFicha.latitud, ubicacionFicha.longitud,
-        ubicacionHallazgo.latitud, ubicacionHallazgo.longitud
+        hallazgo.latitud, hallazgo.longitud
     );
 
-    if (distance <= 10) { // 10 km de radio
+    if (distance <= 10) {
         score += 200;
         criteria.push('Proximidad Geográfica (< 10km)');
-    } else if (distance <= 50) { // 50 km de radio
+    } else if (distance <= 50) {
         score += 100;
         criteria.push('Proximidad Geográfica (< 50km)');
     }

@@ -6274,3 +6274,92 @@
 [2025-08-31 17:23:18] INFO: → GET /api/fichas
 [2025-08-31 17:23:18] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
 [2025-08-31 17:23:18] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-31 19:03:13] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:03:54] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:04:35] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:05:29] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:05:45] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:06:00] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:06:13] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:06:37] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:06:47] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:06:59] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:07:10] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:11:17] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:11:34] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:14:08] INFO: → POST /api/users/login
+[2025-08-31 19:14:08] INFO: → POST /api/users/login
+[2025-08-31 19:14:55] INFO: → POST /api/users/login
+[2025-08-31 19:14:55] INFO: → POST /api/users/login
+[2025-08-31 19:15:05] INFO: → POST /api/users/login
+[2025-08-31 19:15:05] INFO: → POST /api/users/login
+[2025-08-31 19:48:06] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 19:48:27] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 20:04:47] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 20:04:54] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 20:05:10] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 20:15:28] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:15:28] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:15:28] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:15:28] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:18:21] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:18:21] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:18:21] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:18:21] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:20:53] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-08-31 20:21:02] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:21:02] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:21:02] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-31 20:21:02] INFO: 🔍 Buscando coincidencias para la ficha: 1
+[2025-08-31 20:21:02] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:02] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:02] ERROR: ❌ Error al obtener estadísticas del feed: SQLITE_ERROR: no such column: fecha_encontrado
+[2025-08-31 20:21:02] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: titulo
+[2025-08-31 20:21:02] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:21:02] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:21:02] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-31 20:21:02] INFO: 🔍 Buscando coincidencias para la ficha: 1
+[2025-08-31 20:21:02] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:02] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:02] ERROR: ❌ Error al obtener estadísticas del feed: SQLITE_ERROR: no such column: fecha_encontrado
+[2025-08-31 20:21:02] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: titulo
+[2025-08-31 20:21:26] INFO: → GET /api/fichas
+[2025-08-31 20:21:26] INFO: → GET /api/fichas
+[2025-08-31 20:21:26] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-31 20:21:26] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-31 20:21:26] INFO: → GET /api/fichas
+[2025-08-31 20:21:26] INFO: → GET /api/fichas
+[2025-08-31 20:21:26] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-31 20:21:26] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-31 20:21:28] INFO: → GET /api/hallazgos
+[2025-08-31 20:21:28] INFO: → GET /api/hallazgos
+[2025-08-31 20:21:28] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos
+[2025-08-31 20:21:29] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-31 20:21:29] INFO: → GET /api/hallazgos
+[2025-08-31 20:21:29] INFO: → GET /api/hallazgos
+[2025-08-31 20:21:29] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos
+[2025-08-31 20:21:29] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-31 20:21:30] INFO: → GET /api/fichas
+[2025-08-31 20:21:30] INFO: → GET /api/fichas
+[2025-08-31 20:21:30] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-31 20:21:30] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-31 20:21:30] INFO: → GET /api/fichas
+[2025-08-31 20:21:30] INFO: → GET /api/fichas
+[2025-08-31 20:21:30] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-08-31 20:21:30] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-31 20:21:32] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:21:32] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:21:32] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-31 20:21:32] INFO: 🔍 Buscando coincidencias para la ficha: 1
+[2025-08-31 20:21:32] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:32] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:32] ERROR: ❌ Error al obtener estadísticas del feed: SQLITE_ERROR: no such column: fecha_encontrado
+[2025-08-31 20:21:32] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: titulo
+[2025-08-31 20:21:32] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:21:32] INFO: → GET /api/feed/dashboard
+[2025-08-31 20:21:32] INFO: 📦 Usuario encontrado y parseado:
+[2025-08-31 20:21:32] INFO: 🔍 Buscando coincidencias para la ficha: 1
+[2025-08-31 20:21:32] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:32] ERROR: ❌ Error al obtener coincidencias del usuario: Cannot read properties of undefined (reading 'estado')
+[2025-08-31 20:21:32] ERROR: ❌ Error al obtener estadísticas del feed: SQLITE_ERROR: no such column: fecha_encontrado
+[2025-08-31 20:21:32] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: titulo
