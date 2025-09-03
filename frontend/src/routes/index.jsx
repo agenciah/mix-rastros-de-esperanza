@@ -1,5 +1,5 @@
 import { useAuth } from '../context/AuthContext';
-import { useRoutes, Navigate } from 'react-router-dom'; // Importa useRoutes
+import { useRoutes, Navigate } from 'react-router-dom';
 
 // Rutas públicas
 import Login from '../pages/auth/Login';
@@ -17,11 +17,10 @@ import ForgotPassword from '@/pages/auth/ForgotPassword';
 import ResetPassword from '@/pages/auth/ResetPassword';
 import AdminLogin from '@/pages/admin/AdminLogin';
 
-
-// Importa la configuración de rutas de administrador
+// Rutas de administrador
 import { adminRoutesConfig } from './adminRoutesConfig';
 
-// Rutas privadas
+// Rutas privadas y componentes del dashboard
 import ProtectedRoute from '@/components/ProtectedRoute';
 import DashboardLayout from '../layouts/DashboardLayout';
 import Dashboard from '../pages/Dashboard';
@@ -33,13 +32,16 @@ import FichaEditLayout from '@/pages/dashboard/fichas/fichasEdit/FichaEditLayout
 import HallazgoCreateLayout from '@/pages/dashboard/hallazgos/hallazgosCreateLayout';
 import HallazgoEditLayout from '@/pages/dashboard/hallazgos/hallazgosEditLayout';
 import HallazgosList from '@/pages/dashboard/hallazgos/hallazgosList';
+import FeedHallazgosList from '@/pages/dashboard/feed/feedHallazgosList';
+import HallazgoDetail from '@/pages/dashboard/hallazgos/HallazgoDetail';
+import Mensajes from '@/pages/dashboard/Mensajes';
+
 
 const RoutesApp = () => {
   const { user, loading } = useAuth();
 
   if (loading) return <div className="text-center mt-10">Cargando...</div>;
 
-  // Define tus rutas como un array de objetos
   const allRoutes = [
     // Rutas públicas
     { path: "/", element: <LandingPage /> },
@@ -59,15 +61,15 @@ const RoutesApp = () => {
     { path: "/admin/login", element: <AdminLogin /> },
 
     // Rutas de administrador (importadas)
-    ...adminRoutesConfig, // Aquí se "desestructuran" las rutas del archivo de configuración
+    ...adminRoutesConfig,
 
     // Rutas protegidas para usuarios normales
     {
-      element: <ProtectedRoute />, // Este es el layout/componente de protección
-      children: [ // Las rutas anidadas se definen en el array 'children'
+      element: <ProtectedRoute />,
+      children: [
         {
           path: "/dashboard",
-          element: <DashboardLayout />, // Este es el layout del dashboard
+          element: <DashboardLayout />,
           children: [
             { index: true, element: <Dashboard /> },
             { path: "fichas", element: <FichasList/>},
@@ -77,9 +79,13 @@ const RoutesApp = () => {
             { path: "hallazgos/crear", element: <HallazgoCreateLayout /> },
             { path: "hallazgos/editar/:id", element: <HallazgoEditLayout /> },
             { path: "configuracion", element: <Configuracion /> },
+            { path: "mensajes", element: <Mensajes /> }, // <-- Agrega esta línea
+            
+            // Rutas del feed de hallazgos
+            { path: "hallazgos-list", element: <FeedHallazgosList /> },
+            { path: "hallazgos-list/:id", element: <HallazgoDetail /> },
           ],
         },
-        
       ],
     },
 
@@ -87,10 +93,9 @@ const RoutesApp = () => {
     { path: "*", element: <Navigate to={user ? "/dashboard" : "/login"} /> },
   ];
 
-  // useRoutes toma el array de objetos de ruta y devuelve el elemento React que debe renderizarse
   const element = useRoutes(allRoutes);
 
-  return element; // Renderiza el elemento devuelto por useRoutes
+  return element;
 };
 
 export default RoutesApp;

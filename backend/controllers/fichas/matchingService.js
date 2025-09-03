@@ -4,6 +4,7 @@ import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 import { sendMatchNotification } from '../../utils/emailService.js';
 import { getFichaCompletaById, getAllHallazgosCompletos } from '../../db/queries/fichasAndHallazgosQueries.js';
+import { insertSystemNotification } from '../../db/queries/messagingQueries.js'; // <- Crearemos esta función
 
 /**
  * Busca posibles coincidencias entre una nueva ficha de desaparición y los hallazgos existentes.
@@ -171,20 +172,40 @@ function checkVestimentaMatch(vestimentaFicha, vestimentaHallazgo) {
 /**
  * Notifica a los usuarios de los hallazgos coincidentes.
  */
-async function notifyMatchedUsers(matches, nombreVictima) {
+async function notifyMatchedUsers(matches, fichaCompleta) {
     const db = await openDb();
-    // Usar un Set para evitar enviar múltiples correos al mismo usuario
     const notifiedUsers = new Set();
     
+    // Obtener los datos del creador de la ficha
+    const usuarioFicha = await db.get('SELECT email, nombre FROM users WHERE id = ?', [fichaCompleta.id_usuario_creador]);
+    if (!usuarioFicha) {
+        logger.warn(`Usuario creador de ficha ${fichaCompleta.id_usuario_creador} no encontrado.`);
+        return;
+    }
+
     for (const match of matches) {
-        // La columna que se usa para buscar el usuario es la correcta
-        if (!notifiedUsers.has(match.id_usuario_reporte)) {
-            const user = await db.get('SELECT email, nombre FROM usuarios WHERE id_usuario = ?', [match.id_usuario_reporte]);
-            if (user) {
-                const subject = `🚨 ¡Posible coincidencia encontrada para tu reporte!`;
-                const message = `Hemos encontrado una posible coincidencia con una ficha de desaparición para el hallazgo que reportaste. El nombre de la persona desaparecida es ${nombreVictima}. Por favor, revisa tu cuenta para más detalles.`;
-                await sendMatchNotification(user.email, subject, message);
-                notifiedUsers.add(match.id_usuario_reporte);
+        const idUsuarioHallazgo = match.id_usuario_reporte;
+        if (!notifiedUsers.has(idUsuarioHallazgo)) {
+            const usuarioHallazgo = await db.get('SELECT email, nombre FROM users WHERE id = ?', [idUsuarioHallazgo]);
+            if (usuarioHallazgo) {
+                // 1. Enviar el correo electrónico
+                const subject = `🚨 ¡Posible coincidencia encontrada!`;
+                const message = `Hemos encontrado una posible coincidencia para el hallazgo que reportaste, con la ficha de búsqueda de ${fichaCompleta.nombre}. Por favor, revisa tu cuenta para más detalles.`;
+                await sendMatchNotification(usuarioHallazgo.email, subject, message);
+
+                // 2. Insertar notificación en la base de datos
+                const systemUserId = 1; // Suponiendo que el ID 1 es el usuario del sistema
+                const notificationContent = `Se ha encontrado una **posible coincidencia** con el reporte que hiciste. Por favor, revisa la ficha de ${fichaCompleta.nombre} para ver los detalles y decidir si es un match.`;
+                
+                await insertSystemNotification(
+                    idUsuarioHallazgo, // ID del usuario que recibe la notificacion
+                    notificationContent,
+                    'match_found', // Tipo de notificación
+                    fichaCompleta.id_ficha, // ID de la ficha que hizo match
+                    match.id_hallazgo // ID del hallazgo que hizo match
+                );
+                
+                notifiedUsers.add(idUsuarioHallazgo);
             }
         }
     }

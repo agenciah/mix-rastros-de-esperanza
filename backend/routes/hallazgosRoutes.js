@@ -13,6 +13,7 @@ import {
 import { authenticateToken } from '../middleware/authMiddleware.js';
 import logger from '../utils/logger.js';
 
+
 const router = express.Router();
 
 // Middleware para loggear las solicitudes a estas rutas
@@ -49,5 +50,6 @@ router.get('/catalogos/partes-cuerpo', obtenerCatalogoPartesCuerpo);
 
 // GET /api/hallazgos/catalogos/prendas
 router.get('/catalogos/prendas', obtenerCatalogoPrendas);
+
 
 export default router;

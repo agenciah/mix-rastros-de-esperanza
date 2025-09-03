@@ -459,10 +459,24 @@ export async function ensureAllTables() {
         password TEXT NOT NULL
       );
     `);
+
+     await db.exec(`
+    CREATE TABLE IF NOT EXISTS conversations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user1_id INTEGER NOT NULL,
+        user2_id INTEGER NOT NULL,
+        type TEXT NOT NULL DEFAULT 'personal',
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        last_message_at TEXT, -- ¡AQUÍ ESTÁ LA COLUMNA!
+        FOREIGN KEY (user1_id) REFERENCES users(id),
+        FOREIGN KEY (user2_id) REFERENCES users(id)
+    );
+`);
     
     await db.exec(`
       CREATE TABLE IF NOT EXISTS mensajes (
         id_mensaje INTEGER PRIMARY KEY AUTOINCREMENT,
+        conversation_id INTEGER NOT NULL,
         id_remitente INTEGER NOT NULL,
         id_destinatario INTEGER NOT NULL,
         id_ficha INTEGER,
@@ -473,7 +487,8 @@ export async function ensureAllTables() {
         estado_leido INTEGER DEFAULT 0,
         FOREIGN KEY (id_remitente) REFERENCES users(id),
         FOREIGN KEY (id_destinatario) REFERENCES users(id),
-        FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion(id_ficha)
+        FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion(id_ficha),
+        FOREIGN KEY (conversation_id) REFERENCES conversations(id)
       );`
     );
     
@@ -491,6 +506,8 @@ export async function ensureAllTables() {
         FOREIGN KEY (id_remitente) REFERENCES users(id)
       );`
     );
+
+    
     
     await db.exec(`
       CREATE TABLE IF NOT EXISTS mensajes_administrador (

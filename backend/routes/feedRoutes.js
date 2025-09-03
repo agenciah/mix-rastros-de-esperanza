@@ -1,5 +1,3 @@
-// backend/api/index.js (o donde tengas tus rutas)
-
 import express from 'express';
 import { getStatsData } from '../controllers/feed/feedStatsController.js';
 import { getAdminMessagesData } from '../controllers/feed/feedAdminMessagesController.js';
@@ -10,7 +8,7 @@ const router = express.Router();
 // ... (tus otras rutas)
 
 // ✅ Nueva ruta para el listado de todos los hallazgos
-router.get('/hallazgos/list', async (req, res) => {
+router.get('/list', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
