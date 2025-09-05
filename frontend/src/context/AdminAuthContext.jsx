@@ -16,6 +16,7 @@ export const AdminAuthProvider = ({ children }) => {
 
   const loginAdmin = async (email, password) => {
     try {
+        console.log('URL de la petición:', apiAdmin.defaults.baseURL + '/login');
         const res = await apiAdmin.post('/login', { email, password })
         const { token, admin } = res.data
 

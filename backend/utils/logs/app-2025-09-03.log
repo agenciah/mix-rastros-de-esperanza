@@ -1071,3 +1071,235 @@
 [2025-09-03 13:57:42] INFO: → PUT /api/messaging/conversations/1/read
 [2025-09-03 13:57:42] INFO: 📦 Usuario encontrado y parseado:
 [2025-09-03 13:57:42] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 13:58:31] INFO: → GET /api/feed/dashboard
+[2025-09-03 13:58:31] INFO: → GET /api/feed/dashboard
+[2025-09-03 13:58:31] INFO: → GET /api/feed/dashboard
+[2025-09-03 13:58:31] INFO: → GET /api/feed/dashboard
+[2025-09-03 13:59:16] INFO: → GET /api/hallazgos
+[2025-09-03 13:59:16] INFO: → GET /api/hallazgos
+[2025-09-03 13:59:16] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos
+[2025-09-03 13:59:16] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 13:59:16] INFO: → GET /api/hallazgos
+[2025-09-03 13:59:16] INFO: → GET /api/hallazgos
+[2025-09-03 13:59:16] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos
+[2025-09-03 13:59:16] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 13:59:17] INFO: → GET /api/fichas
+[2025-09-03 13:59:17] INFO: → GET /api/fichas
+[2025-09-03 13:59:17] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-09-03 13:59:17] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 13:59:17] INFO: → GET /api/fichas
+[2025-09-03 13:59:17] INFO: → GET /api/fichas
+[2025-09-03 13:59:17] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-09-03 13:59:17] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 13:59:18] INFO: → GET /api/feed/dashboard
+[2025-09-03 13:59:18] INFO: → GET /api/feed/dashboard
+[2025-09-03 13:59:18] INFO: → GET /api/feed/dashboard
+[2025-09-03 13:59:18] INFO: → GET /api/feed/dashboard
+[2025-09-03 14:02:07] INFO: → GET /api/messaging/conversations
+[2025-09-03 14:02:07] INFO: → GET /api/messaging/conversations
+[2025-09-03 14:02:07] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:02:07] INFO: → GET /api/messaging/conversations
+[2025-09-03 14:02:07] INFO: → GET /api/messaging/conversations
+[2025-09-03 14:02:07] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:02:12] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-03 14:02:12] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-03 14:02:12] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-03 14:02:12] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-03 14:02:12] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:02:12] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:02:15] INFO: → GET /api/feed/dashboard
+[2025-09-03 14:02:15] INFO: → GET /api/feed/dashboard
+[2025-09-03 14:02:15] INFO: → GET /api/feed/dashboard
+[2025-09-03 14:02:15] INFO: → GET /api/feed/dashboard
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:35] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:37] INFO: → GET /api/fichas
+[2025-09-03 14:46:37] INFO: → GET /api/fichas
+[2025-09-03 14:46:37] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-09-03 14:46:37] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:46:37] INFO: → GET /api/fichas
+[2025-09-03 14:46:37] INFO: → GET /api/fichas
+[2025-09-03 14:46:37] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas
+[2025-09-03 14:46:37] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: → GET /api/hallazgos
+[2025-09-03 14:46:39] INFO: → GET /api/hallazgos
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: → GET /api/hallazgos
+[2025-09-03 14:46:39] INFO: → GET /api/hallazgos
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:39] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:40] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-03 14:46:40] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:40] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:40] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-03 14:46:41] INFO: → GET /api/hallazgos
+[2025-09-03 14:46:41] INFO: → GET /api/hallazgos
+[2025-09-03 14:46:41] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos
+[2025-09-03 14:46:41] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:46:41] INFO: → GET /api/hallazgos
+[2025-09-03 14:46:41] INFO: → GET /api/hallazgos
+[2025-09-03 14:46:41] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos
+[2025-09-03 14:46:41] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:46:42] INFO: → GET /api/messaging/conversations
+[2025-09-03 14:46:42] INFO: → GET /api/messaging/conversations
+[2025-09-03 14:46:42] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:46:42] INFO: → GET /api/messaging/conversations
+[2025-09-03 14:46:42] INFO: → GET /api/messaging/conversations
+[2025-09-03 14:46:42] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:46:43] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-03 14:46:43] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-03 14:46:43] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:46:43] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-03 14:46:43] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-03 14:46:43] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 14:46:52] INFO: → GET /api/feed/dashboard
+[2025-09-03 14:46:52] INFO: → GET /api/feed/dashboard
+[2025-09-03 14:46:52] INFO: → GET /api/feed/dashboard
+[2025-09-03 14:46:52] INFO: → GET /api/feed/dashboard
+[2025-09-03 16:16:58] INFO: → GET /api/messaging/conversations
+[2025-09-03 16:16:58] INFO: → GET /api/messaging/conversations
+[2025-09-03 16:16:58] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 16:16:58] INFO: → GET /api/messaging/conversations
+[2025-09-03 16:16:58] INFO: → GET /api/messaging/conversations
+[2025-09-03 16:16:58] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 16:16:59] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-03 16:16:59] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-03 16:16:59] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-03 16:16:59] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-03 16:16:59] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 16:16:59] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 16:17:07] INFO: → GET /api/feed/dashboard
+[2025-09-03 16:17:07] INFO: → GET /api/feed/dashboard
+[2025-09-03 16:17:07] INFO: → GET /api/feed/dashboard
+[2025-09-03 16:17:07] INFO: → GET /api/feed/dashboard
+[2025-09-03 16:17:46] INFO: → GET /api/hallazgos
+[2025-09-03 16:17:46] INFO: → GET /api/hallazgos
+[2025-09-03 16:17:46] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos
+[2025-09-03 16:17:46] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 16:17:46] INFO: → GET /api/hallazgos
+[2025-09-03 16:17:46] INFO: → GET /api/hallazgos
+[2025-09-03 16:17:46] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos
+[2025-09-03 16:17:46] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 16:17:55] INFO: → GET /api/messaging/conversations
+[2025-09-03 16:17:55] INFO: → GET /api/messaging/conversations
+[2025-09-03 16:17:55] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 16:17:55] INFO: → GET /api/messaging/conversations
+[2025-09-03 16:17:55] INFO: → GET /api/messaging/conversations
+[2025-09-03 16:17:55] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 17:11:35] INFO: → GET /api/messaging/conversations
+[2025-09-03 17:11:36] INFO: → GET /api/messaging/conversations
+[2025-09-03 17:11:36] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 17:11:36] INFO: → GET /api/messaging/conversations
+[2025-09-03 17:11:36] INFO: → GET /api/messaging/conversations
+[2025-09-03 17:11:36] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-03 19:35:50] INFO: → GET /api/feed/dashboard
+[2025-09-03 19:35:50] INFO: → GET /api/feed/dashboard
+[2025-09-03 19:35:50] INFO: → GET /api/feed/dashboard
+[2025-09-03 19:35:50] INFO: → GET /api/feed/dashboard
+[2025-09-03 19:40:36] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-03 19:47:39] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-03 19:49:43] ERROR: ❌ Error al iniciar la app: WebSocket.Server is not a constructor
+[2025-09-03 19:51:14] INFO: 🚀 Servidor corriendo en http://localhost:3001

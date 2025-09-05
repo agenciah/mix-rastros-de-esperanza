@@ -108,3 +108,91 @@ export const getAllHallazgosCompletos = async () => {
 
     return hallazgosCompletos;
 };
+
+/**
+ * Obtiene una ficha de desaparición con todos sus detalles y datos del usuario creador.
+ */
+export const getFichaCompletaByIdAdmin = async (id_ficha) => {
+  const db = await openDb();
+  const fichaSql = `
+    SELECT
+      fd.id_ficha,
+      fd.id_usuario_creador,
+      u.nombre AS nombre_usuario,
+      u.email AS email_usuario,
+      fd.nombre,
+      fd.segundo_nombre,
+      fd.apellido_paterno,
+      fd.apellido_materno,
+      fd.fecha_desaparicion,
+      fd.id_ubicacion_desaparicion,
+      fd.id_tipo_lugar_desaparicion,
+      ctl.nombre_tipo AS tipo_lugar,
+      fd.foto_perfil,
+      fd.estado_ficha,
+      fd.estado_pago,
+      fd.fecha_registro_encontrado,
+      ubicacion.estado,
+      ubicacion.municipio,
+      ubicacion.localidad,
+      ubicacion.calle,
+      ubicacion.referencias,
+      ubicacion.latitud,
+      ubicacion.longitud,
+      ubicacion.codigo_postal
+    FROM fichas_desaparicion AS fd
+    LEFT JOIN users AS u ON fd.id_usuario_creador = u.id
+    LEFT JOIN ubicaciones AS ubicacion ON fd.id_ubicacion_desaparicion = ubicacion.id_ubicacion
+    LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
+    WHERE fd.id_ficha = ?;
+  `;
+
+  const rasgosSql = `
+    SELECT frf.*, cpc.nombre_parte AS nombre_parte_cuerpo
+    FROM ficha_rasgos_fisicos AS frf
+    LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
+    WHERE frf.id_ficha = ?;
+  `;
+
+  const vestimentaSql = `
+    SELECT fv.*, cp.tipo_prenda AS tipo_prenda_nombre
+    FROM ficha_vestimenta AS fv
+    LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
+    WHERE fv.id_ficha = ?;
+  `;
+
+  const ficha = await db.get(fichaSql, [id_ficha]);
+  if (!ficha) return null;
+
+  const rasgos = await db.all(rasgosSql, [id_ficha]);
+  const vestimenta = await db.all(vestimentaSql, [id_ficha]);
+
+  return {
+    ...ficha,
+    rasgos_fisicos: rasgos,
+    vestimenta: vestimenta,
+  };
+};
+
+/**
+ * Obtiene todos los catálogos necesarios para los formularios de hallazgos.
+ * @returns {Promise<object>} - Un objeto con arrays de los catálogos.
+ */
+export const getAllHallazgosCatalogos = async () => {
+    const db = await openDb();
+
+    try {
+        const tiposLugar = await db.all(`SELECT id_tipo_lugar, nombre_tipo FROM catalogo_tipo_lugar ORDER BY nombre_tipo`);
+        const partesCuerpo = await db.all(`SELECT id_parte_cuerpo, nombre_parte, categoria_principal FROM catalogo_partes_cuerpo ORDER BY nombre_parte`);
+        const prendas = await db.all(`SELECT id_prenda, tipo_prenda, categoria_general FROM catalogo_prendas ORDER BY tipo_prenda`);
+        
+        return {
+            tiposLugar,
+            partesCuerpo,
+            prendas
+        };
+    } catch (error) {
+        logger.error(`❌ Error al obtener catálogos para hallazgos: ${error.message}`);
+        throw error;
+    }
+};

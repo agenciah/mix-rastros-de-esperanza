@@ -13,6 +13,11 @@ import app from './app.js';
 // ✅ ¡Aquí está el console.log que necesitas!
 console.log("Intentando importar las rutas...");
 
+// 🆕 Importamos los módulos de 'http' y 'ws'
+import http from 'http';
+// 🛠️ CORRECCIÓN: Usamos la importación con nombre para 'WebSocketServer'.
+import { WebSocketServer } from 'ws';
+
 import authRoutes from './routes/auth.js';
 import errorHandler from './middleware/errorHandler.js';
 import cancelacionesRoutes from './routes/cancelaciones.js';
@@ -85,7 +90,38 @@ async function main() {
 
         // 7️⃣ Levantamos el servidor
         const PORT = process.env.PORT || 3001;
-        app.listen(PORT, () => {
+        // En lugar de app.listen(), creamos explícitamente el servidor HTTP.
+        const server = http.createServer(app);
+
+        // 🛠️ CORRECCIÓN: Ahora usamos el constructor 'WebSocketServer'.
+        const wss = new WebSocketServer({ server });
+
+        wss.on('connection', (ws) => {
+            console.log('Cliente de WebSocket conectado');
+
+            ws.on('message', (message) => {
+                console.log(`Mensaje recibido: ${message}`);
+                
+                // Reenviamos el mensaje a todos los clientes (broadcasting)
+                wss.clients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(message.toString());
+                    }
+                });
+            });
+
+            ws.on('close', () => {
+                console.log('Cliente de WebSocket desconectado');
+            });
+
+            ws.on('error', (error) => {
+                console.error('Error en el websocket:', error);
+            });
+
+            ws.send('¡Hola! Estás conectado al servidor de websockets.');
+        });
+
+        server.listen(PORT, () => {
             logger.info(`🚀 Servidor corriendo en http://localhost:${PORT}`);
             console.log(`Server running on port ${PORT}`);
         });

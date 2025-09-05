@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 const apiAdmin = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001/api/admin',
+  baseURL: import.meta.env.VITE_ADMIN_API_URL,
   headers: {
     'Content-Type': 'application/json'
   }

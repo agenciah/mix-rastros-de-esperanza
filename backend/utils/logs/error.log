@@ -310,3 +310,4 @@ Error: ENOENT: no such file or directory, open '/home/alex1986/test_gastos_bot/g
 [2025-09-02 14:52:39] ERROR: ❌ Error al iniciar la app: SQLITE_ERROR: near ")": syntax error
 [2025-09-02 14:53:45] ERROR: ❌ Error al iniciar la app: SQLITE_ERROR: near ")": syntax error
 [2025-09-02 14:56:37] ERROR: ❌ Error al iniciar la app: SQLITE_ERROR: near ")": syntax error
+[2025-09-03 19:49:43] ERROR: ❌ Error al iniciar la app: WebSocket.Server is not a constructor

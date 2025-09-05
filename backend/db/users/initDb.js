@@ -506,8 +506,6 @@ export async function ensureAllTables() {
         FOREIGN KEY (id_remitente) REFERENCES users(id)
       );`
     );
-
-    
     
     await db.exec(`
       CREATE TABLE IF NOT EXISTS mensajes_administrador (

@@ -11,10 +11,10 @@ const SidebarAdmin = () => {
 
   const links = [
     { to: "/admin", label: "Vista General" },
-    { to: "/admin/tickets", label: "Facturas de Tickets" },
-    { to: "/admin/servicios", label: "Facturas de Servicio" },
     { to: "/admin/usuarios", label: "Editor de Usuarios" },
     { to: "/admin/estadisticas", label: "Estadísticas" },
+    { to: "/admin/fichas", label: "Administrar Fichas" },
+    { to: "/admin/hallazgos", label: "Administrar Hallazgos" },
     { to: "/admin/configuracion", label: "Configuración" },
     { to: "/admin/historial", label: "Historial de Movimientos" },
   ];
@@ -25,7 +25,7 @@ const SidebarAdmin = () => {
     <aside className="w-64 h-screen bg-gray-900 text-white fixed top-0 left-0 flex flex-col justify-between">
       <div>
         <div className="p-4 font-bold text-xl border-b border-gray-700">
-          Admin Simplika
+          Admin Rastros de Esperanza
         </div>
         <nav className="mt-4 flex flex-col gap-2 px-4">
           {links.map((link) => (

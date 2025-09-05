@@ -39,6 +39,7 @@
     "sqlite3": "^5.1.7",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0",
+    "ws": "^8.18.3",
     "zod": "^4.0.5"
   },
   "devDependencies": {

@@ -1,71 +1,36 @@
-// backend/db/admin/usuarios.js
-import { openDb } from '../../db/users/initDb.js'
+// 📁 backend/db/admin/usuarios.js
+/**
+ * @fileoverview Funciones de base de datos exclusivas para el dashboard de administrador.
+ */
+import { openDb } from '../../db/users/initDb.js';
 
+/**
+ * Obtiene la lista de todos los usuarios con datos relevantes para el dashboard de administrador.
+ * Incluye un conteo de fichas y hallazgos por cada usuario.
+ */
 export async function getAllUsuariosAdmin() {
-  const db = await openDb()
+    const db = await openDb();
 
-  // 1. Traer todos los campos relevantes de users + estado_servicio
-  const usuarios = await db.all(`
-    SELECT 
-      u.id,
-      u.nombre,
-      u.telefono,
-      u.email,
-      u.plan,
-      u.trial_start_date,
-      u.tickets_facturados,
-      u.facturacion_tickets,
-      u.gastos_registrados,
-      u.razon_social_tickets,
-      u.rfc_tickets,
-      u.uso_cfdi_tickets,
-      u.cp_fiscal_tickets,
-      u.email_fiscal_tickets,
-      u.razon_social_servicio,
-      u.rfc_servicio,
-      u.uso_cfdi_servicio,
-      u.cp_fiscal_servicio,
-      u.email_fiscal_servicio,
-      u.email_confirmed,
-      u.cancelado,
-      u.cancelacion_efectiva,
-      u.role,
+    // 1. Traer todos los usuarios con sus campos relevantes.
+    // 2. Realizar subconsultas para contar fichas y hallazgos directamente en la consulta principal.
+    const usuarios = await db.all(`
+        SELECT 
+          u.id,
+          u.nombre,
+          u.email,
+          u.telefono,
+          u.estado_republica,
+          u.role,
+          u.estado_suscripcion,
+          u.ultima_conexion,
+          u.fichas_activas_pagadas,
+          (SELECT COUNT(*) FROM fichas_desaparicion WHERE id_usuario_creador = u.id) as total_fichas,
+          (SELECT COUNT(*) FROM hallazgos WHERE id_usuario_buscador = u.id) as total_hallazgos,
+          u.acepto_terminos,
+          u.fecha_aceptacion
+        FROM users u
+        ORDER BY u.id DESC
+    `);
 
-      es.trial_end_date,
-      es.proximo_pago,
-      es.facturas_restantes,
-      es.servicio_activo,
-      es.cancelacion_programada,
-      es.fecha_inicio,
-      es.fecha_fin
-
-    FROM users u
-    LEFT JOIN estado_servicio es ON es.user_id = u.id
-  `)
-
-  // 2. Para cada usuario, contar tickets pendientes (no facturados y es_facturable)
-  for (const user of usuarios) {
-    const { total } = await db.get(`
-      SELECT COUNT(*) as total 
-      FROM gastos 
-      WHERE user_id = ? AND es_facturable = 1 AND (ya_facturado IS NULL OR ya_facturado = 0)
-    `, [user.id])
-
-    user.tickets_pendientes = total
-  }
-
-  return usuarios
-}
-
-export async function getUsuariosConDatosServicio() {
-  const db = await openDb()
-  const rows = await db.all(`
-    SELECT id, nombre, razon_social_servicio, rfc_servicio
-    FROM users
-    WHERE razon_social_servicio IS NOT NULL
-      AND rfc_servicio IS NOT NULL
-      AND razon_social_servicio != ''
-      AND rfc_servicio != ''
-  `)
-  return rows
+    return usuarios;
 }
