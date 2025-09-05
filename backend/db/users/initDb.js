@@ -420,6 +420,21 @@ export async function ensureAllTables() {
         FOREIGN KEY (id_hallazgo) REFERENCES hallazgos (id_hallazgo)
       );
     `);
+
+    await db.exec(`
+    CREATE TABLE IF NOT EXISTS posibles_coincidencias (
+      id_posible_coincidencia INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_ficha INTEGER NOT NULL,
+      id_hallazgo INTEGER NOT NULL,
+      puntaje INTEGER NOT NULL,
+      criterios_match TEXT,
+      fecha_creacion TEXT NOT NULL DEFAULT (datetime('now')),
+      estado_revision TEXT NOT NULL DEFAULT 'pendiente',
+      comentarios_admin TEXT,
+      FOREIGN KEY (id_ficha) REFERENCES fichas_desaparicion (id_ficha),
+      FOREIGN KEY (id_hallazgo) REFERENCES hallazgos (id_hallazgo)
+    );
+`);
     
     await db.exec(`
       CREATE TABLE IF NOT EXISTS pagos (

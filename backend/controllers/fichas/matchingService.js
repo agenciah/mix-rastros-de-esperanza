@@ -1,10 +1,10 @@
-// backend/services/matchingService.js
+// backend/controllers/fichas/matchingService.js
 
 import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 import { sendMatchNotification } from '../../utils/emailService.js';
 import { getFichaCompletaById, getAllHallazgosCompletos } from '../../db/queries/fichasAndHallazgosQueries.js';
-import { insertSystemNotification } from '../../db/queries/messagingQueries.js'; // <- Crearemos esta función
+import { insertSystemNotification, insertPossibleMatch } from '../../db/queries/messagingQueries.js';
 
 /**
  * Busca posibles coincidencias entre una nueva ficha de desaparición y los hallazgos existentes.
@@ -16,6 +16,7 @@ export async function findMatchesForFicha(fichaData) {
     
     try {
         const { id_ficha, ubicacion_desaparicion, rasgos_fisicos, vestimenta } = fichaData;
+        const db = await openDb();
 
         // 1. Obtener los datos completos de la ficha para la notificación
         const fichaCompleta = await getFichaCompletaById(id_ficha);
@@ -63,6 +64,14 @@ export async function findMatchesForFicha(fichaData) {
                     matchedCriteria.push(...vestimentaScore.criteria);
                 }
             }
+            
+            // Coincidencia por Nombre
+            // Puedes agregar esta lógica para darle mayor peso
+            const nameScore = checkNameMatch(fichaCompleta, hallazgo);
+            if (nameScore.score > 0) {
+                score += nameScore.score;
+                matchedCriteria.push(...nameScore.criteria);
+            }
 
             if (score > 0) {
                 matches.push({
@@ -79,6 +88,16 @@ export async function findMatchesForFicha(fichaData) {
 
         // Filtrar para obtener solo los mejores 10 matches
         const topMatches = matches.slice(0, 10);
+
+        // ===========================================
+        // 🚨 NUEVA LÓGICA: GUARDAR LAS POSIBLES COINCIDENCIAS EN LA DB
+        // ===========================================
+        for (const match of topMatches) {
+            await insertPossibleMatch(db, id_ficha, match.id_hallazgo, match.score, match.matchedCriteria);
+        }
+        logger.info(`✅ ${topMatches.length} posibles coincidencias guardadas para la ficha ${id_ficha}`);
+        // ===========================================
+
 
         // Enviar notificaciones a los usuarios que reportaron los hallazgos
         await notifyMatchedUsers(topMatches, fichaCompleta.nombre);
@@ -100,7 +119,6 @@ function checkLocationMatch(ubicacionFicha, hallazgo) {
     let score = 0;
     let criteria = [];
 
-    // ✅ La lógica ya está correcta, ya que ahora 'hallazgo' trae los campos 'estado', 'municipio', etc.
     if (ubicacionFicha.estado === hallazgo.estado) {
         score += 50;
         criteria.push('Coincidencia de Estado');
@@ -140,7 +158,7 @@ function checkRasgosMatch(rasgosFicha, rasgosHallazgo) {
             rh.tipo_rasgo === rasgoFicha.tipo_rasgo
         );
         if (matchedRasgo) {
-            score += 30; // Puntos por cada rasgo que coincide en parte del cuerpo y tipo
+            score += 30;
             criteria.push(`Coincidencia de Rasgo Físico: ${matchedRasgo.nombre_parte}`);
         }
     }
@@ -158,10 +176,10 @@ function checkVestimentaMatch(vestimentaFicha, vestimentaHallazgo) {
     for (const prendaFicha of vestimentaFicha) {
         const matchedPrenda = vestimentaHallazgo.find(ph => 
             ph.id_prenda === prendaFicha.id_prenda &&
-            (prendaFicha.color && ph.color.toLowerCase() === prendaFicha.color.toLowerCase())
+            (prendaFicha.color && ph.color && ph.color.toLowerCase() === prendaFicha.color.toLowerCase())
         );
         if (matchedPrenda) {
-            score += 20; // Puntos por cada prenda que coincide en tipo y color
+            score += 20;
             criteria.push(`Coincidencia de Vestimenta: ${matchedPrenda.tipo_prenda}`);
         }
     }
@@ -170,19 +188,33 @@ function checkVestimentaMatch(vestimentaFicha, vestimentaHallazgo) {
 }
 
 /**
+ * Lógica para verificar la coincidencia de nombre.
+ */
+function checkNameMatch(ficha, hallazgo) {
+    let score = 0;
+    let criteria = [];
+    
+    const fichaNombreCompleto = `${ficha.nombre} ${ficha.apellido_paterno}`.toLowerCase();
+    const hallazgoNombreCompleto = `${hallazgo.nombre} ${hallazgo.apellido_paterno}`.toLowerCase();
+    
+    if (fichaNombreCompleto === hallazgoNombreCompleto) {
+        score += 500;
+        criteria.push('Coincidencia de Nombre Exacta');
+    } else if (ficha.nombre.toLowerCase() === hallazgo.nombre.toLowerCase()) {
+        score += 100;
+        criteria.push('Coincidencia en el Primer Nombre');
+    }
+    
+    return { score, criteria };
+}
+
+/**
  * Notifica a los usuarios de los hallazgos coincidentes.
  */
-async function notifyMatchedUsers(matches, fichaCompleta) {
+async function notifyMatchedUsers(matches, nombreFicha) {
     const db = await openDb();
     const notifiedUsers = new Set();
     
-    // Obtener los datos del creador de la ficha
-    const usuarioFicha = await db.get('SELECT email, nombre FROM users WHERE id = ?', [fichaCompleta.id_usuario_creador]);
-    if (!usuarioFicha) {
-        logger.warn(`Usuario creador de ficha ${fichaCompleta.id_usuario_creador} no encontrado.`);
-        return;
-    }
-
     for (const match of matches) {
         const idUsuarioHallazgo = match.id_usuario_reporte;
         if (!notifiedUsers.has(idUsuarioHallazgo)) {
@@ -190,19 +222,18 @@ async function notifyMatchedUsers(matches, fichaCompleta) {
             if (usuarioHallazgo) {
                 // 1. Enviar el correo electrónico
                 const subject = `🚨 ¡Posible coincidencia encontrada!`;
-                const message = `Hemos encontrado una posible coincidencia para el hallazgo que reportaste, con la ficha de búsqueda de ${fichaCompleta.nombre}. Por favor, revisa tu cuenta para más detalles.`;
+                const message = `Hola ${usuarioHallazgo.nombre},\n\nHemos encontrado una posible coincidencia para el hallazgo que reportaste, con la ficha de búsqueda de ${nombreFicha}. Por favor, revisa tu cuenta para más detalles.\n\nSaludos,\nEl equipo de Rastros de Esperanza.`;
                 await sendMatchNotification(usuarioHallazgo.email, subject, message);
 
                 // 2. Insertar notificación en la base de datos
-                const systemUserId = 1; // Suponiendo que el ID 1 es el usuario del sistema
-                const notificationContent = `Se ha encontrado una **posible coincidencia** con el reporte que hiciste. Por favor, revisa la ficha de ${fichaCompleta.nombre} para ver los detalles y decidir si es un match.`;
+                const notificationContent = `Se ha encontrado una **posible coincidencia** con el reporte que hiciste. Por favor, revisa la ficha de ${nombreFicha} para ver los detalles y decidir si es un match.`;
                 
                 await insertSystemNotification(
-                    idUsuarioHallazgo, // ID del usuario que recibe la notificacion
+                    idUsuarioHallazgo,
                     notificationContent,
-                    'match_found', // Tipo de notificación
-                    fichaCompleta.id_ficha, // ID de la ficha que hizo match
-                    match.id_hallazgo // ID del hallazgo que hizo match
+                    'match_found',
+                    match.id_ficha,
+                    match.id_hallazgo
                 );
                 
                 notifiedUsers.add(idUsuarioHallazgo);
@@ -210,6 +241,7 @@ async function notifyMatchedUsers(matches, fichaCompleta) {
         }
     }
 }
+
 
 /**
  * Función para calcular la distancia entre dos puntos geográficos (fórmula de Haversine).

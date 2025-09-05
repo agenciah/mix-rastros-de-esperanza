@@ -7,6 +7,11 @@ import { loginAdmin } from '../controllers/admin/loginAdminController.js';
 import { authenticateAdminToken } from '../middleware/adminAuthMiddleware.js';
 import fichasRoutes from './admin/fichasAdmin.js';
 import hallazgosRoutes from './admin/hallazgosAdmin.js';
+import { 
+    getRecentMatches, 
+    getMatchDetail, 
+    updateMatchReviewStatus 
+} from '../controllers/admin/adminMatchesController.js';
 
 const router = express.Router();
 
@@ -24,5 +29,12 @@ router.get('/estadisticas', authenticateAdminToken, obtenerEstadisticas);
 router.use('/fichas', fichasRoutes);
 // 🆕 Monta el nuevo router de hallazgos
 router.use('/hallazgos', hallazgosRoutes);
+
+// =============================
+// Rutas para la Sección de Coincidencias
+// =============================
+router.get('/matches', getRecentMatches);
+router.get('/matches/:id_coincidencia', getMatchDetail);
+router.put('/matches/:id_coincidencia/review', updateMatchReviewStatus);
 
 export default router;

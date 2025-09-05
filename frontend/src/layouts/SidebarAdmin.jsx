@@ -12,11 +12,11 @@ const SidebarAdmin = () => {
   const links = [
     { to: "/admin", label: "Vista General" },
     { to: "/admin/usuarios", label: "Editor de Usuarios" },
-    { to: "/admin/estadisticas", label: "Estadísticas" },
     { to: "/admin/fichas", label: "Administrar Fichas" },
     { to: "/admin/hallazgos", label: "Administrar Hallazgos" },
     { to: "/admin/configuracion", label: "Configuración" },
     { to: "/admin/historial", label: "Historial de Movimientos" },
+    { to: "/admin/matches", label: "Coincidencias" },
   ];
 
   

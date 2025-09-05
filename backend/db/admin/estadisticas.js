@@ -2,44 +2,84 @@ import { openDb } from '../users/initDb.js';
 import { plans } from '../../shared/planes.js'; // Importamos el listado de planes con precios
 
 /**
- * Obtiene el ingreso total acumulado de todas las facturas de servicio.
- * @returns {Promise<number>} El total de ingresos.
+ * Obtiene el total de usuarios registrados.
+ * @returns {Promise<number>} El total de usuarios.
  */
-export async function getTotalIngresos() {
+export async function getTotalUsuarios() {
   const db = await openDb();
-  // Sumamos el monto de todas las facturas que no están pendientes
-  const { total } = await db.get(`SELECT SUM(monto) as total FROM facturas_servicio WHERE estatus != 'Pendiente'`);
+  const { total } = await db.get(`SELECT COUNT(*) as total FROM users`);
   return total || 0;
 }
 
 /**
- * Obtiene el total de ingresos por mes.
+ * Obtiene el total de fichas de búsqueda.
+ * @returns {Promise<number>} El total de fichas.
+ */
+export async function getTotalFichas() {
+  const db = await openDb();
+  const { total } = await db.get(`SELECT COUNT(*) as total FROM fichas_desaparicion`);
+  return total || 0;
+}
+
+/**
+ * Obtiene el total de hallazgos.
+ * @returns {Promise<number>} El total de hallazgos.
+ */
+export async function getTotalHallazgos() {
+  const db = await openDb();
+  const { total } = await db.get(`SELECT COUNT(*) as total FROM hallazgos`);
+  return total || 0;
+}
+
+/**
+ * Obtiene el total de ingresos confirmados.
+ * @returns {Promise<number>} El total de ingresos.
+ */
+export async function getTotalIngresosConfirmados() {
+  const db = await openDb();
+  const { total } = await db.get(`SELECT SUM(monto) as total FROM pagos WHERE estado_pago = 'confirmado'`);
+  return total || 0;
+}
+
+/**
+ * Obtiene el total de ingresos pendientes.
+ * @returns {Promise<number>} El total de ingresos pendientes.
+ */
+export async function getTotalIngresosPendientes() {
+  const db = await openDb();
+  const { total } = await db.get(`SELECT SUM(monto) as total FROM pagos WHERE estado_pago = 'pendiente'`);
+  return total || 0;
+}
+
+/**
+ * Obtiene el total de ingresos por mes (pagos confirmados).
  * @returns {Promise<Array<Object>>} Un array con el ingreso total por mes y año.
  */
-export async function getIngresosPorMes() {
+export async function getIngresosConfirmadosPorMes() {
   const db = await openDb();
   return db.all(`
     SELECT
-      strftime('%Y-%m', fecha_emision) as mes,
+      strftime('%Y-%m', fecha_pago) as mes,
       SUM(monto) as total
-    FROM facturas_servicio
-    WHERE estatus != 'Pendiente'
+    FROM pagos
+    WHERE estado_pago = 'confirmado'
     GROUP BY mes
     ORDER BY mes ASC
   `);
 }
 
 /**
- * Obtiene el número de nuevos usuarios registrados por mes.
- * @returns {Promise<Array<Object>>} Un array con el número de usuarios nuevos por mes y año.
+ * Obtiene el total de ingresos pendientes por mes.
+ * @returns {Promise<Array<Object>>} Un array con los ingresos totales pendientes por mes.
  */
-export async function getNuevosUsuariosPorMes() {
+export async function getIngresosPendientesPorMes() {
   const db = await openDb();
   return db.all(`
     SELECT
-      strftime('%Y-%m', trial_start_date) as mes,
-      COUNT(*) as total
-    FROM users
+      strftime('%Y-%m', fecha_pago) as mes,
+      SUM(monto) as total
+    FROM pagos
+    WHERE estado_pago = 'pendiente'
     GROUP BY mes
     ORDER BY mes ASC
   `);
@@ -87,24 +127,17 @@ export async function getTotalIngresosSuscripciones() {
 }
 
 /**
- * Obtiene el número de usuarios dados de baja por mes.
- * @returns {Promise<Array<Object>>} Un array con la cuenta de cancelaciones por mes.
+ * Obtiene el total de coincidencias confirmadas.
+ * @returns {Promise<number>} El total de coincidencias.
  */
-export async function getCancelacionesPorMes() {
+export async function getTotalCoincidencias() {
   const db = await openDb();
-  return db.all(`
-    SELECT
-      strftime('%Y-%m', cancelacion_efectiva) as mes,
-      COUNT(*) as total
-    FROM users
-    WHERE cancelado = 1
-    GROUP BY mes
-    ORDER BY mes ASC
-  `);
+  const { total } = await db.get(`SELECT COUNT(*) as total FROM coincidencias_confirmadas`);
+  return total || 0;
 }
 
 /**
- * Obtiene el número total de usuarios dados de baja.
+ * Obtiene el total de usuarios dados de baja.
  * @returns {Promise<number>} El total de cancelaciones.
  */
 export async function getTotalCancelaciones() {

@@ -1,45 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   PieChart,
   Pie,
   Cell,
   ResponsiveContainer,
   Tooltip,
-  Legend
+  Legend,
+  BarChart,
+  XAxis,
+  YAxis,
+  Bar,
+  CartesianGrid
 } from 'recharts';
 import apiAdmin from '../../lib/axiosAdmin';
 import { toast } from 'sonner';
 import { PLANES } from '../../constants/planes';
-import { format } from 'date-fns';
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7f50', '#00C49F', '#FF8042'];
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState({
+    totalUsuarios: 0,
+    totalFichas: 0,
+    totalHallazgos: 0,
+    totalCoincidencias: 0,
+    ingresosConfirmados: 0,
+    ingresosPendientes: 0,
+    totalCancelaciones: 0,
     usuariosPorPlan: [],
-    ticketsEstado: { facturados: 0, pendientes: 0 },
-    facturasPendientes: [],
-    nuevosUsuarios: 0,
-    cancelaciones: 0,
-    totalIngresosSuscripciones: 0, // Nuevo estado para los ingresos
+    ingresosConfirmadosPorMes: [],
+    ingresosPendientesPorMes: [],
   });
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        // Llamamos al nuevo endpoint del dashboard
-        const res = await apiAdmin.get('/dashboard');
+        // Llama al nuevo endpoint de estadísticas del admin
+        const res = await apiAdmin.get('/estadisticas');
         const {
+          totalUsuarios,
+          totalFichas,
+          totalHallazgos,
+          ingresos,
           usuariosPorPlan,
-          ticketsEstado,
-          facturasPendientes,
-          nuevosUsuarios,
-          cancelaciones,
-          totalIngresosSuscripciones, // Se obtiene el nuevo dato de la respuesta
+          totalCoincidencias,
+          totalCancelaciones
         } = res.data;
 
         // Mapeamos los nombres de los planes para la gráfica de pastel
@@ -52,13 +60,18 @@ export default function Dashboard() {
         });
 
         setDashboardData({
+          totalUsuarios,
+          totalFichas,
+          totalHallazgos,
+          totalCoincidencias,
+          ingresosConfirmados: ingresos.confirmados,
+          ingresosPendientes: ingresos.pendientes,
+          totalCancelaciones,
           usuariosPorPlan: planesMapeados,
-          ticketsEstado,
-          facturasPendientes,
-          nuevosUsuarios,
-          cancelaciones,
-          totalIngresosSuscripciones,
+          ingresosConfirmadosPorMes: ingresos.confirmadosPorMes,
+          ingresosPendientesPorMes: ingresos.pendientesPorMes,
         });
+
       } catch (error) {
         console.error('Error al obtener los datos del dashboard:', error);
         toast.error('No se pudieron cargar los datos del dashboard.');
@@ -85,55 +98,118 @@ export default function Dashboard() {
 
       {/* Resumen General */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Nueva tarjeta para el total de ingresos */}
+        {/* Total de Usuarios */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Ingresos recurrentes</CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Usuarios</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold">{formatCurrency(dashboardData.totalIngresosSuscripciones)}</div>
+            <div className="text-4xl font-bold">{dashboardData.totalUsuarios}</div>
           </CardContent>
         </Card>
-        {/* --- */}
+
+        {/* Total de Fichas */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Nuevos Usuarios (últimos 30 días)</CardTitle>
+            <CardTitle className="text-sm font-medium">Fichas de Búsqueda</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold">{dashboardData.nuevosUsuarios}</div>
+            <div className="text-4xl font-bold">{dashboardData.totalFichas}</div>
           </CardContent>
         </Card>
+
+        {/* Total de Hallazgos */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Cancelaciones (últimos 30 días)</CardTitle>
+            <CardTitle className="text-sm font-medium">Hallazgos Registrados</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold">{dashboardData.cancelaciones}</div>
+            <div className="text-4xl font-bold">{dashboardData.totalHallazgos}</div>
           </CardContent>
         </Card>
+
+        {/* Total de Coincidencias */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Tickets de Facturación</CardTitle>
+            <CardTitle className="text-sm font-medium">Coincidencias Confirmadas</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <Badge variant="default" className="bg-green-500 hover:bg-green-600">Facturados</Badge>
-              <div className="text-2xl font-bold">{dashboardData.ticketsEstado.facturados}</div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="default" className="bg-yellow-500 hover:bg-yellow-600">Pendientes</Badge>
-              <div className="text-2xl font-bold">{dashboardData.ticketsEstado.pendientes}</div>
-            </div>
+          <CardContent>
+            <div className="text-4xl font-bold">{dashboardData.totalCoincidencias}</div>
           </CardContent>
         </Card>
-        <Card className="lg:col-span-2">
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Ingresos Totales */}
+        <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Usuarios por Plan</CardTitle>
+            <CardTitle className="text-sm font-medium">Ingresos Confirmados</CardTitle>
           </CardHeader>
-          <CardContent className="h-40">
+          <CardContent>
+            <div className="text-4xl font-bold">{formatCurrency(dashboardData.ingresosConfirmados)}</div>
+          </CardContent>
+        </Card>
+
+        {/* Ingresos Pendientes */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Ingresos Pendientes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-bold">{formatCurrency(dashboardData.ingresosPendientes)}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Gráficos de Ingresos Mensuales */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl font-bold">Ingresos Confirmados por Mes</CardTitle>
+          </CardHeader>
+          <CardContent className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={dashboardData.ingresosConfirmadosPorMes}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="mes" />
+                <YAxis />
+                <Tooltip formatter={(value) => formatCurrency(value)} />
+                <Legend />
+                <Bar dataKey="total" name="Ingresos" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl font-bold">Ingresos Pendientes por Mes</CardTitle>
+          </CardHeader>
+          <CardContent className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={dashboardData.ingresosPendientesPorMes}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="mes" />
+                <YAxis />
+                <Tooltip formatter={(value) => formatCurrency(value)} />
+                <Legend />
+                <Bar dataKey="total" name="Ingresos" fill="#82ca9d" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Gráfico de pastel de usuarios por plan */}
+      <div className="mt-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl font-bold">Usuarios por Plan</CardTitle>
+          </CardHeader>
+          <CardContent className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={dashboardData.usuariosPorPlan} dataKey="value" nameKey="name" outerRadius={60} label>
+                <Pie data={dashboardData.usuariosPorPlan} dataKey="value" nameKey="name" outerRadius={100} label>
                   {dashboardData.usuariosPorPlan.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
@@ -142,49 +218,6 @@ export default function Dashboard() {
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Tabla de Facturas de Servicio Pendientes */}
-      <div className="mt-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-bold">Facturas de servicio pendientes</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {dashboardData.facturasPendientes.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Usuario
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Monto
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Fecha de Emisión
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {dashboardData.facturasPendientes.map((factura) => (
-                      <tr key={factura.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{factura.nombre_usuario}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${factura.monto}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {format(new Date(factura.fecha_emision), 'dd/MM/yyyy')}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className="text-gray-500 text-center py-4">No hay facturas de servicio pendientes.</p>
-            )}
           </CardContent>
         </Card>
       </div>

@@ -196,3 +196,59 @@ export const getAllHallazgosCatalogos = async () => {
         throw error;
     }
 };
+/**
+ * Obtiene un hallazgo completo por su ID, incluyendo sus rasgos y vestimenta.
+ * @param {number} id - El ID del hallazgo a buscar.
+ * @returns {Promise<object | null>} - El hallazgo completo o null si no se encuentra.
+ */
+export const getHallazgoCompletoById = async (id) => {
+    const db = await openDb();
+
+    // Consulta principal del hallazgo
+    const hallazgoSql = `
+        SELECT
+            h.id_hallazgo, h.id_usuario_creador, h.estado_hallazgo, h.fecha_hallazgo,
+            json_object(
+                'id_ubicacion', u.id_ubicacion, 'estado', u.estado, 'municipio', u.municipio,
+                'localidad', u.localidad, 'calle', u.calle, 'referencias', u.referencias,
+                'latitud', u.latitud, 'longitud', u.longitud, 'codigo_postal', u.codigo_postal
+            ) AS ubicacion_hallazgo_json
+        FROM hallazgos AS h
+        LEFT JOIN ubicaciones AS u ON h.id_ubicacion_hallazgo = u.id_ubicacion
+        WHERE h.id_hallazgo = ?;
+    `;
+    const hallazgoResult = await db.get(hallazgoSql, [id]);
+
+    if (!hallazgoResult) {
+        return null;
+    }
+    
+    // Consultas para los detalles de características y vestimenta
+    const rasgosSql = `
+        SELECT hrf.*, cpc.nombre_parte AS nombre_parte_cuerpo
+        FROM hallazgo_caracteristicas AS hrf
+        LEFT JOIN catalogo_partes_cuerpo AS cpc ON hrf.id_parte_cuerpo = cpc.id_parte_cuerpo
+        WHERE hrf.id_hallazgo = ?;
+    `;
+
+    const vestimentaSql = `
+        SELECT hv.*, cp.tipo_prenda AS tipo_prenda_nombre
+        FROM hallazgo_vestimenta AS hv
+        LEFT JOIN catalogo_prendas AS cp ON hv.id_prenda = cp.id_prenda
+        WHERE hv.id_hallazgo = ?;
+    `;
+
+    const rasgos = await db.all(rasgosSql, [id]);
+    const vestimenta = await db.all(vestimentaSql, [id]);
+
+    const hallazgoCompleto = {
+        ...hallazgoResult,
+        ubicacion_hallazgo: JSON.parse(hallazgoResult.ubicacion_hallazgo_json),
+        rasgos_fisicos: rasgos,
+        vestimenta: vestimenta
+    };
+
+    delete hallazgoCompleto.ubicacion_hallazgo_json;
+
+    return hallazgoCompleto;
+};

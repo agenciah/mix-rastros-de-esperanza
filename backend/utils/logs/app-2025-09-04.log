@@ -769,3 +769,89 @@
 [2025-09-04 17:58:12] INFO: 🚀 Servidor corriendo en http://localhost:3001
 [2025-09-04 18:07:18] INFO: 🚀 Servidor corriendo en http://localhost:3001
 [2025-09-04 18:07:36] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 18:43:10] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 18:43:26] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 18:43:38] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 18:48:01] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 18:51:19] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 18:51:47] INFO: → GET /api/admin/dashboard
+[2025-09-04 18:51:47] INFO: → GET /api/admin/dashboard
+[2025-09-04 18:51:47] INFO: → GET /api/admin/dashboard
+[2025-09-04 18:51:47] INFO: → GET /api/admin/dashboard
+[2025-09-04 18:51:51] INFO: → GET /api/admin/usuarios
+[2025-09-04 18:51:51] INFO: → GET /api/admin/usuarios
+[2025-09-04 18:51:51] INFO: → GET /api/admin/usuarios
+[2025-09-04 18:51:51] INFO: → GET /api/admin/usuarios
+[2025-09-04 18:51:52] INFO: → GET /api/admin/dashboard
+[2025-09-04 18:51:52] INFO: → GET /api/admin/dashboard
+[2025-09-04 18:51:52] INFO: → GET /api/admin/dashboard
+[2025-09-04 18:51:52] INFO: → GET /api/admin/dashboard
+[2025-09-04 18:52:25] INFO: → GET /api/admin/estadisticas
+[2025-09-04 18:52:25] INFO: → GET /api/admin/estadisticas
+[2025-09-04 18:52:25] INFO: → GET /api/admin/estadisticas
+[2025-09-04 18:52:25] INFO: → GET /api/admin/estadisticas
+[2025-09-04 18:52:27] INFO: → GET /api/admin/dashboard
+[2025-09-04 18:52:27] INFO: → GET /api/admin/dashboard
+[2025-09-04 18:52:27] INFO: → GET /api/admin/dashboard
+[2025-09-04 18:52:27] INFO: → GET /api/admin/dashboard
+[2025-09-04 18:56:05] INFO: → GET /api/admin/estadisticas
+[2025-09-04 18:56:05] INFO: → GET /api/admin/estadisticas
+[2025-09-04 18:56:14] INFO: → GET /api/admin/usuarios
+[2025-09-04 18:56:14] INFO: → GET /api/admin/usuarios
+[2025-09-04 18:56:14] INFO: → GET /api/admin/usuarios
+[2025-09-04 18:56:14] INFO: → GET /api/admin/usuarios
+[2025-09-04 18:56:15] INFO: → GET /api/admin/estadisticas
+[2025-09-04 18:56:15] INFO: → GET /api/admin/estadisticas
+[2025-09-04 18:56:15] INFO: → GET /api/admin/estadisticas
+[2025-09-04 18:56:15] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:04:04] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 19:10:06] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 19:10:08] INFO: → GET /api/admin/usuarios
+[2025-09-04 19:10:08] INFO: → GET /api/admin/usuarios
+[2025-09-04 19:10:08] INFO: → GET /api/admin/usuarios
+[2025-09-04 19:10:08] INFO: → GET /api/admin/usuarios
+[2025-09-04 19:10:09] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:10:09] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:10:09] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:10:09] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:10:15] INFO: → GET /api/admin/usuarios
+[2025-09-04 19:10:15] INFO: → GET /api/admin/usuarios
+[2025-09-04 19:10:15] INFO: → GET /api/admin/usuarios
+[2025-09-04 19:10:15] INFO: → GET /api/admin/usuarios
+[2025-09-04 19:10:15] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:10:15] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:10:15] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:10:15] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:14:35] INFO: → GET /api/admin/usuarios
+[2025-09-04 19:14:35] INFO: → GET /api/admin/usuarios
+[2025-09-04 19:14:35] INFO: → GET /api/admin/usuarios
+[2025-09-04 19:14:35] INFO: → GET /api/admin/usuarios
+[2025-09-04 19:14:36] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:14:36] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:14:36] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:14:36] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:14:40] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:14:40] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:14:40] INFO: → GET /api/admin/estadisticas
+[2025-09-04 19:14:40] INFO: → GET /api/admin/estadisticas
+[2025-09-04 22:02:17] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 22:04:10] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 22:04:17] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 22:04:39] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 22:06:00] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 22:06:09] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 22:10:28] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-04 22:45:02] INFO: → GET /api/admin/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:45:02] INFO: → GET /api/admin/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:45:02] INFO: → GET /api/admin/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:45:02] INFO: → GET /api/admin/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:45:20] INFO: → GET /api/admin/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:45:20] INFO: → GET /api/admin/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:45:20] INFO: → GET /api/admin/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:45:20] INFO: → GET /api/admin/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:46:49] INFO: → GET /api/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:46:49] INFO: → GET /api/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:48:30] INFO: → GET /api/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:48:30] INFO: → GET /api/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:48:30] INFO: → GET /api/admin/matches?page=1&limit=10&status=all
+[2025-09-04 22:48:30] INFO: → GET /api/admin/matches?page=1&limit=10&status=all

@@ -165,3 +165,29 @@ export async function getOrCreateConversation(user1Id, user2Id) {
         throw error;
     }
 }
+
+// ===========================================
+// 🚨 NUEVA FUNCIÓN: INSERTAR POSIBLE COINCIDENCIA
+// ===========================================
+
+/**
+ * Inserta una posible coincidencia en la base de datos para auditoría.
+ * @param {object} db - Instancia de la base de datos.
+ * @param {number} id_ficha - ID de la ficha de desaparición.
+ * @param {number} id_hallazgo - ID del hallazgo.
+ * @param {number} puntaje - Puntuación de la coincidencia.
+ * @param {Array<string>} criterios_match - Lista de criterios que coincidieron.
+ */
+export async function insertPossibleMatch(db, id_ficha, id_hallazgo, puntaje, criterios_match) {
+    try {
+        const result = await db.run(`
+            INSERT INTO posibles_coincidencias (id_ficha, id_hallazgo, puntaje, criterios_match)
+            VALUES (?, ?, ?, ?)
+        `, [id_ficha, id_hallazgo, puntaje, JSON.stringify(criterios_match)]);
+        
+        return result.lastID;
+    } catch (error) {
+        logger.error(`Error al insertar posible coincidencia: ${error.message}`);
+        throw error;
+    }
+}

@@ -1,47 +1,50 @@
 import {
-  getTotalIngresos,
-  getIngresosPorMes,
-  getNuevosUsuariosPorMes,
+  getTotalUsuarios,
+  getTotalFichas,
+  getTotalHallazgos,
+  getTotalIngresosConfirmados,
+  getTotalIngresosPendientes,
+  getIngresosConfirmadosPorMes,
+  getIngresosPendientesPorMes,
   getUsuariosPorPlan,
-  getCancelacionesPorMes,
-  getTotalCancelaciones,
-  getTotalIngresosSuscripciones // Importamos la nueva función
+  getTotalCoincidencias,
+  getTotalCancelaciones
 } from '../../db/admin/estadisticas.js';
 
 /**
- * Obtiene todos los datos estadísticos para el componente de Estadísticas.
+ * Controlador para obtener todas las estadísticas del dashboard de admin.
  */
 export async function obtenerEstadisticas(req, res) {
   try {
-    const [
-      totalIngresos,
-      ingresosPorMes,
-      nuevosUsuariosPorMes,
-      usuariosPorPlan,
-      cancelacionesPorMes,
-      totalCancelaciones,
-      totalIngresosSuscripciones // Agregamos la nueva función al Promise.all
-    ] = await Promise.all([
-      getTotalIngresos(),
-      getIngresosPorMes(),
-      getNuevosUsuariosPorMes(),
-      getUsuariosPorPlan(),
-      getCancelacionesPorMes(),
-      getTotalCancelaciones(),
-      getTotalIngresosSuscripciones() // La llamamos aquí
-    ]);
+    const totalUsuarios = await getTotalUsuarios();
+    const totalFichas = await getTotalFichas();
+    const totalHallazgos = await getTotalHallazgos();
+    const ingresosConfirmados = await getTotalIngresosConfirmados();
+    const ingresosPendientes = await getTotalIngresosPendientes();
+    const ingresosConfirmadosPorMes = await getIngresosConfirmadosPorMes();
+    const ingresosPendientesPorMes = await getIngresosPendientesPorMes();
+    const usuariosPorPlan = await getUsuariosPorPlan();
+    const totalCoincidencias = await getTotalCoincidencias();
+    const totalCancelaciones = await getTotalCancelaciones();
 
+    // Devuelve un objeto JSON con todas las métricas
     res.json({
-      totalIngresos,
-      ingresosPorMes,
-      nuevosUsuariosPorMes,
+      totalUsuarios,
+      totalFichas,
+      totalHallazgos,
+      ingresos: {
+        confirmados: ingresosConfirmados,
+        pendientes: ingresosPendientes,
+        confirmadosPorMes: ingresosConfirmadosPorMes,
+        pendientesPorMes: ingresosPendientesPorMes,
+      },
       usuariosPorPlan,
-      cancelacionesPorMes,
-      totalCancelaciones,
-      totalIngresosSuscripciones // La enviamos en la respuesta
+      totalCoincidencias,
+      totalCancelaciones
     });
+
   } catch (error) {
-    console.error('❌ Error al obtener las estadísticas:', error);
-    res.status(500).json({ error: 'Error al obtener las estadísticas' });
+    console.error('Error al obtener estadísticas del admin:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 }
