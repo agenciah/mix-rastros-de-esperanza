@@ -537,3 +537,41 @@ export const searchHallazgosByKeyword = async (searchTerm = '', limit = 20, offs
         throw error;
     }
 };
+
+/**
+ * Obtiene una lista paginada de fichas públicas para el feed principal.
+ * @param {number} limit - El número de fichas a devolver.
+ * @param {number} offset - El punto de inicio para la paginación.
+ * @returns {Promise<Array<object>>} - Un array de fichas para el feed.
+ */
+export const getAllPublicFichas = async (limit = 10, offset = 0) => {
+    const db = await openDb();
+    const sql = `
+        SELECT
+            fd.id_ficha,
+            fd.nombre,
+            fd.segundo_nombre,
+            fd.apellido_paterno,
+            fd.apellido_materno,
+            fd.fecha_desaparicion,
+            fd.foto_perfil,
+            fd.genero,
+            fd.edad_estimada,
+            u.estado,
+            u.municipio
+        FROM fichas_desaparicion AS fd
+        LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
+        WHERE
+            fd.estado_ficha = 'activa' 
+        ORDER BY fd.fecha_desaparicion DESC
+        LIMIT ? OFFSET ?;
+    `;
+    
+    try {
+        const fichas = await db.all(sql, [limit, offset]);
+        return fichas;
+    } catch (error) {
+        logger.error(`❌ Error al obtener las fichas públicas: ${error.message}`);
+        throw error;
+    }
+};

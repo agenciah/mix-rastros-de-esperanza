@@ -11,6 +11,7 @@ import {
     obtenerCatalogoTiposLugar,
     obtenerCatalogoPartesCuerpo,
     obtenerCatalogoPrendas,
+    getPublicFichasFeed
 } from '../controllers/fichas/fichasController.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 import logger from '../utils/logger.js';
@@ -27,8 +28,9 @@ router.use((req, res, next) => {
 // POST /api/fichas/
 router.post('/', authenticateToken, createFichaDesaparicion);
 
-// GET /api/fichas/
-// GET /api/fichas/
+// GET /api/fichas/publicas
+router.get('/publicas', getPublicFichasFeed);
+
 // GET /api/fichas/ - Obtener todas las fichas
 router.get('/', authenticateToken, getAllFichas);
 

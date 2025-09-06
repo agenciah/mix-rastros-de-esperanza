@@ -3,7 +3,7 @@
 import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 import { findMatchesForFicha } from './matchingService.js';
-import { getFichaCompletaById } from '../../db/queries/fichasAndHallazgosQueries.js';
+import { getFichaCompletaById, getAllPublicFichas } from '../../db/queries/fichasAndHallazgosQueries.js';
 
 /**
  * @fileoverview Controlador para la gestión de Fichas de Desaparición.
@@ -508,5 +508,25 @@ export const obtenerCatalogoPrendas = async (req, res) => {
     } catch (error) {
         logger.error(`❌ Error al obtener catálogo de prendas: ${error.message}`);
         res.status(500).json({ success: false, message: 'Error interno del servidor' });
+    }
+};
+
+/**
+ * Obtiene las fichas públicas para el feed principal de forma paginada.
+ * No requiere autenticación.
+ */
+export const getPublicFichasFeed = async (req, res) => {
+    try {
+        // Obtenemos limit y offset de la URL, con valores por defecto
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = parseInt(req.query.offset) || 0;
+
+        const fichas = await getAllPublicFichas(limit, offset);
+        
+        res.json({ success: true, data: fichas });
+
+    } catch (error) {
+        logger.error(`❌ Error al obtener el feed de fichas públicas: ${error.message}`);
+        res.status(500).json({ success: false, message: 'Error al obtener las fichas.' });
     }
 };

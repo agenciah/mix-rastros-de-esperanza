@@ -35,7 +35,8 @@ import HallazgosList from '@/pages/dashboard/hallazgos/hallazgosList';
 import FeedHallazgosList from '@/pages/dashboard/feed/feedHallazgosList';
 import HallazgoDetail from '@/pages/dashboard/hallazgos/HallazgoDetail';
 import Mensajes from '@/pages/dashboard/Mensajes';
-
+import FeedFichasList from '@/pages/dashboard/feed/FeedFichasList';
+import FichaDetail from '@/pages/dashboard/feed/FichaDetail';
 
 const RoutesApp = () => {
   const { user, loading } = useAuth();
@@ -78,6 +79,8 @@ const RoutesApp = () => {
             { path: "hallazgos", element: <HallazgosList /> },
             { path: "hallazgos/crear", element: <HallazgoCreateLayout /> },
             { path: "hallazgos/editar/:id", element: <HallazgoEditLayout /> },
+            { path: "fichas-list", element: <FeedFichasList /> },
+            { path: "fichas-list/:id", element: <FichaDetail /> },
             { path: "configuracion", element: <Configuracion /> },
             { path: "mensajes", element: <Mensajes /> }, // <-- Agrega esta línea
             

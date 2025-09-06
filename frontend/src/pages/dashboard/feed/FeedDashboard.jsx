@@ -2,11 +2,69 @@
 
 import React from 'react';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { useFichasRecientes } from '@/hooks/useFichasRecientes';
 import { Link } from 'react-router-dom';
 
 // Importaciones de los componentes de shadcn/ui
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { FaUser, FaMapMarkerAlt, FaRegCalendarAlt } from 'react-icons/fa';
+
+const FichaCard = ({ ficha }) => {
+    const nombreCompleto = `${ficha.nombre || ''} ${ficha.apellido_paterno || ''}`.trim();
+
+    let fechaFormateada = 'Fecha no disponible';
+    if (ficha.fecha_desaparicion) {
+        try {
+            fechaFormateada = new Date(ficha.fecha_desaparicion).toLocaleDateString('es-MX', {
+                year: 'numeric', month: 'short', day: 'numeric'
+            });
+        } catch (e) {
+            console.error("Fecha inválida:", ficha.fecha_desaparicion);
+        }
+    }
+
+    const ubicacion = `${ficha.municipio || ''}, ${ficha.estado || ''}`.trim().replace(/^,|,$/g, '') || 'Ubicación no disponible';
+
+    const edadGenero = [
+        ficha.edad_estimada ? `${ficha.edad_estimada} años` : null,
+        ficha.genero
+    ].filter(Boolean).join(', ') || 'Datos no disponibles';
+
+    return (
+        <Link to={`/dashboard/fichas-list/${ficha.id_ficha}`} className="h-full block">
+            <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <CardContent className="p-0">
+                    {ficha.foto_perfil ? (
+                        <img 
+                            src={ficha.foto_perfil} 
+                            alt={`Foto de ${nombreCompleto}`} 
+                            className="w-full h-48 object-cover" 
+                        />
+                    ) : (
+                        <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                            <FaUser className="text-gray-400 text-6xl" />
+                        </div>
+                    )}
+                </CardContent>
+                <CardHeader className="flex-grow">
+                    <CardTitle className="text-lg text-blue-800">{nombreCompleto}</CardTitle>
+                    <CardDescription>{edadGenero}</CardDescription>
+                </CardHeader>
+                <CardFooter className="flex flex-col items-start text-xs text-gray-600 space-y-1">
+                    <div className="flex items-center">
+                        <FaMapMarkerAlt className="mr-2 text-gray-400" />
+                        <span>{ubicacion}</span>
+                    </div>
+                    <div className="flex items-center">
+                        <FaRegCalendarAlt className="mr-2 text-gray-400" />
+                        <span>Desaparición: {fechaFormateada}</span>
+                    </div>
+                </CardFooter>
+            </Card>
+        </Link>
+    );
+};
 
 // --- Componentes de Tarjetas ---
 const HallazgoCard = ({ hallazgo }) => {
@@ -68,6 +126,9 @@ const CasoExitoCard = ({ caso }) => (
 // --- Componente Principal ---
 const FeedDashboard = () => {
     const { data, loading, error } = useDashboardData();
+    // 2. LLAMAMOS A AMBOS HOOKS DE FORMA INDEPENDIENTE
+    const { data: dashboardData, loading: dashboardLoading, error: dashboardError } = useDashboardData();
+    const { fichasRecientes, loading: fichasLoading, error: fichasError } = useFichasRecientes();
 
     if (loading) {
         return <div className="text-center py-8">Cargando datos...</div>;
@@ -83,7 +144,7 @@ const FeedDashboard = () => {
         <div className="p-4 md:p-6 space-y-8 bg-gray-50">
             {/* Sección de Estadísticas Globales */}
             <section>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6">
                     <Card className="text-center p-2 md:p-4">
                         <p className="text-xs text-gray-500">Fichas Publicadas</p>
                         <CardTitle className="text-3xl font-bold">{globalStats.totalFichas}</CardTitle>
@@ -97,6 +158,35 @@ const FeedDashboard = () => {
                         <CardTitle className="text-3xl font-bold">{globalStats.casosResueltos}</CardTitle>
                     </Card>
                 </div>
+            </section>
+
+             {/* SECCIÓN DE FICHAS CON SU PROPIO ESTADO DE CARGA Y ERROR */}
+            <section>
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-bold text-gray-800">Últimas Fichas Publicadas</h2>
+                    <Link to="fichas-list" className="text-blue-600 hover:text-blue-800 font-semibold text-sm">
+                        Ver todas →
+                    </Link>
+                </div>
+                {fichasLoading && <p className="text-gray-500">Cargando fichas...</p>}
+                {fichasError && <p className="text-red-500">{fichasError}</p>}
+                {!fichasLoading && !fichasError && (
+                    fichasRecientes.length > 0 ? (
+                        <Carousel className="w-full">
+                            <CarouselContent className="ml-0">
+                                {fichasRecientes.map((ficha) => (
+                                    <CarouselItem key={ficha.id_ficha} className="basis-[250px] md:basis-1/2 lg:basis-1/3 pr-4">
+                                        <FichaCard ficha={ficha} />
+                                    </CarouselItem>
+                                ))}
+                            </CarouselContent>
+                            <CarouselPrevious className="hidden md:flex" />
+                            <CarouselNext className="hidden md:flex" />
+                        </Carousel>
+                    ) : (
+                        <p className="text-gray-500">No hay fichas publicadas recientemente.</p>
+                    )
+                )}
             </section>
 
             {/* Sección de Últimos Hallazgos */}

@@ -687,3 +687,401 @@
 [2025-09-06 08:56:06] INFO: → GET /api/feed/dashboard
 [2025-09-06 08:56:06] INFO: → GET /api/feed/dashboard
 [2025-09-06 08:56:06] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:15:09] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-06 09:15:30] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-06 09:15:37] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-06 09:15:51] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-06 09:15:57] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-06 09:16:58] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-06 09:17:19] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-06 09:27:27] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:27:27] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:27:27] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:27:27] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:27:27] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:27:27] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:27:29] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:27:29] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:27:29] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:27:29] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:27:52] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:27:52] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:27:52] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:27:52] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:27:52] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:27:52] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:27:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:27:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:27:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:27:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:49:22] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:49:22] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:49:22] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:49:22] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:49:50] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:49:50] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:49:50] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:49:50] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:49:50] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:49:50] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:51:22] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:51:22] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:51:22] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:51:22] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:52:40] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-06 09:52:40] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-06 09:52:40] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/?limit=10&offset=0
+[2025-09-06 09:52:40] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 09:52:40] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-06 09:52:40] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-06 09:52:40] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/?limit=10&offset=0
+[2025-09-06 09:52:40] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 09:52:44] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:52:44] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:52:44] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:52:44] INFO: → GET /api/feed/dashboard
+[2025-09-06 09:52:45] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:52:45] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:52:45] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:52:45] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:52:45] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 09:52:45] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:53:47] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-06 10:53:49] INFO: → GET /api/feed/dashboard
+[2025-09-06 10:53:49] INFO: → GET /api/feed/dashboard
+[2025-09-06 10:53:49] INFO: → GET /api/feed/dashboard
+[2025-09-06 10:53:49] INFO: → GET /api/feed/dashboard
+[2025-09-06 10:53:51] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:53:51] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:53:51] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:53:51] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:53:51] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:53:51] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:53:53] INFO: → GET /api/feed/dashboard
+[2025-09-06 10:53:53] INFO: → GET /api/feed/dashboard
+[2025-09-06 10:53:53] INFO: → GET /api/feed/dashboard
+[2025-09-06 10:53:53] INFO: → GET /api/feed/dashboard
+[2025-09-06 10:53:55] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:53:55] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:53:55] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:53:55] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:53:55] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:53:55] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 10:54:00] INFO: → GET /api/feed/dashboard
+[2025-09-06 10:54:00] INFO: → GET /api/feed/dashboard
+[2025-09-06 10:54:00] INFO: → GET /api/feed/dashboard
+[2025-09-06 10:54:00] INFO: → GET /api/feed/dashboard
+[2025-09-06 10:58:44] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-06 10:58:52] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-06 10:58:55] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-06 10:59:09] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-06 11:00:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:00:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:00:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:00:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:00:56] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:00:56] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:00:56] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:00:56] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:00:56] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:00:56] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:00:57] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:00:57] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:00:57] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:00:57] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:00:58] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-06 11:00:58] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-06 11:00:58] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/?limit=10&offset=0
+[2025-09-06 11:00:58] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 11:00:58] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-06 11:00:58] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-06 11:00:58] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/?limit=10&offset=0
+[2025-09-06 11:00:58] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 11:01:00] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:01:00] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:01:00] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:01:00] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:03:16] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:03:16] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:03:16] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:03:16] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:03:32] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:03:32] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:03:32] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:03:32] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:03:46] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:03:46] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:03:46] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:03:46] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:04:05] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:04:05] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:04:05] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:04:05] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:04:50] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:04:50] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:04:50] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:04:50] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:06:31] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:06:31] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:06:31] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:06:31] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:07:20] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:07:20] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:07:20] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:07:20] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:10:07] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:10:07] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:10:07] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:10:07] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:14:22] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:14:22] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:14:22] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:14:22] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:14:22] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:14:22] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:14:22] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:15:03] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:15:03] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:15:03] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:15:03] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:15:03] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:15:03] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:15:03] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:15:03] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:15:03] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:15:03] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:15:03] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:15:03] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:15:03] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:15:03] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:16:53] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:16:53] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:16:53] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:16:53] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:16:53] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:16:53] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:16:53] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:16:53] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:16:53] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:16:53] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:16:53] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:16:53] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:16:53] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:16:53] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:55] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:55] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:55] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:17:55] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:17:55] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:17:55] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:17:55] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:17:55] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:17:55] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:55] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:55] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:55] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:55] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:55] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:58] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:58] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:58] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:17:58] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:17:58] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:17:59] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:17:59] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:17:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:17:59] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:59] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:59] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:59] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:59] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:17:59] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:23:31] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:23:31] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:23:31] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:23:31] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:23:31] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:23:31] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:23:31] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:23:31] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:23:31] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:23:31] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:23:31] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:23:31] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:23:31] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:23:31] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:06] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:06] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:06] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:06] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:06] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:06] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:06] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:06] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:06] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:06] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:06] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:06] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:06] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:06] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:33] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:33] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:33] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:33] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:33] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:33] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:36] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:36] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:36] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:36] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:36] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:36] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:36] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:36] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:24:36] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:36] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:36] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:36] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:36] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:24:36] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:11] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:11] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:11] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:11] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:11] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:11] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:11] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:11] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:11] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:11] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:11] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:11] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:11] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:11] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:13] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:13] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:13] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:13] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:13] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:13] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:13] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:14] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:14] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:14] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:14] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:14] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:14] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:14] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:33] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:33] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:33] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:33] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:33] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:33] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:25:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:33] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:25:45] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:25:45] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:25:45] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:25:45] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:25:45] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:25:45] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:26:05] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:26:05] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:26:05] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:26:05] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:26:05] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:26:05] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:26:05] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:26:05] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:26:05] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:26:05] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:26:05] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:26:05] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:26:05] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:26:05] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:26:32] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:26:32] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:26:32] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:26:32] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:26:32] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:26:32] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:29:57] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:29:57] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:29:57] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:29:57] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:29:57] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:29:57] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:29:57] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:29:57] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:29:57] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:29:57] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:29:57] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:29:57] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:29:57] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:29:57] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:37] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:31:37] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:31:37] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:31:37] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:31:37] INFO: → GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:31:37] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=12&offset=0
+[2025-09-06 11:31:38] INFO: → GET /api/fichas/1
+[2025-09-06 11:31:38] INFO: → GET /api/fichas/1
+[2025-09-06 11:31:38] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/1
+[2025-09-06 11:31:38] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 11:31:38] INFO: → GET /api/fichas/1
+[2025-09-06 11:31:38] INFO: → GET /api/fichas/1
+[2025-09-06 11:31:38] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/1
+[2025-09-06 11:31:38] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 11:31:51] INFO: → POST /api/messaging/conversations
+[2025-09-06 11:31:51] INFO: → POST /api/messaging/conversations
+[2025-09-06 11:31:51] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 11:31:51] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:51] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:51] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:31:51] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:31:51] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:31:51] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:31:51] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:31:51] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:31:51] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:51] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:51] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:51] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:51] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:51] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:52] INFO: → GET /api/messaging/conversations
+[2025-09-06 11:31:52] INFO: → GET /api/messaging/conversations
+[2025-09-06 11:31:52] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 11:31:52] INFO: → GET /api/messaging/conversations
+[2025-09-06 11:31:52] INFO: → GET /api/messaging/conversations
+[2025-09-06 11:31:52] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 11:31:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:54] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:31:54] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:31:54] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:31:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:54] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:31:54] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:31:54] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-06 11:31:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:54] INFO: → GET /api/feed/dashboard
+[2025-09-06 11:31:54] INFO: → GET /api/feed/dashboard
