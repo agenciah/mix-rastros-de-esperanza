@@ -1,6 +1,3 @@
-// src/components/fichas/DatosPrincipalesForm.jsx
-
-// Se eliminó useState ya que el estado viene del componente padre
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,13 +6,11 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import useCatalogos from "@/hooks/useCatalogos";
+import useCatalogos from "../../../hooks/useCatalogos";
 
-// Acepta `datos` y `setDatos` como props
 export default function DatosPrincipalesForm({ datos, setDatos }) {
   const { tiposLugar, loading, error } = useCatalogos();
 
-  // El cambio ahora actualiza el estado del padre
   const handleChange = (e) => {
     const { name, value } = e.target;
     setDatos(prevDatos => ({
@@ -24,7 +19,6 @@ export default function DatosPrincipalesForm({ datos, setDatos }) {
     }));
   };
 
-  // La fecha también actualiza el estado del padre
   const handleFecha = (day) => {
     setDatos(prevDatos => ({
       ...prevDatos,
@@ -32,28 +26,24 @@ export default function DatosPrincipalesForm({ datos, setDatos }) {
     }));
   };
 
-  // El select también actualiza el estado del padre
-  const handleSelectChange = (value) => {
+  const handleSelectChange = (value, name) => {
     setDatos(prevDatos => ({
       ...prevDatos,
-      id_tipo_lugar_desaparicion: value,
+      [name]: value,
     }));
   };
-
-  // Se eliminó la función handleSubmit ya que el botón de envío está en el componente padre.
 
   if (loading) return <p>Cargando catálogos...</p>;
   if (error) return <p>Error al cargar catálogos: {error}</p>;
 
   return (
     <div className="space-y-4 p-4 border rounded-2xl shadow-md bg-white">
-      {/* Resto del formulario (campos de nombre, etc.) */}
       <div>
         <Label htmlFor="nombre">Nombre *</Label>
         <Input 
           id="nombre" 
           name="nombre" 
-          value={datos.nombre} // Usa el prop `datos`
+          value={datos.nombre}
           onChange={handleChange} 
           required 
         />
@@ -112,7 +102,6 @@ export default function DatosPrincipalesForm({ datos, setDatos }) {
 
       <div>
         <Label htmlFor="ubicacion">Ubicación (estado / municipio)</Label>
-        {/* Cambiado para usar el objeto `ubicacion_desaparicion` */}
         <Input 
           id="ubicacion" 
           name="ubicacion" 
@@ -124,11 +113,80 @@ export default function DatosPrincipalesForm({ datos, setDatos }) {
         />
       </div>
 
-      {/* Select para el tipo de lugar, ahora con datos de la API */}
+      {/* Nuevos campos para género, edad, estatura, complexión y peso */}
+      <div>
+        <Label htmlFor="genero">Género</Label>
+        <Select
+          onValueChange={(value) => handleSelectChange(value, "genero")}
+          value={datos.genero}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Selecciona el género" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="masculino">Masculino</SelectItem>
+            <SelectItem value="femenino">Femenino</SelectItem>
+            <SelectItem value="otro">Otro</SelectItem>
+            <SelectItem value="desconocido">Desconocido</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label htmlFor="edad_estimada">Edad estimada</Label>
+        <Input 
+          id="edad_estimada"
+          name="edad_estimada"
+          type="number"
+          value={datos.edad_estimada}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="estatura">Estatura (cm)</Label>
+        <Input 
+          id="estatura"
+          name="estatura"
+          type="number"
+          value={datos.estatura}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="complexion">Complexión</Label>
+        <Select
+          onValueChange={(value) => handleSelectChange(value, "complexion")}
+          value={datos.complexion}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Selecciona la complexión" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="delgada">Delgada</SelectItem>
+            <SelectItem value="media">Media</SelectItem>
+            <SelectItem value="robusta">Robusta</SelectItem>
+            <SelectItem value="desconocido">Desconocido</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label htmlFor="peso">Peso (kg)</Label>
+        <Input 
+          id="peso"
+          name="peso"
+          type="number"
+          value={datos.peso}
+          onChange={handleChange}
+        />
+      </div>
+      
       <div>
         <Label>Tipo de lugar *</Label>
         <Select
-          onValueChange={handleSelectChange} // Usamos el manejador que actualiza el estado del padre
+          onValueChange={(value) => handleSelectChange(value, "id_tipo_lugar_desaparicion")}
           value={datos.id_tipo_lugar_desaparicion}
         >
           <SelectTrigger>

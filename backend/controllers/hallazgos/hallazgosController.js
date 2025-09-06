@@ -1,8 +1,11 @@
+// backend/controllers/hallazgos/hallazgosController.js
+
 import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 // Asume que este archivo existe y contiene la lógica de matching
 import { findMatchesForHallazgo } from './matchController.js'; 
 import { sendMatchNotification } from '../../utils/emailService.js'; // Asume que este archivo existe
+import { searchHallazgosByKeyword } from '../../db/queries/fichasAndHallazgosQueries.js';
 
 /**
  * @fileoverview Controlador para la gestión de Hallazgos.
@@ -31,6 +34,13 @@ export const createHallazgo = async (req, res) => {
             descripcion_general_hallazgo,
             ubicacion_hallazgo,
             id_tipo_lugar_hallazgo,
+            // Nuevos campos
+            edad_estimada,
+            genero,
+            estatura,
+            complexion,
+            peso,
+            // Fin de nuevos campos
             caracteristicas,
             vestimenta,
         } = req.body;
@@ -58,13 +68,13 @@ export const createHallazgo = async (req, res) => {
         
         const id_ubicacion_hallazgo = ubicacionResult.lastID;
 
-        // 2. Insertar el hallazgo principal
+        // 2. Insertar el hallazgo principal con los nuevos campos
         const hallazgoResult = await db.run(
             `INSERT INTO hallazgos (
                 id_usuario_buscador, nombre, segundo_nombre, apellido_paterno, apellido_materno,
                 id_ubicacion_hallazgo, id_tipo_lugar_hallazgo, fecha_hallazgo,
-                descripcion_general_hallazgo
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                descripcion_general_hallazgo, edad_estimada, genero, estatura, complexion, peso
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 id_usuario_buscador,
                 nombre,
@@ -75,6 +85,11 @@ export const createHallazgo = async (req, res) => {
                 id_tipo_lugar_hallazgo,
                 fecha_hallazgo,
                 descripcion_general_hallazgo,
+                edad_estimada,
+                genero,
+                estatura,
+                complexion,
+                peso,
             ]
         );
         console.log("🟢 Resultado de la inserción de 'hallazgos':", { lastID: hallazgoResult.lastID, changes: hallazgoResult.changes });
@@ -126,6 +141,11 @@ export const createHallazgo = async (req, res) => {
         const matches = await findMatchesForHallazgo({
             id_hallazgo: idHallazgo,
             ubicacion_hallazgo,
+            edad_estimada,
+            genero,
+            estatura,
+            complexion,
+            peso,
             caracteristicas,
             vestimenta,
         });
@@ -179,6 +199,13 @@ export const getAllHallazgos = async (req, res) => {
                 h.apellido_materno,
                 h.fecha_hallazgo,
                 h.descripcion_general_hallazgo,
+                -- Nuevos campos agregados
+                h.edad_estimada,
+                h.genero,
+                h.estatura,
+                h.complexion,
+                h.peso,
+                -- Fin de nuevos campos
                 u.estado,
                 u.municipio,
                 ctl.nombre_tipo AS tipo_lugar,
@@ -250,18 +277,25 @@ export const getHallazgoById = async (req, res) => {
                 h.fecha_hallazgo,
                 h.descripcion_general_hallazgo,
                 h.estado_hallazgo,
-                h.id_tipo_lugar_hallazgo, -- ⬅️ ¡Agregamos el ID aquí!
+                h.id_tipo_lugar_hallazgo,
+                -- Nuevos campos agregados
+                h.edad_estimada,
+                h.genero,
+                h.estatura,
+                h.complexion,
+                h.peso,
+                -- Fin de nuevos campos
                 u.id_ubicacion AS id_ubicacion_hallazgo,
                 u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.latitud, u.longitud, u.codigo_postal,
                 ctl.nombre_tipo AS tipo_lugar,
                 json_group_array(DISTINCT json_object(
-                    'id_parte_cuerpo', hc.id_parte_cuerpo,  -- ⬅️ ¡Agrega el ID aquí!
+                    'id_parte_cuerpo', hc.id_parte_cuerpo,
                     'tipo_caracteristica', hc.tipo_caracteristica, 
                     'descripcion', hc.descripcion,
                     'nombre_parte', cpc.nombre_parte
                 )) FILTER (WHERE hc.id_hallazgo_caracteristica IS NOT NULL) AS caracteristicas_json,
                 json_group_array(DISTINCT json_object(
-                    'id_prenda', hv.id_prenda,  -- ⬅️ ¡Agrega el ID aquí!
+                    'id_prenda', hv.id_prenda,
                     'color', hv.color, 
                     'marca', hv.marca, 
                     'caracteristica_especial', hv.caracteristica_especial,
@@ -288,14 +322,14 @@ export const getHallazgoById = async (req, res) => {
         const { 
             id_ubicacion_hallazgo, estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal,
             caracteristicas_json, vestimenta_json,
-            id_tipo_lugar_hallazgo, // ⬅️ ¡Agregamos el ID aquí!
+            id_tipo_lugar_hallazgo, 
             ...restOfData // Aquí se capturan todos los demás campos (nombre, fecha, etc.)
         } = hallazgoCompleto;
 
         const caracteristicas = JSON.parse(hallazgoCompleto.caracteristicas_json);
         const vestimenta = JSON.parse(hallazgoCompleto.vestimenta_json);
         
-         // Formatear la respuesta para que coincida con el formato del formulario en el frontend
+          // Formatear la respuesta para que coincida con el formato del formulario en el frontend
         const formattedData = {
             ...restOfData, // Usamos los campos restantes
             ubicacion_hallazgo: {
@@ -309,7 +343,7 @@ export const getHallazgoById = async (req, res) => {
                 longitud,
                 codigo_postal,
             },
-            id_tipo_lugar_hallazgo, // ⬅️ ¡Lo agregamos a la respuesta!
+            id_tipo_lugar_hallazgo,
             caracteristicas: caracteristicas[0] === null ? [] : caracteristicas,
             vestimenta: vestimenta[0] === null ? [] : vestimenta
         };
@@ -321,7 +355,6 @@ export const getHallazgoById = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error al obtener el hallazgo.' });
     }
 };
-
 
 /**
  * Actualiza un hallazgo existente, verificando la propiedad del usuario.
@@ -336,6 +369,9 @@ export const actualizarHallazgo = async (req, res) => {
         const {
             nombre, segundo_nombre, apellido_paterno, apellido_materno,
             fecha_hallazgo, descripcion_general_hallazgo, id_tipo_lugar_hallazgo,
+            // Nuevos campos
+            edad_estimada, genero, estatura, complexion, peso,
+            // Fin de nuevos campos
             ubicacion_hallazgo, caracteristicas, vestimenta,
         } = req.body;
 
@@ -374,7 +410,8 @@ export const actualizarHallazgo = async (req, res) => {
         // 3. Actualiza el hallazgo principal
         const hallazgoUpdateData = {
             nombre, segundo_nombre, apellido_paterno, apellido_materno,
-            fecha_hallazgo, descripcion_general_hallazgo, id_tipo_lugar_hallazgo
+            fecha_hallazgo, descripcion_general_hallazgo, id_tipo_lugar_hallazgo,
+            edad_estimada, genero, estatura, complexion, peso,
         };
         
         const hallazgoSetClause = Object.keys(hallazgoUpdateData).map(key => `${key} = ?`).join(', ');
@@ -467,8 +504,10 @@ export const searchHallazgos = async (req, res) => {
 
         const queryTerm = `%${searchTerm.toLowerCase()}%`;
         const selectFields = resumen
-            ? 'h.id_hallazgo, h.nombre, h.segundo_nombre, h.apellido_paterno, h.apellido_materno, h.fecha_hallazgo, u.estado, u.municipio'
-            : `h.id_hallazgo, h.id_usuario_buscador, h.nombre, h.segundo_nombre, h.apellido_paterno, h.apellido_materno, h.fecha_hallazgo, h.descripcion_general_hallazgo, h.estado_hallazgo, u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.latitud, u.longitud, u.codigo_postal, ctl.nombre_tipo AS tipo_lugar,
+            ? `h.id_hallazgo, h.nombre, h.segundo_nombre, h.apellido_paterno, h.apellido_materno, h.fecha_hallazgo, h.genero, h.edad_estimada, u.estado, u.municipio`
+            : `h.id_hallazgo, h.id_usuario_buscador, h.nombre, h.segundo_nombre, h.apellido_paterno, h.apellido_materno, h.fecha_hallazgo, h.descripcion_general_hallazgo, h.estado_hallazgo, 
+               h.edad_estimada, h.genero, h.estatura, h.complexion, h.peso,
+               u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.latitud, u.longitud, u.codigo_postal, ctl.nombre_tipo AS tipo_lugar,
                 json_group_array(DISTINCT json_object('tipo_caracteristica', hc.tipo_caracteristica, 'descripcion', hc.descripcion, 'nombre_parte', cpc.nombre_parte)) FILTER (WHERE hc.id_hallazgo_caracteristica IS NOT NULL) AS caracteristicas_json,
                 json_group_array(DISTINCT json_object('color', hv.color, 'marca', hv.marca, 'caracteristica_especial', hv.caracteristica_especial, 'tipo_prenda', cp.tipo_prenda)) FILTER (WHERE hv.id_hallazgo_vestimenta IS NOT NULL) AS vestimenta_json
             `;
@@ -550,5 +589,101 @@ export const obtenerCatalogoPrendas = async (req, res) => {
     } catch (error) {
         logger.error(`❌ Error al obtener catálogo de prendas: ${error.message}`);
         res.status(500).json({ success: false, message: 'Error interno del servidor' });
+    }
+};
+
+/**
+ * Obtiene los hallazgos creados por un usuario específico.
+ */
+export const getHallazgosByUserId = async (req, res) => {
+    // LOG #1: Confirma que la función fue invocada
+    console.log('--- 🚀 [BACKEND] Controlador getHallazgosByUserId INVOCADO ---');
+
+    try {
+        const db = await openDb();
+        
+        // LOG #2: Inspeccionar el objeto 'user' que adjunta el middleware de autenticación
+        console.log('1. Contenido de req.user:', JSON.stringify(req.user, null, 2));
+
+        // El ID del usuario viene del token. Usamos optional chaining (?.) por seguridad.
+        const id_usuario_buscador = req.user?.id; 
+
+        // LOG #3: Verificar el ID de usuario que se extrajo
+        console.log('2. ID de usuario extraído para la consulta:', id_usuario_buscador);
+
+        if (!id_usuario_buscador) {
+            console.error('❌ Error Crítico: No se pudo extraer el ID del usuario desde req.user. El middleware puede estar fallando.');
+            return res.status(403).json({ success: false, message: 'Acceso denegado: Identidad de usuario no encontrada.' });
+        }
+
+        const hallazgosSql = `
+            SELECT 
+                h.id_hallazgo, h.id_usuario_buscador, h.nombre, h.segundo_nombre, h.apellido_paterno,
+                h.apellido_materno, h.fecha_hallazgo, h.descripcion_general_hallazgo, h.edad_estimada,
+                h.genero, h.estatura, h.complexion, h.peso, u.estado, u.municipio, ctl.nombre_tipo AS tipo_lugar,
+                json_group_array(DISTINCT json_object('tipo_caracteristica', hc.tipo_caracteristica, 'descripcion', hc.descripcion, 'nombre_parte', cpc.nombre_parte)) FILTER (WHERE hc.id_hallazgo_caracteristica IS NOT NULL) AS caracteristicas_json,
+                json_group_array(DISTINCT json_object('color', hv.color, 'marca', hv.marca, 'caracteristica_especial', hv.caracteristica_especial, 'tipo_prenda', cp.tipo_prenda)) FILTER (WHERE hv.id_hallazgo_vestimenta IS NOT NULL) AS vestimenta_json
+            FROM hallazgos AS h
+            LEFT JOIN ubicaciones AS u ON h.id_ubicacion_hallazgo = u.id_ubicacion
+            LEFT JOIN catalogo_tipo_lugar AS ctl ON h.id_tipo_lugar_hallazgo = ctl.id_tipo_lugar
+            LEFT JOIN hallazgo_caracteristicas AS hc ON h.id_hallazgo = hc.id_hallazgo
+            LEFT JOIN catalogo_partes_cuerpo AS cpc ON hc.id_parte_cuerpo = cpc.id_parte_cuerpo
+            LEFT JOIN hallazgo_vestimenta AS hv ON h.id_hallazgo = hv.id_hallazgo
+            LEFT JOIN catalogo_prendas AS cp ON hv.id_prenda = cp.id_prenda
+            WHERE h.id_usuario_buscador = ? -- Esta línea filtra por el ID del usuario
+            GROUP BY h.id_hallazgo
+            ORDER BY h.fecha_hallazgo DESC
+            LIMIT 20;
+        `;
+        
+        const hallazgosResult = await db.all(hallazgosSql, [id_usuario_buscador]);
+
+        // LOG #4: Ver el resultado crudo que devuelve la base de datos
+        console.log('3. Resultado crudo de la BD (hallazgosResult):', hallazgosResult);
+
+        const hallazgosCompletos = hallazgosResult.map(hallazgo => {
+            const caracteristicas = JSON.parse(hallazgo.caracteristicas_json);
+            const vestimenta = JSON.parse(hallazgo.vestimenta_json);
+            
+            delete hallazgo.caracteristicas_json;
+            delete hallazgo.vestimenta_json;
+
+            return {
+                ...hallazgo,
+                caracteristicas: caracteristicas && caracteristicas[0] === null ? [] : caracteristicas,
+                vestimenta: vestimenta && vestimenta[0] === null ? [] : vestimenta
+            };
+        });
+
+        // LOG #5: Ver los datos finales justo antes de enviarlos al frontend
+        console.log('4. Datos procesados listos para enviar (hallazgosCompletos):', hallazgosCompletos);
+        console.log('--- ✅ [BACKEND] Petición procesada con éxito ---');
+
+        res.json({ success: true, data: hallazgosCompletos });
+    } catch (error) {
+        // LOG #6: Asegurarnos de que si hay un error, lo veamos claramente
+        console.error('--- ❌ [BACKEND] ERROR CAPTURADO EN EL CONTROLADOR ---');
+        console.error(error);
+        logger.error(`❌ Error al obtener los hallazgos del usuario: ${error.message}`);
+        res.status(500).json({ success: false, message: 'Error al obtener tus hallazgos.' });
+    }
+};
+
+export const searchHallazgosFeed = async (req, res) => {
+    try {
+        // Extraemos todos los parámetros necesarios de la URL
+        const { searchTerm = '', limit = 10, offset = 0 } = req.query; 
+
+        console.log(`[Backend Controller] Término: "${searchTerm}", Límite: ${limit}, Offset: ${offset}`);
+
+        // Pasamos TODOS los parámetros a la función de la base de datos
+        const hallazgos = await searchHallazgosByKeyword(searchTerm, parseInt(limit), parseInt(offset));
+
+        console.log(`[Backend Controller] Datos a enviar:`, hallazgos);
+
+        res.json({ success: true, data: hallazgos });
+    } catch (error) {
+        logger.error(`❌ Error al buscar hallazgos para el feed: ${error.message}`);
+        res.status(500).json({ success: false, message: 'Error al realizar la búsqueda de hallazgos.' });
     }
 };

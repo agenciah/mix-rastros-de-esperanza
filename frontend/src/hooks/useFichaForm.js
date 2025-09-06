@@ -1,12 +1,37 @@
 // src/hooks/useFichaForm.js
-import { useState } from "react";
-import { toast } from "sonner"; 
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import useCreateFicha from "@/hooks/useCreateFicha";
 
-export default function useFichaForm() {
+// Acepta 'initialData' como argumento para prellenar el formulario
+export default function useFichaForm(initialData = null) {
   const { createFicha: CreateFicha } = useCreateFicha();
 
-  const [datosPrincipales, setDatosPrincipales] = useState({
+  // El estado se inicializa con los datos de 'initialData' o con un objeto vacío si no se proporcionan datos
+  const [datosPrincipales, setDatosPrincipales] = useState(initialData ? {
+    nombre: initialData.nombre || "",
+    segundo_nombre: initialData.segundo_nombre || "",
+    apellido_paterno: initialData.apellido_paterno || "",
+    apellido_materno: initialData.apellido_materno || "",
+    fecha_desaparicion: initialData.fecha_desaparicion || "",
+    ubicacion_desaparicion: {
+      estado: initialData.ubicacion_desaparicion?.estado || "",
+      municipio: initialData.ubicacion_desaparicion?.municipio || "",
+      localidad: initialData.ubicacion_desaparicion?.localidad || "",
+      calle: initialData.ubicacion_desaparicion?.calle || "",
+      referencias: initialData.ubicacion_desaparicion?.referencias || "",
+      latitud: initialData.ubicacion_desaparicion?.latitud || "",
+      longitud: initialData.ubicacion_desaparicion?.longitud || "",
+      codigo_postal: initialData.ubicacion_desaparicion?.codigo_postal || "",
+    },
+    id_tipo_lugar_desaparicion: initialData.id_tipo_lugar_desaparicion || "",
+    foto_perfil: initialData.foto_perfil || null,
+    edad_estimada: initialData.edad_estimada || "",
+    genero: initialData.genero || "",
+    estatura: initialData.estatura || "",
+    complexion: initialData.complexion || "",
+    peso: initialData.peso || "",
+  } : {
     nombre: "",
     segundo_nombre: "",
     apellido_paterno: "",
@@ -24,20 +49,24 @@ export default function useFichaForm() {
     },
     id_tipo_lugar_desaparicion: "",
     foto_perfil: null,
+    edad_estimada: "",
+    genero: "",
+    estatura: "",
+    complexion: "",
+    peso: "",
   });
 
-  const [rasgosFisicos, setRasgosFisicos] = useState([
+  const [rasgosFisicos, setRasgosFisicos] = useState(initialData?.rasgos_fisicos || [
     { id_parte_cuerpo: "", tipo_rasgo: "", descripcion_detalle: "" },
   ]);
 
-  const [vestimenta, setVestimenta] = useState([
+  const [vestimenta, setVestimenta] = useState(initialData?.vestimenta || [
     { id_prenda: "", color: "", marca: "", caracteristica_especial: "" },
   ]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Reset general
   const resetForm = () => {
     setDatosPrincipales({
       nombre: "",
@@ -57,6 +86,11 @@ export default function useFichaForm() {
       },
       id_tipo_lugar_desaparicion: "",
       foto_perfil: null,
+      edad_estimada: "",
+      genero: "",
+      estatura: "",
+      complexion: "",
+      peso: "",
     });
     setRasgosFisicos([{ id_parte_cuerpo: "", tipo_rasgo: "", descripcion_detalle: "" }]);
     setVestimenta([{ id_prenda: "", color: "", marca: "", caracteristica_especial: "" }]);
@@ -67,7 +101,6 @@ export default function useFichaForm() {
     setError(null);
 
     try {
-      // No incluimos el id_usuario aquí, el backend lo maneja
       const payload = {
         ...datosPrincipales,
         rasgos_fisicos: rasgosFisicos,

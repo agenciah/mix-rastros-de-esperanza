@@ -11,12 +11,15 @@ import {
 import useCatalogos from "@/hooks/useCatalogos";
 
 export default function HallazgoDatosPrincipales({ form, handleChange, handleNestedChange }) {
-    // Obtiene los datos de los catálogos, el estado de carga y error
     const { tiposLugar, loading: catalogosLoading, error: catalogosError } = useCatalogos();
 
-    // Función para manejar el cambio en el selector de tipo de lugar
     const handleTipoLugarChange = (value) => {
         handleChange({ target: { name: "id_tipo_lugar_hallazgo", value: parseInt(value, 10) } });
+    };
+
+    // Función para manejar el cambio del select de género
+    const handleGeneroChange = (value) => {
+        handleChange({ target: { name: "genero", value: value } });
     };
 
     return (
@@ -66,6 +69,70 @@ export default function HallazgoDatosPrincipales({ form, handleChange, handleNes
                 </div>
             </div>
 
+            {/* MODIFICACIÓN: Nueva sección de Características Físicas */}
+            <h3 className="text-lg font-semibold mt-6">Características Físicas</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="edad_estimada">Edad Estimada</Label>
+                    <Input
+                        id="edad_estimada"
+                        name="edad_estimada"
+                        type="number"
+                        placeholder="Ej: 30"
+                        value={form.edad_estimada || ""}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="genero">Género</Label>
+                    <Select onValueChange={handleGeneroChange} value={form.genero || ""}>
+                        <SelectTrigger id="genero">
+                            <SelectValue placeholder="Selecciona un género" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Masculino">Masculino</SelectItem>
+                            <SelectItem value="Femenino">Femenino</SelectItem>
+                            <SelectItem value="No identificado">No identificado</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="estatura">Estatura (cm)</Label>
+                    <Input
+                        id="estatura"
+                        name="estatura"
+                        type="number"
+                        step="0.01"
+                        placeholder="Ej: 175"
+                        value={form.estatura || ""}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="complexion">Complexión</Label>
+                    <Input
+                        id="complexion"
+                        name="complexion"
+                        type="text"
+                        placeholder="Ej: Delgada, Robusta, Normal"
+                        value={form.complexion || ""}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="peso">Peso (kg)</Label>
+                    <Input
+                        id="peso"
+                        name="peso"
+                        type="number"
+                        placeholder="Ej: 70"
+                        value={form.peso || ""}
+                        onChange={handleChange}
+                    />
+                </div>
+            </div>
+            {/* Fin de la nueva sección */}
+
             {/* Sección de Datos del hallazgo */}
             <h3 className="text-lg font-semibold mt-6">Datos del hallazgo</h3>
             <div className="space-y-2">
@@ -88,7 +155,6 @@ export default function HallazgoDatosPrincipales({ form, handleChange, handleNes
                         name="ubicacion_hallazgo.estado"
                         type="text"
                         placeholder="Ej: Ciudad de México, Jalisco, Nuevo León..."
-                        // CORRECCIÓN: Usa encadenamiento opcional para prevenir el error.
                         value={form.ubicacion_hallazgo?.estado || ""}
                         onChange={(e) => handleNestedChange('ubicacion_hallazgo.estado', e.target.value)}
                         required
@@ -101,7 +167,6 @@ export default function HallazgoDatosPrincipales({ form, handleChange, handleNes
                         name="ubicacion_hallazgo.municipio"
                         type="text"
                         placeholder="Ej: Cuauhtémoc, Zapopan, San Nicolás de los Garza..."
-                        // CORRECCIÓN: Usa encadenamiento opcional para prevenir el error.
                         value={form.ubicacion_hallazgo?.municipio || ""}
                         onChange={(e) => handleNestedChange('ubicacion_hallazgo.municipio', e.target.value)}
                         required
@@ -109,7 +174,6 @@ export default function HallazgoDatosPrincipales({ form, handleChange, handleNes
                 </div>
             </div>
 
-            {/* Selector para el tipo de lugar */}
             <div className="space-y-2">
                 <Label htmlFor="tipo_lugar_hallazgo">Tipo de lugar donde se encontró</Label>
                 <Select 

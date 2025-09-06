@@ -9,6 +9,8 @@ import {
     obtenerCatalogoTiposLugar,
     obtenerCatalogoPartesCuerpo,
     obtenerCatalogoPrendas,
+    getHallazgosByUserId,
+    searchHallazgosFeed
 } from '../controllers/hallazgos/hallazgosController.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 import logger from '../utils/logger.js';
@@ -26,20 +28,28 @@ router.use((req, res, next) => {
 // POST /api/hallazgos/
 router.post('/', authenticateToken, createHallazgo);
 
-// GET /api/hallazgos/
-router.get('/', authenticateToken, getAllHallazgos);
+// Rutas de búsqueda y específicas
+// GET /api/hallazgos/feed/search -> ¡NUEVA RUTA para la barra de búsqueda del feed!
+router.get('/feed/search', authenticateToken, searchHallazgosFeed);
 
-// GET /api/hallazgos/buscar
+// GET /api/hallazgos/by-user -> ¡Esta debe ir primero!
+router.get('/by-user', authenticateToken, getHallazgosByUserId);
+
+// GET /api/hallazgos/buscar -> También es una ruta específica, debe ir antes de :id
 router.get('/buscar', authenticateToken, searchHallazgos);
 
-// GET /api/hallazgos/:id
+// GET /api/hallazgos/:id -> Esta es la más genérica y debe ir después de las anteriores
 router.get('/:id', authenticateToken, getHallazgoById);
+
+// GET /api/hallazgos/
+router.get('/', authenticateToken, getAllHallazgos);
 
 // PUT /api/hallazgos/:id
 router.put('/:id', authenticateToken, actualizarHallazgo);
 
 // DELETE /api/hallazgos/:id
 router.delete('/:id', authenticateToken, deleteHallazgo);
+
 
 // Rutas para catálogos
 // GET /api/hallazgos/catalogos/tipos-lugar
@@ -50,6 +60,5 @@ router.get('/catalogos/partes-cuerpo', obtenerCatalogoPartesCuerpo);
 
 // GET /api/hallazgos/catalogos/prendas
 router.get('/catalogos/prendas', obtenerCatalogoPrendas);
-
 
 export default router;

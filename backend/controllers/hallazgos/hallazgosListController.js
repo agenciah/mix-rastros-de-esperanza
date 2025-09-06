@@ -13,6 +13,8 @@ export const getHallazgosList = async (limit, offset) => {
                 h.nombre, 
                 h.apellido_paterno, 
                 h.fecha_hallazgo,
+                h.genero,
+                h.edad_estimada,
                 u.estado, 
                 u.municipio
             FROM hallazgos AS h

@@ -534,6 +534,48 @@ export async function ensureAllTables() {
       );`
     );
 
+// ---------------------------------
+// Alteraciones para agregar campos clave a Fichas
+// ---------------------------------
+const fichaNewColumns = [
+    { name: 'edad_estimada', type: 'INTEGER' },
+    { name: 'genero', type: 'TEXT' },
+    { name: 'estatura', type: 'REAL' },
+    { name: 'complexion', type: 'TEXT' },
+    { name: 'peso', type: 'REAL' } // Agregado de nuevo
+];
+
+const fichaExistingColumns = await db.all(`PRAGMA table_info(fichas_desaparicion);`);
+const fichaExistingColumnNames = fichaExistingColumns.map(col => col.name);
+
+for (const col of fichaNewColumns) {
+    if (!fichaExistingColumnNames.includes(col.name)) {
+        console.log(`➕ Agregando columna '${col.name}' a la tabla fichas_desaparicion...`);
+        await db.exec(`ALTER TABLE fichas_desaparicion ADD COLUMN ${col.name} ${col.type};`);
+    }
+}
+
+// ---------------------------------
+// Alteraciones para agregar campos clave a Hallazgos
+// ---------------------------------
+const hallazgoNewColumns = [
+    { name: 'edad_estimada', type: 'INTEGER' },
+    { name: 'genero', type: 'TEXT' },
+    { name: 'estatura', type: 'REAL' },
+    { name: 'complexion', type: 'TEXT' },
+    { name: 'peso', type: 'REAL' } // Agregado de nuevo
+];
+
+const hallazgoExistingColumns = await db.all(`PRAGMA table_info(hallazgos);`);
+const hallazgoExistingColumnNames = hallazgoExistingColumns.map(col => col.name);
+
+for (const col of hallazgoNewColumns) {
+    if (!hallazgoExistingColumnNames.includes(col.name)) {
+        console.log(`➕ Agregando columna '${col.name}' a la tabla hallazgos...`);
+        await db.exec(`ALTER TABLE hallazgos ADD COLUMN ${col.name} ${col.type};`);
+    }
+}
+
     console.log("✔️ Todas las tablas verificadas/creadas correctamente");
 }
 

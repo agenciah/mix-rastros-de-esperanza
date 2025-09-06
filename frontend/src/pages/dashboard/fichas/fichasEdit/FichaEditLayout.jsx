@@ -1,17 +1,15 @@
-// src/pages/dashboard/fichas/FichaEditLayout.jsx
-
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import useFichaForm from "@/hooks/useFichaForm";
-import useFetchFicha from "@/hooks/editFicha/useFetchFicha";
-import useEditFicha from "@/hooks/editFicha/useEditFicha";
+import { Card, CardHeader, CardTitle, CardContent } from "../../../../components/ui/card";
+import { Separator } from "../../../../components/ui/separator";
+import { Button } from "../../../../components/ui/button";
+import useFichaForm from "../../../../hooks/useFichaForm";
+import useFetchFicha from "../../../../hooks/editFicha/useFetchFicha";
+import useEditFicha from "../../../../hooks/editFicha/useEditFicha";
 import RasgosFisicosForm from "../RasgosFisicosForm";
 import VestimentaForm from "../VestimentaForm";
 import DatosPrincipalesForm from "../DatosPrincipalesForm";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "../../../../components/ui/alert";
 import { Terminal, Lightbulb } from "lucide-react";
 
 export default function FichaEditLayout() {
@@ -36,6 +34,9 @@ export default function FichaEditLayout() {
   useEffect(() => {
     // AHORA CHECAMOS POR 'fichaData' Y 'fichaData.data'
     if (fichaData && fichaData.data) {
+      // Opcional: para verificar en la consola que los datos se cargan
+      console.log("Datos de la ficha obtenidos del backend:", fichaData.data);
+      
       // Mapear los datos de la API al estado del formulario
       const dataToMap = fichaData.data;
       setDatosPrincipales({
@@ -56,6 +57,13 @@ export default function FichaEditLayout() {
         },
         id_tipo_lugar_desaparicion: dataToMap.id_tipo_lugar_desaparicion || "",
         foto_perfil: dataToMap.foto_perfil || null,
+        // --- Nuevos campos para mapear ---
+        genero: dataToMap.genero || "",
+        edad_estimada: dataToMap.edad_estimada || "",
+        estatura: dataToMap.estatura || "",
+        complexion: dataToMap.complexion || "",
+        peso: dataToMap.peso || "",
+        // --- Fin de nuevos campos ---
       });
       // AQUI MAPEAMOS LOS ARRAYS, POR ESO ES IMPORTANTE QUE EL BACKEND NOS LOS REGRESE ASI
       setRasgosFisicos(dataToMap.rasgos_fisicos || [{ id_parte_cuerpo: "", tipo_rasgo: "", descripcion_detalle: "" }]);

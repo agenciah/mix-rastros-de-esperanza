@@ -311,3 +311,7 @@ Error: ENOENT: no such file or directory, open '/home/alex1986/test_gastos_bot/g
 [2025-09-02 14:53:45] ERROR: ❌ Error al iniciar la app: SQLITE_ERROR: near ")": syntax error
 [2025-09-02 14:56:37] ERROR: ❌ Error al iniciar la app: SQLITE_ERROR: near ")": syntax error
 [2025-09-03 19:49:43] ERROR: ❌ Error al iniciar la app: WebSocket.Server is not a constructor
+[2025-09-05 10:49:52] ERROR: ❌ Error al buscar coincidencias para hallazgo: Cannot read properties of undefined (reading 'toLowerCase')
+[2025-09-05 11:13:30] ERROR: ❌ Error al buscar coincidencias para hallazgo: Cannot read properties of undefined (reading 'toLowerCase')
+[2025-09-05 18:55:16] ERROR: ❌ Error al buscar hallazgos para el feed: Cannot access 'hallazgosSql' before initialization
+[2025-09-05 18:55:23] ERROR: ❌ Error al buscar hallazgos para el feed: Cannot access 'hallazgosSql' before initialization

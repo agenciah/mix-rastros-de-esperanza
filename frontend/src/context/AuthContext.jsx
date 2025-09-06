@@ -1,69 +1,72 @@
-// /context/AuthContext.jsx
+// RUTA: src/context/AuthContext.jsx
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
-// ✨ 1. CREAMOS UNA FUNCIÓN AUXILIAR PARA NORMALIZAR LOS DATOS
-// Esta función se asegura de que la propiedad 'plan' siempre sea un array.
+// Función auxiliar para normalizar los datos del usuario. Se mantiene igual.
 const normalizeUserData = (userData) => {
-  if (userData && typeof userData.plan === 'string') {
-    try {
-      // Intenta convertir el string del plan a un objeto/array real
-      return { ...userData, plan: JSON.parse(userData.plan) };
-    } catch (error) {
-      console.error('⚠️ Error al parsear `user.plan`, se dejará como está:', error);
-      // Si falla el parseo, devuelve los datos originales para no romper la app
-      return userData;
+    if (userData && typeof userData.plan === 'string') {
+        try {
+            return { ...userData, plan: JSON.parse(userData.plan) };
+        } catch (error) {
+            console.error('⚠️ Error al parsear `user.plan`, se dejará como está:', error);
+            return userData;
+        }
     }
-  }
-  // Si no hay nada que hacer, devuelve los datos tal cual
-  return userData;
+    return userData;
 };
 
-
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // <- Es mejor iniciar como null
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+    // El estado del usuario se inicializa de forma síncrona desde localStorage. ¡Correcto!
+    const [user, setUser] = useState(() => {
+        try {
+            const storedUser = localStorage.getItem('user');
+            return storedUser ? normalizeUserData(JSON.parse(storedUser)) : null;
+        } catch (error) {
+            console.error("Error al leer el usuario del localStorage", error);
+            return null;
+        }
+    });
 
-  useEffect(() => {
-    const userDataFromStorage = localStorage.getItem('user');
-
-    if (userDataFromStorage) {
-      const parsedData = JSON.parse(userDataFromStorage);
-      // ✨ 2. USAMOS LA FUNCIÓN DE NORMALIZACIÓN AQUÍ
-      const normalizedUser = normalizeUserData(parsedData);
-      console.log('1. 🕵️‍♂️ AuthContext: Datos normalizados desde localStorage', normalizedUser);
-      setUser(normalizedUser);
-    }
+    // --- MEJORAS ---
+    // 1. Renombramos 'loading' a 'isAuthLoading' para mayor claridad.
+    // 2. Lo inicializamos en 'true' para indicar que la verificación inicial está pendiente.
+    const [isAuthLoading, setIsAuthLoading] = useState(true);
     
-    setLoading(false);
-  }, []);
+    const navigate = useNavigate();
 
-  const login = (userData, token) => {
-    // ✨ 3. USAMOS LA NORMALIZACIÓN TAMBIÉN EN EL LOGIN
-    const normalizedUser = normalizeUserData(userData);
+    // 3. Usamos un useEffect para declarar explícitamente que la "carga" inicial ha terminado.
+    // Esto se ejecuta solo una vez, justo después del primer render.
+    useEffect(() => {
+        // La comprobación síncrona del usuario ya se hizo en useState.
+        // Por tanto, podemos decir que la carga ha terminado.
+        // Si en el futuro necesitas validar un token contra una API, esa lógica asíncrona iría aquí.
+        setIsAuthLoading(false);
+    }, []);
+
+    const login = (userData, token) => {
+        const normalizedUser = normalizeUserData(userData);
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(normalizedUser));
+        setUser(normalizedUser);
+        navigate('/dashboard');
+    };
+
+    const logout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setUser(null);
+        navigate('/login');
+    };
     
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(normalizedUser)); // Guardamos el usuario ya normalizado
-    setUser(normalizedUser);
-    navigate('/dashboard');
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-    navigate('/login');
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, setUser, login, logout, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    // 4. Pasamos 'isAuthLoading' en el 'value' del Provider.
+    return (
+        <AuthContext.Provider value={{ user, setUser, login, logout, isAuthLoading }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => useContext(AuthContext);

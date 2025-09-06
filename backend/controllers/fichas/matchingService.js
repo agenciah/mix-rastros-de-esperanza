@@ -18,36 +18,39 @@ export async function findMatchesForFicha(fichaData) {
         const { id_ficha, ubicacion_desaparicion, rasgos_fisicos, vestimenta } = fichaData;
         const db = await openDb();
 
-        // 1. Obtener los datos completos de la ficha para la notificación
         const fichaCompleta = await getFichaCompletaById(id_ficha);
         if (!fichaCompleta) {
             logger.warn(`Ficha con ID ${id_ficha} no encontrada para matching.`);
             return [];
         }
 
-        // 2. Obtener TODOS los hallazgos activos con sus detalles en una sola consulta
         const hallazgos = await getAllHallazgosCompletos();
         
-        // Log para mostrar la estructura de un hallazgo y ver el nombre de la columna del ID de usuario
         if (hallazgos.length > 0) {
             logger.debug(`Estructura del primer hallazgo para depuración: `, hallazgos[0]);
         }
 
         const matches = [];
 
-        // Lógica de coincidencia, ahora con los datos completos en memoria
         for (const hallazgo of hallazgos) {
             let score = 0;
             let matchedCriteria = [];
 
-            // Coincidencia por Ubicación (puntuación alta)
+            // Coincidencia por datos generales (NUEVA LÓGICA)
+            const generalDataMatch = checkGeneralDataMatch(fichaCompleta, hallazgo);
+            if (generalDataMatch.score > 0) {
+                score += generalDataMatch.score;
+                matchedCriteria.push(...generalDataMatch.criteria);
+            }
+
+            // Coincidencia por Ubicación
             const locationMatch = checkLocationMatch(ubicacion_desaparicion, hallazgo);
             if (locationMatch.score > 0) {
                 score += locationMatch.score;
                 matchedCriteria.push(...locationMatch.criteria);
             }
 
-            // Coincidencia por Rasgos Físicos (puntuación media)
+            // Coincidencia por Rasgos Físicos
             if (rasgos_fisicos && rasgos_fisicos.length > 0) {
                 const rasgosScore = checkRasgosMatch(rasgos_fisicos, hallazgo.rasgos_fisicos);
                 if (rasgosScore.score > 0) {
@@ -56,7 +59,7 @@ export async function findMatchesForFicha(fichaData) {
                 }
             }
 
-            // Coincidencia por Vestimenta (puntuación media)
+            // Coincidencia por Vestimenta
             if (vestimenta && vestimenta.length > 0) {
                 const vestimentaScore = checkVestimentaMatch(vestimenta, hallazgo.vestimenta);
                 if (vestimentaScore.score > 0) {
@@ -66,7 +69,6 @@ export async function findMatchesForFicha(fichaData) {
             }
             
             // Coincidencia por Nombre
-            // Puedes agregar esta lógica para darle mayor peso
             const nameScore = checkNameMatch(fichaCompleta, hallazgo);
             if (nameScore.score > 0) {
                 score += nameScore.score;
@@ -78,28 +80,19 @@ export async function findMatchesForFicha(fichaData) {
                     id_hallazgo: hallazgo.id_hallazgo,
                     score,
                     matchedCriteria,
-                    id_usuario_reporte: hallazgo.id_usuario_creador
+                    id_usuario_reporte: hallazgo.id_usuario_buscador
                 });
             }
         }
 
-        // Ordenar los matches por puntaje de forma descendente
         matches.sort((a, b) => b.score - a.score);
-
-        // Filtrar para obtener solo los mejores 10 matches
         const topMatches = matches.slice(0, 10);
 
-        // ===========================================
-        // 🚨 NUEVA LÓGICA: GUARDAR LAS POSIBLES COINCIDENCIAS EN LA DB
-        // ===========================================
         for (const match of topMatches) {
-            await insertPossibleMatch(db, id_ficha, match.id_hallazgo, match.score, match.matchedCriteria);
+            await insertPossibleMatch(db, id_ficha, match.id_hallazgo, match.score, match.matchedCriteria.join(', '));
         }
         logger.info(`✅ ${topMatches.length} posibles coincidencias guardadas para la ficha ${id_ficha}`);
-        // ===========================================
 
-
-        // Enviar notificaciones a los usuarios que reportaron los hallazgos
         await notifyMatchedUsers(topMatches, fichaCompleta.nombre);
 
         return topMatches;
@@ -112,10 +105,8 @@ export async function findMatchesForFicha(fichaData) {
 
 /**
  * Lógica para verificar la coincidencia de ubicación.
- * @param {object} ubicacionFicha - El objeto de ubicación de la ficha.
- * @param {object} hallazgo - El objeto de hallazgo completo, incluyendo los datos de ubicación.
  */
-function checkLocationMatch(ubicacionFicha, hallazgo) {
+export function checkLocationMatch(ubicacionFicha, hallazgo) {
     let score = 0;
     let criteria = [];
 
@@ -129,37 +120,78 @@ function checkLocationMatch(ubicacionFicha, hallazgo) {
         criteria.push('Coincidencia de Municipio');
     }
 
-    const distance = calculateDistance(
-        ubicacionFicha.latitud, ubicacionFicha.longitud,
-        hallazgo.latitud, hallazgo.longitud
-    );
+    return { score, criteria };
+}
 
-    if (distance <= 10) {
+/**
+ * Lógica para verificar la coincidencia de datos biográficos.
+ */
+export function checkGeneralDataMatch(ficha, hallazgo) {
+    let score = 0;
+    let criteria = [];
+
+    // Coincidencia de género (fuerte)
+    if (ficha.genero && hallazgo.genero && ficha.genero === hallazgo.genero) {
         score += 200;
-        criteria.push('Proximidad Geográfica (< 10km)');
-    } else if (distance <= 50) {
-        score += 100;
-        criteria.push('Proximidad Geográfica (< 50km)');
+        criteria.push('Coincidencia de Género');
+    }
+
+    // Coincidencia de edad (tolerancia de 2 años)
+    if (ficha.edad_estimada && hallazgo.edad_estimada) {
+        const ageDiff = Math.abs(ficha.edad_estimada - hallazgo.edad_estimada);
+        if (ageDiff <= 2) {
+            score += 150;
+            criteria.push(`Coincidencia de Edad (diferencia de ${ageDiff} años)`);
+        }
     }
     
+    // Coincidencia de estatura (tolerancia de 5% de la ficha)
+    if (ficha.estatura && hallazgo.estatura) {
+        const estaturaDiff = Math.abs(ficha.estatura - hallazgo.estatura);
+        if (estaturaDiff <= (ficha.estatura * 0.05)) {
+            score += 100;
+            criteria.push('Coincidencia de Estatura');
+        }
+    }
+
+    // Coincidencia de peso (tolerancia de 5% de la ficha)
+    if (ficha.peso && hallazgo.peso) {
+        const pesoDiff = Math.abs(ficha.peso - hallazgo.peso);
+        if (pesoDiff <= (ficha.peso * 0.05)) {
+            score += 100;
+            criteria.push('Coincidencia de Peso');
+        }
+    }
+
+    // Coincidencia de complexión
+    if (ficha.complexion && hallazgo.complexion && ficha.complexion === hallazgo.complexion) {
+        score += 50;
+        criteria.push('Coincidencia de Complexión');
+    }
+
     return { score, criteria };
 }
 
 /**
  * Lógica para verificar la coincidencia de rasgos físicos.
  */
-function checkRasgosMatch(rasgosFicha, rasgosHallazgo) {
+export function checkRasgosMatch(rasgosFicha, rasgosHallazgo) {
     let score = 0;
     let criteria = [];
+
+    if (!Array.isArray(rasgosHallazgo)) {
+        logger.warn(`rasgosHallazgo no es un array, se recibió: ${JSON.stringify(rasgosHallazgo)}`);
+        return { score, criteria };
+    }
 
     for (const rasgoFicha of rasgosFicha) {
         const matchedRasgo = rasgosHallazgo.find(rh => 
             rh.id_parte_cuerpo === rasgoFicha.id_parte_cuerpo &&
-            rh.tipo_rasgo === rasgoFicha.tipo_rasgo
+            rh.descripcion.toLowerCase().includes(rasgoFicha.descripcion_detalle.toLowerCase())
         );
         if (matchedRasgo) {
             score += 30;
-            criteria.push(`Coincidencia de Rasgo Físico: ${matchedRasgo.nombre_parte}`);
+            criteria.push(`Coincidencia de Rasgo Físico: ${rasgoFicha.descripcion_detalle}`);
         }
     }
 
@@ -169,9 +201,14 @@ function checkRasgosMatch(rasgosFicha, rasgosHallazgo) {
 /**
  * Lógica para verificar la coincidencia de vestimenta.
  */
-function checkVestimentaMatch(vestimentaFicha, vestimentaHallazgo) {
+export function checkVestimentaMatch(vestimentaFicha, vestimentaHallazgo) {
     let score = 0;
     let criteria = [];
+
+    if (!Array.isArray(vestimentaHallazgo)) {
+        logger.warn(`vestimentaHallazgo no es un array, se recibió: ${JSON.stringify(vestimentaHallazgo)}`);
+        return { score, criteria };
+    }
 
     for (const prendaFicha of vestimentaFicha) {
         const matchedPrenda = vestimentaHallazgo.find(ph => 
@@ -180,7 +217,7 @@ function checkVestimentaMatch(vestimentaFicha, vestimentaHallazgo) {
         );
         if (matchedPrenda) {
             score += 20;
-            criteria.push(`Coincidencia de Vestimenta: ${matchedPrenda.tipo_prenda}`);
+            criteria.push(`Coincidencia de Vestimenta: ${prendaFicha.color} ${prendaFicha.tipo_prenda}`);
         }
     }
 
@@ -190,7 +227,7 @@ function checkVestimentaMatch(vestimentaFicha, vestimentaHallazgo) {
 /**
  * Lógica para verificar la coincidencia de nombre.
  */
-function checkNameMatch(ficha, hallazgo) {
+export function checkNameMatch(ficha, hallazgo) {
     let score = 0;
     let criteria = [];
     
@@ -220,12 +257,12 @@ async function notifyMatchedUsers(matches, nombreFicha) {
         if (!notifiedUsers.has(idUsuarioHallazgo)) {
             const usuarioHallazgo = await db.get('SELECT email, nombre FROM users WHERE id = ?', [idUsuarioHallazgo]);
             if (usuarioHallazgo) {
-                // 1. Enviar el correo electrónico
+                // Enviar el correo electrónico
                 const subject = `🚨 ¡Posible coincidencia encontrada!`;
                 const message = `Hola ${usuarioHallazgo.nombre},\n\nHemos encontrado una posible coincidencia para el hallazgo que reportaste, con la ficha de búsqueda de ${nombreFicha}. Por favor, revisa tu cuenta para más detalles.\n\nSaludos,\nEl equipo de Rastros de Esperanza.`;
                 await sendMatchNotification(usuarioHallazgo.email, subject, message);
 
-                // 2. Insertar notificación en la base de datos
+                // Insertar notificación en la base de datos
                 const notificationContent = `Se ha encontrado una **posible coincidencia** con el reporte que hiciste. Por favor, revisa la ficha de ${nombreFicha} para ver los detalles y decidir si es un match.`;
                 
                 await insertSystemNotification(
@@ -240,23 +277,4 @@ async function notifyMatchedUsers(matches, nombreFicha) {
             }
         }
     }
-}
-
-
-/**
- * Función para calcular la distancia entre dos puntos geográficos (fórmula de Haversine).
- */
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    const toRad = (value) => (value * Math.PI) / 180;
-    const R = 6371; // Radio de la Tierra en km
-
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    
-    return R * c; // Distancia en km
 }

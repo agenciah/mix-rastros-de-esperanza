@@ -12,6 +12,8 @@ export const getFichaCompletaById = async (id) => {
         SELECT
             fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,
             fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha,
+            -- Campos nuevos para la ficha
+            fd.edad_estimada, fd.genero, fd.estatura, fd.peso, fd.complexion,
             json_object(
                 'id_ubicacion', u.id_ubicacion, 'estado', u.estado, 'municipio', u.municipio,
                 'localidad', u.localidad, 'calle', u.calle, 'referencias', u.referencias,
@@ -56,6 +58,100 @@ export const getFichaCompletaById = async (id) => {
 };
 
 /**
+ * Busca fichas de desaparición basándose en múltiples criterios.
+ * @param {object} params - Objeto con los parámetros de búsqueda.
+ * @param {string} [params.nombre] - Nombre de la persona.
+ * @param {string} [params.apellido] - Apellido de la persona.
+ * @param {string} [params.estado] - Estado de desaparición.
+ * @param {string} [params.municipio] - Municipio de desaparición.
+ * @param {string} [params.genero] - Género de la persona.
+ * @param {string} [params.edad_estimada_min] - Edad mínima.
+ * @param {string} [params.edad_estimada_max] - Edad máxima.
+ * @param {string} [params.fecha_desaparicion_inicio] - Fecha de inicio del rango.
+ * @param {string} [params.fecha_desaparicion_fin] - Fecha de fin del rango.
+ * @returns {Promise<Array<object>>} - Array de fichas que coinciden con los criterios.
+ */
+export const searchFichas = async (params) => {
+    const db = await openDb();
+    let query = `
+        SELECT
+            fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.apellido_materno,
+            fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha,
+            -- Campos nuevos para el resultado de la búsqueda
+            fd.edad_estimada, fd.genero, fd.estatura, fd.peso, fd.complexion,
+            u.estado, u.municipio
+        FROM fichas_desaparicion AS fd
+        LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
+    `;
+
+    const conditions = [];
+    const queryParams = [];
+
+    // Condiciones de nombre y apellido
+    if (params.nombre) {
+        conditions.push(`fd.nombre LIKE ?`);
+        queryParams.push(`%${params.nombre}%`);
+    }
+    if (params.apellido) {
+        conditions.push(`fd.apellido_paterno LIKE ? OR fd.apellido_materno LIKE ?`);
+        queryParams.push(`%${params.apellido}%`, `%${params.apellido}%`);
+    }
+
+    // Condiciones de ubicación
+    if (params.estado) {
+        conditions.push(`u.estado = ?`);
+        queryParams.push(params.estado);
+    }
+    if (params.municipio) {
+        conditions.push(`u.municipio = ?`);
+        queryParams.push(params.municipio);
+    }
+
+    // Condiciones de género
+    if (params.genero) {
+        conditions.push(`fd.genero = ?`);
+        queryParams.push(params.genero);
+    }
+
+    // Condiciones de edad
+    if (params.edad_estimada_min) {
+        conditions.push(`fd.edad_estimada >= ?`);
+        queryParams.push(params.edad_estimada_min);
+    }
+    if (params.edad_estimada_max) {
+        conditions.push(`fd.edad_estimada <= ?`);
+        queryParams.push(params.edad_estimada_max);
+    }
+
+    // Condiciones de fecha
+    if (params.fecha_desaparicion_inicio) {
+        conditions.push(`fd.fecha_desaparicion >= ?`);
+        queryParams.push(params.fecha_desaparicion_inicio);
+    }
+    if (params.fecha_desaparicion_fin) {
+        conditions.push(`fd.fecha_desaparicion <= ?`);
+        queryParams.push(params.fecha_desaparicion_fin);
+    }
+    
+    // Solo mostrar fichas activas por defecto
+    conditions.push(`fd.estado_ficha = 'activa'`);
+
+    if (conditions.length > 0) {
+        query += ` WHERE ` + conditions.join(' AND ');
+    }
+
+    query += ` ORDER BY fd.fecha_desaparicion DESC`;
+
+    try {
+        const result = await db.all(query, queryParams);
+        return result;
+    } catch (error) {
+        logger.error(`❌ Error en la búsqueda de fichas: ${error.message}`);
+        throw error;
+    }
+};
+
+/**
  * Obtiene todos los hallazgos completos, incluyendo sus rasgos y vestimenta.
  * @returns {Promise<Array<object>>} - Lista de hallazgos completos.
  */
@@ -66,6 +162,8 @@ export const getAllHallazgosCompletos = async () => {
             h.id_hallazgo, 
             h.id_usuario_buscador, 
             h.estado_hallazgo,
+            -- Campos nuevos para el hallazgo
+            h.edad_estimada, h.genero, h.estatura, h.peso, h.complexion,
             u.estado, 
             u.municipio, 
             u.localidad,
@@ -113,65 +211,161 @@ export const getAllHallazgosCompletos = async () => {
  * Obtiene una ficha de desaparición con todos sus detalles y datos del usuario creador.
  */
 export const getFichaCompletaByIdAdmin = async (id_ficha) => {
-  const db = await openDb();
-  const fichaSql = `
-    SELECT
-      fd.id_ficha,
-      fd.id_usuario_creador,
-      u.nombre AS nombre_usuario,
-      u.email AS email_usuario,
-      fd.nombre,
-      fd.segundo_nombre,
-      fd.apellido_paterno,
-      fd.apellido_materno,
-      fd.fecha_desaparicion,
-      fd.id_ubicacion_desaparicion,
-      fd.id_tipo_lugar_desaparicion,
-      ctl.nombre_tipo AS tipo_lugar,
-      fd.foto_perfil,
-      fd.estado_ficha,
-      fd.estado_pago,
-      fd.fecha_registro_encontrado,
-      ubicacion.estado,
-      ubicacion.municipio,
-      ubicacion.localidad,
-      ubicacion.calle,
-      ubicacion.referencias,
-      ubicacion.latitud,
-      ubicacion.longitud,
-      ubicacion.codigo_postal
-    FROM fichas_desaparicion AS fd
-    LEFT JOIN users AS u ON fd.id_usuario_creador = u.id
-    LEFT JOIN ubicaciones AS ubicacion ON fd.id_ubicacion_desaparicion = ubicacion.id_ubicacion
-    LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
-    WHERE fd.id_ficha = ?;
-  `;
+    const db = await openDb();
+    const fichaSql = `
+        SELECT
+            fd.id_ficha,
+            fd.id_usuario_creador,
+            u.nombre AS nombre_usuario,
+            u.email AS email_usuario,
+            fd.nombre,
+            fd.segundo_nombre,
+            fd.apellido_paterno,
+            fd.apellido_materno,
+            fd.fecha_desaparicion,
+            fd.id_ubicacion_desaparicion,
+            fd.id_tipo_lugar_desaparicion,
+            ctl.nombre_tipo AS tipo_lugar,
+            fd.foto_perfil,
+            fd.estado_ficha,
+            fd.estado_pago,
+            fd.fecha_registro_encontrado,
+            -- Campos nuevos para la ficha
+            fd.edad_estimada, fd.genero, fd.estatura, fd.peso, fd.complexion,
+            ubicacion.estado,
+            ubicacion.municipio,
+            ubicacion.localidad,
+            ubicacion.calle,
+            ubicacion.referencias,
+            ubicacion.latitud,
+            ubicacion.longitud,
+            ubicacion.codigo_postal
+        FROM fichas_desaparicion AS fd
+        LEFT JOIN users AS u ON fd.id_usuario_creador = u.id
+        LEFT JOIN ubicaciones AS ubicacion ON fd.id_ubicacion_desaparicion = ubicacion.id_ubicacion
+        LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
+        WHERE fd.id_ficha = ?;
+    `;
 
-  const rasgosSql = `
-    SELECT frf.*, cpc.nombre_parte AS nombre_parte_cuerpo
-    FROM ficha_rasgos_fisicos AS frf
-    LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
-    WHERE frf.id_ficha = ?;
-  `;
+    const rasgosSql = `
+        SELECT frf.*, cpc.nombre_parte AS nombre_parte_cuerpo
+        FROM ficha_rasgos_fisicos AS frf
+        LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
+        WHERE frf.id_ficha = ?;
+    `;
 
-  const vestimentaSql = `
-    SELECT fv.*, cp.tipo_prenda AS tipo_prenda_nombre
-    FROM ficha_vestimenta AS fv
-    LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
-    WHERE fv.id_ficha = ?;
-  `;
+    const vestimentaSql = `
+        SELECT fv.*, cp.tipo_prenda AS tipo_prenda_nombre
+        FROM ficha_vestimenta AS fv
+        LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
+        WHERE fv.id_ficha = ?;
+    `;
 
-  const ficha = await db.get(fichaSql, [id_ficha]);
-  if (!ficha) return null;
+    const ficha = await db.get(fichaSql, [id_ficha]);
+    if (!ficha) return null;
 
-  const rasgos = await db.all(rasgosSql, [id_ficha]);
-  const vestimenta = await db.all(vestimentaSql, [id_ficha]);
+    const rasgos = await db.all(rasgosSql, [id_ficha]);
+    const vestimenta = await db.all(vestimentaSql, [id_ficha]);
 
-  return {
-    ...ficha,
-    rasgos_fisicos: rasgos,
-    vestimenta: vestimenta,
-  };
+    return {
+        ...ficha,
+        rasgos_fisicos: rasgos,
+        vestimenta: vestimenta,
+    };
+};
+
+/**
+ * Busca hallazgos basándose en múltiples criterios.
+ * @param {object} params - Objeto con los parámetros de búsqueda.
+ * @param {string} [params.nombre] - Nombre de la persona encontrada.
+ * @param {string} [params.apellido] - Apellido de la persona encontrada.
+ * @param {string} [params.estado] - Estado del hallazgo.
+ * @param {string} [params.municipio] - Municipio del hallazgo.
+ * @param {string} [params.genero] - Género de la persona.
+ * @param {string} [params.edad_estimada_min] - Edad mínima.
+ * @param {string} [params.edad_estimada_max] - Edad máxima.
+ * @param {string} [params.fecha_hallazgo_inicio] - Fecha de inicio del rango.
+ * @param {string} [params.fecha_hallazgo_fin] - Fecha de fin del rango.
+ * @returns {Promise<Array<object>>} - Array de hallazgos que coinciden con los criterios.
+ */
+export const searchHallazgos = async (params) => {
+    const db = await openDb();
+    let query = `
+        SELECT
+            h.id_hallazgo, h.nombre, h.apellido_paterno, h.apellido_materno,
+            h.fecha_hallazgo, h.descripcion_general_hallazgo, h.estado_hallazgo,
+            -- Campos nuevos para el resultado de la búsqueda
+            h.edad_estimada, h.genero, h.estatura, h.peso, h.complexion,
+            u.estado, u.municipio
+        FROM hallazgos AS h
+        LEFT JOIN ubicaciones AS u ON h.id_ubicacion_hallazgo = u.id_ubicacion
+    `;
+
+    const conditions = [];
+    const queryParams = [];
+
+    // Condiciones de nombre y apellido
+    if (params.nombre) {
+        conditions.push(`h.nombre LIKE ?`);
+        queryParams.push(`%${params.nombre}%`);
+    }
+    if (params.apellido) {
+        conditions.push(`h.apellido_paterno LIKE ? OR h.apellido_materno LIKE ?`);
+        queryParams.push(`%${params.apellido}%`, `%${params.apellido}%`);
+    }
+
+    // Condiciones de ubicación
+    if (params.estado) {
+        conditions.push(`u.estado = ?`);
+        queryParams.push(params.estado);
+    }
+    if (params.municipio) {
+        conditions.push(`u.municipio = ?`);
+        queryParams.push(params.municipio);
+    }
+
+    // Condiciones de género
+    if (params.genero) {
+        conditions.push(`h.genero = ?`);
+        queryParams.push(params.genero);
+    }
+
+    // Condiciones de edad
+    if (params.edad_estimada_min) {
+        conditions.push(`h.edad_estimada >= ?`);
+        queryParams.push(params.edad_estimada_min);
+    }
+    if (params.edad_estimada_max) {
+        conditions.push(`h.edad_estimada <= ?`);
+        queryParams.push(params.edad_estimada_max);
+    }
+
+    // Condiciones de fecha
+    if (params.fecha_hallazgo_inicio) {
+        conditions.push(`h.fecha_hallazgo >= ?`);
+        queryParams.push(params.fecha_hallazgo_inicio);
+    }
+    if (params.fecha_hallazgo_fin) {
+        conditions.push(`h.fecha_hallazgo <= ?`);
+        queryParams.push(params.fecha_hallazgo_fin);
+    }
+    
+    // Solo mostrar hallazgos activos por defecto
+    conditions.push(`h.estado_hallazgo = 'activo'`);
+
+    if (conditions.length > 0) {
+        query += ` WHERE ` + conditions.join(' AND ');
+    }
+
+    query += ` ORDER BY h.fecha_hallazgo DESC`;
+
+    try {
+        const result = await db.all(query, queryParams);
+        return result;
+    } catch (error) {
+        logger.error(`❌ Error en la búsqueda de hallazgos: ${error.message}`);
+        throw error;
+    }
 };
 
 /**
@@ -207,7 +401,9 @@ export const getHallazgoCompletoById = async (id) => {
     // Consulta principal del hallazgo
     const hallazgoSql = `
         SELECT
-            h.id_hallazgo, h.id_usuario_creador, h.estado_hallazgo, h.fecha_hallazgo,
+            h.id_hallazgo, h.id_usuario_buscador, h.estado_hallazgo, h.fecha_hallazgo,
+            -- Campos nuevos para el hallazgo
+            h.edad_estimada, h.genero, h.estatura, h.peso, h.complexion,
             json_object(
                 'id_ubicacion', u.id_ubicacion, 'estado', u.estado, 'municipio', u.municipio,
                 'localidad', u.localidad, 'calle', u.calle, 'referencias', u.referencias,
@@ -251,4 +447,93 @@ export const getHallazgoCompletoById = async (id) => {
     delete hallazgoCompleto.ubicacion_hallazgo_json;
 
     return hallazgoCompleto;
+};
+
+/**
+ * Busca hallazgos por un término de búsqueda general, incluyendo nombres, descripciones, rasgos y vestimenta.
+ * @param {string} searchTerm - El término de búsqueda.
+ * @param {number} [limit=20] - Límite de resultados.
+ * @param {number} [offset=0] - Offset de resultados.
+ * @returns {Promise<Array<object>>} - Array de hallazgos que coinciden con la búsqueda.
+ */
+// Reemplaza la función completa con esta versión definitiva
+export const searchHallazgosByKeyword = async (searchTerm = '', limit = 20, offset = 0) => {
+    const db = await openDb();
+    
+    const sqlTerm = `%${searchTerm.toLowerCase()}%`;
+
+    const hallazgosSql = `
+        SELECT 
+            h.id_hallazgo, h.nombre, h.segundo_nombre, h.apellido_paterno, 
+            h.apellido_materno, h.fecha_hallazgo, h.descripcion_general_hallazgo,
+            h.edad_estimada, h.genero, h.estatura, h.complexion, h.peso,
+            u.estado, u.municipio, u.localidad
+        FROM hallazgos AS h
+        -- Joins que ya teníamos
+        LEFT JOIN ubicaciones AS u ON h.id_ubicacion_hallazgo = u.id_ubicacion
+        LEFT JOIN hallazgo_vestimenta AS hv ON h.id_hallazgo = hv.id_hallazgo
+        LEFT JOIN catalogo_prendas AS cp ON hv.id_prenda = cp.id_prenda
+        -- ===================================================================
+        -- NUEVOS JOINS PARA BÚSQUEDA EXHAUSTIVA
+        -- ===================================================================
+        LEFT JOIN catalogo_tipo_lugar AS ctl ON h.id_tipo_lugar_hallazgo = ctl.id_tipo_lugar
+        LEFT JOIN hallazgo_caracteristicas AS hc ON h.id_hallazgo = hc.id_hallazgo
+        LEFT JOIN catalogo_partes_cuerpo AS cpc ON hc.id_parte_cuerpo = cpc.id_parte_cuerpo
+        -- ===================================================================
+        WHERE ( 
+            -- === Parte 1: Datos Generales del Hallazgo ===
+            LOWER(h.nombre) LIKE ? OR
+            LOWER(h.segundo_nombre) LIKE ? OR
+            LOWER(h.apellido_paterno) LIKE ? OR
+            LOWER(h.apellido_materno) LIKE ? OR
+            LOWER(h.descripcion_general_hallazgo) LIKE ? OR
+            LOWER(h.genero) LIKE ? OR
+            LOWER(h.complexion) LIKE ? OR
+            CAST(h.edad_estimada AS TEXT) LIKE ? OR
+            CAST(h.estatura AS TEXT) LIKE ? OR
+            CAST(h.peso AS TEXT) LIKE ? OR
+            LOWER(u.estado) LIKE ? OR
+            LOWER(u.municipio) LIKE ? OR
+            LOWER(ctl.nombre_tipo) LIKE ? OR -- <-- Búsqueda en Tipo de Lugar del Catálogo
+
+            -- === Parte 2: Rasgos Físicos ===
+            LOWER(cpc.nombre_parte) LIKE ? OR -- <-- Búsqueda en Parte del Cuerpo del Catálogo
+            LOWER(hc.tipo_caracteristica) LIKE ? OR
+            LOWER(hc.descripcion) LIKE ? OR
+
+            -- === Parte 3: Vestimenta ===
+            LOWER(cp.tipo_prenda) LIKE ? OR -- <-- Búsqueda en Tipo de Prenda del Catálogo
+            LOWER(hv.color) LIKE ? OR
+            LOWER(hv.marca) LIKE ? OR -- <-- Campo que faltaba
+            LOWER(hv.caracteristica_especial) LIKE ? -- <-- Campo que faltaba
+        )
+        GROUP BY h.id_hallazgo
+        ORDER BY h.fecha_hallazgo DESC
+        LIMIT ? OFFSET ?;
+    `;
+    
+    // Lista de parámetros actualizada para coincidir con cada '?' en la consulta
+    const params = [
+        // Parte 1 (13 params)
+        sqlTerm, sqlTerm, sqlTerm, sqlTerm, sqlTerm, sqlTerm, sqlTerm, sqlTerm, 
+        sqlTerm, sqlTerm, sqlTerm, sqlTerm, sqlTerm,
+        // Parte 2 (3 params)
+        sqlTerm, sqlTerm, sqlTerm,
+        // Parte 3 (4 params)
+        sqlTerm, sqlTerm, sqlTerm, sqlTerm,
+        // Paginación (2 params)
+        limit, offset
+    ];
+
+    console.log(`[Query] SQL a ejecutar (Exhaustivo): \n`, hallazgosSql);
+    console.log(`[Query] Parámetros (${params.length}):`, params);
+
+    try {
+        const hallazgosResult = await db.all(hallazgosSql, params);
+        console.log(`[Query] Resultados de la consulta SQL:`, hallazgosResult);
+        return hallazgosResult;
+    } catch (error) {
+        console.error(`❌ Error en la consulta SQL: ${error.message}`);
+        throw error;
+    }
 };

@@ -1,43 +1,74 @@
 import { useState, useCallback, useEffect } from 'react';
 import api from '../../lib/axios';
+import { useAuth } from '@/context/AuthContext';
 
 /**
  * @fileoverview Hook para manejar todas las interacciones con la API de Hallazgos.
  * Centraliza las funciones del CRUD y la búsqueda, proporcionando un estado de carga y error.
  */
 export const useHallazgos = () => {
+    const { user, isAuthLoading: authLoading } = useAuth();
+    
     const [hallazgos, setHallazgos] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    /**
-     * Obtiene todos los hallazgos.
-     * @returns {Promise<Array>} Un array de objetos de hallazgo.
+    // *** NUEVO console.log para ver el estado del usuario al inicio del hook ***
+    console.log('✅ Estado del hook useHallazgos:');
+    console.log(`- authLoading: ${authLoading}`);
+    console.log(`- user: ${user ? user.id_usuario : 'No logueado'}`);
+
+     /**
+     * Obtiene los hallazgos del usuario autenticado.
      */
     const fetchHallazgos = useCallback(async () => {
         setIsLoading(true);
         setError(null);
+
+        // *** console.log antes de la llamada a la API ***
+        console.log("🚀 Iniciando solicitud para obtener hallazgos del usuario...");
         try {
-            const response = await api.get('/api/hallazgos');
-            setHallazgos(response.data.data); // CORRECCIÓN: Almacena los datos en el estado
+            // Cambiar la URL para llamar a la nueva ruta
+            const response = await api.get('/api/hallazgos/by-user');
+            // *** console.log después de una solicitud exitosa ***
+            console.log("✅ Solicitud exitosa. Datos recibidos:", response.data.data);
+            setHallazgos(response.data.data);
         } catch (err) {
-            console.error("❌ Error al obtener todos los hallazgos:", err.response?.data || err.message);
-            setError(err.response?.data?.message || 'Error al cargar los hallazgos.');
+            // Este console.error ya lo tenías, pero es clave para la depuración
+            console.error("❌ Error al obtener los hallazgos del usuario:", err.response?.data || err.message);
+            setError(err.response?.data?.message || 'Error al cargar tus hallazgos.');
             setHallazgos([]);
         } finally {
             setIsLoading(false);
+            console.log("🏁 Solicitud finalizada.");
         }
     }, []);
 
-    // Carga inicial de los datos
+    // Lógica para que el hook solo se ejecute cuando el usuario esté cargado
     useEffect(() => {
+    console.log('➡️ useEffect del hook activado.');
+
+    // Condición de carga: No hacer nada si aún estamos cargando la autenticación
+    if (authLoading) {
+        console.log('⏳ Esperando a que el usuario termine de cargar la sesión...');
+        return;
+    }
+
+    // Condición de éxito: Si el usuario existe, llamar a fetchHallazgos
+    if (user?.id_usuario) {
+        console.log('✅ Usuario logueado (ID:', user.id_usuario, '). Llamando a fetchHallazgos...');
         fetchHallazgos();
-    }, [fetchHallazgos]);
+    } else {
+        // Condición de error/no-logueado: No hay usuario, no se hace el fetch
+        console.log('🛑 No hay usuario logueado. Cancelando el fetch de hallazgos.');
+        // Opcional: podrías establecer los hallazgos a un array vacío si quieres
+        // setHallazgos([]);
+    }
+
+}, [fetchHallazgos, authLoading, user]); // Dependencias correctas
 
     /**
      * Obtiene un hallazgo por su ID.
-     * @param {string} id El ID del hallazgo.
-     * @returns {Promise<Object|null>} Un objeto de hallazgo o null si falla.
      */
     const getHallazgoById = useCallback(async (id) => {
         setIsLoading(true);
@@ -54,18 +85,14 @@ export const useHallazgos = () => {
         }
     }, []);
 
-    /**
-     * Crea un nuevo hallazgo.
-     * @param {Object} hallazgoData Los datos del hallazgo a crear.
-     * @returns {Promise<Object|null>} El hallazgo creado o null si falla.
-     */
     const createHallazgo = useCallback(async (hallazgoData) => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.post('/api/hallazgos', hallazgoData);
+            const dataWithUser = { ...hallazgoData, id_usuario_buscador: user.id_usuario };
+            const response = await api.post('/api/hallazgos', dataWithUser);
             console.log("✅ Hallazgo creado con éxito:", response.data);
-            fetchHallazgos(); // CORRECCIÓN: Refresca la lista después de crear
+            fetchHallazgos();
             return true;
         } catch (err) {
             console.error("❌ Error al crear hallazgo:", err.response ? err.response.data : err.message);
@@ -73,20 +100,14 @@ export const useHallazgos = () => {
             setIsLoading(false);
             return false;
         }
-    }, [fetchHallazgos]);
+    }, [fetchHallazgos, user]);
 
-    /**
-     * Actualiza un hallazgo existente.
-     * @param {string} id El ID del hallazgo a actualizar.
-     * @param {Object} updatedData Los datos actualizados del hallazgo.
-     * @returns {Promise<Object|null>} El resultado de la actualización o null si falla.
-     */
     const actualizarHallazgo = useCallback(async (id, updatedData) => {
         setIsLoading(true);
         setError(null);
         try {
             const response = await api.put(`/api/hallazgos/${id}`, updatedData);
-            fetchHallazgos(); // CORRECCIÓN: Refresca la lista después de actualizar
+            fetchHallazgos();
             return response.data;
         } catch (err) {
             console.error(`❌ Error al actualizar hallazgo con ID ${id}:`, err.response?.data || err.message);
@@ -97,17 +118,12 @@ export const useHallazgos = () => {
         }
     }, [fetchHallazgos]);
 
-    /**
-     * Elimina un hallazgo por su ID.
-     * @param {string} id El ID del hallazgo a eliminar.
-     * @returns {Promise<Object|null>} El resultado de la eliminación o null si falla.
-     */
     const eliminarHallazgo = useCallback(async (id) => {
         setIsLoading(true);
         setError(null);
         try {
             const response = await api.delete(`/api/hallazgos/${id}`);
-            fetchHallazgos(); // CORRECCIÓN: Refresca la lista después de eliminar
+            fetchHallazgos();
             return response.data;
         } catch (err) {
             console.error(`❌ Error al eliminar hallazgo con ID ${id}:`, err.response?.data || err.message);
@@ -118,17 +134,12 @@ export const useHallazgos = () => {
         }
     }, [fetchHallazgos]);
 
-    /**
-     * Busca hallazgos por un término de búsqueda.
-     * @param {string} searchTerm El término de búsqueda.
-     * @returns {Promise<Array>} Un array de objetos de hallazgo.
-     */
     const searchHallazgos = useCallback(async (searchTerm) => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.get(`/api/hallazgos/buscar?searchTerm=${encodeURIComponent(searchTerm)}`);
-            setHallazgos(response.data.data); // CORRECCIÓN: Almacena los resultados de la búsqueda
+            const response = await api.get(`/api/hallazgos/buscar?searchTerm=${encodeURIComponent(searchTerm)}&id_usuario_buscador=${user.id_usuario}`);
+            setHallazgos(response.data.data);
         } catch (err) {
             console.error("❌ Error al buscar hallazgos:", err.response?.data || err.message);
             setError(err.response?.data?.message || 'Error al realizar la búsqueda.');
@@ -136,15 +147,15 @@ export const useHallazgos = () => {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [user]);
 
     return {
-        hallazgos, // Ahora devolvemos el estado 'hallazgos'
+        hallazgos,
         fetchHallazgos,
         getHallazgoById,
         createHallazgo,
         actualizarHallazgo,
-        eliminarHallazgo, // Se cambió el nombre de la función para mayor claridad
+        eliminarHallazgo,
         searchHallazgos,
         isLoading,
         error,

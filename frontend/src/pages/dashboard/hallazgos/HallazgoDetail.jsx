@@ -10,7 +10,11 @@ import {
     FaRegCalendarAlt,
     FaArrowLeft,
     FaCamera,
-    FaEnvelope
+    FaEnvelope,
+    FaRulerVertical, // Icono para estatura
+    FaWeight,
+    FaHourglassHalf, // Icono para edad
+    FaMale, // Icono para complexión (se puede cambiar)
 } from 'react-icons/fa';
 
 const HallazgoDetail = () => {
@@ -41,10 +45,7 @@ const HallazgoDetail = () => {
         }
 
         try {
-            // Llamamos a la función con el ID correcto
             const conversationId = await startConversation(hallazgo.id_usuario_buscador);
-
-            // Redireccionamos a la página de mensajes
             navigate(`/mensajes/${conversationId}`);
         } catch (err) {
             console.error('Error al iniciar la conversación:', err);
@@ -122,6 +123,44 @@ const HallazgoDetail = () => {
                     )}
                 </div>
 
+                {/* MODIFICACIÓN: Nueva sección para los datos físicos */}
+                <div className="space-y-4 border-b pb-4">
+                    <h4 className="text-xl font-bold text-gray-800 mb-2">Datos Físicos</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {hallazgo.genero && (
+                            <div className="flex items-center">
+                                <FaUser className="mr-2 text-gray-400" />
+                                <span>Género: <span className="font-medium text-gray-700">{hallazgo.genero}</span></span>
+                            </div>
+                        )}
+                        {hallazgo.edad_estimada && (
+                            <div className="flex items-center">
+                                <FaHourglassHalf className="mr-2 text-gray-400" />
+                                <span>Edad estimada: <span className="font-medium text-gray-700">{hallazgo.edad_estimada} años</span></span>
+                            </div>
+                        )}
+                        {hallazgo.estatura && (
+                            <div className="flex items-center">
+                                <FaRulerVertical className="mr-2 text-gray-400" />
+                                <span>Estatura: <span className="font-medium text-gray-700">{hallazgo.estatura} m</span></span>
+                            </div>
+                        )}
+                        {hallazgo.peso && (
+                            <div className="flex items-center">
+                                <FaWeight className="mr-2 text-gray-400" />
+                                <span>Peso: <span className="font-medium text-gray-700">{hallazgo.peso} kg</span></span>
+                            </div>
+                        )}
+                        {hallazgo.complexion && (
+                            <div className="flex items-center">
+                                <FaMale className="mr-2 text-gray-400" />
+                                <span>Complexión: <span className="font-medium text-gray-700">{hallazgo.complexion}</span></span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+                {/* Fin de la nueva sección */}
+
                 {/* 2. Sección de Rasgos Físicos (Características) */}
                 {hallazgo.caracteristicas?.length > 0 && (
                     <div className="border-b pb-4">
@@ -164,11 +203,11 @@ const HallazgoDetail = () => {
                     {/* Botón para iniciar conversación */}
                     <button
                         onClick={handleStartConversation}
-                        disabled={isStartingChat} // Deshabilita el botón mientras se procesa la solicitud
-                        className="..."
+                        disabled={isStartingChat}
+                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
                     >
                         {isStartingChat ? (
-                            'Iniciando...' // O un spinner
+                            'Iniciando...'
                         ) : (
                             <>
                                 <FaEnvelope className="mr-2" />

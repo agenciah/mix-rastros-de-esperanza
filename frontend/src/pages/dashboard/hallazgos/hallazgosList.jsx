@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2, Terminal, AlertCircle } from 'lucide-react';
+import { Edit, Trash2, Terminal, AlertCircle, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-// CORRECCIÓN: Cambié el nombre de la importación a 'useHallazgos' para evitar ambigüedad.
 import { useHallazgos } from '@/hooks/hallazgos/useHallazgosHook';
+import { useAuth } from '@/context/AuthContext';
 
 export default function HallazgosList() {
-    // CORRECCIÓN: Cambié el nombre de la función de eliminación y añadí 'hallazgos'
+    const { isAuthLoading: authLoading } = useAuth();
     const { hallazgos, isLoading, error, eliminarHallazgo } = useHallazgos();
+
     const [hallazgoToDelete, setHallazgoToDelete] = useState(null);
 
     const handleDelete = (hallazgo) => {
@@ -19,7 +20,7 @@ export default function HallazgosList() {
     const handleConfirmDelete = async () => {
         if (hallazgoToDelete) {
             await eliminarHallazgo(hallazgoToDelete.id_hallazgo);
-            setHallazgoToDelete(null); // Resetear el estado después de la eliminación
+            setHallazgoToDelete(null);
         }
     };
 
@@ -27,6 +28,15 @@ export default function HallazgosList() {
         setHallazgoToDelete(null);
     };
 
+    if (authLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                <span className="ml-2 text-gray-600">Cargando sesión...</span>
+            </div>
+        );
+    }
+    
     if (isLoading) {
         return <div className="text-center p-8">Cargando hallazgos...</div>;
     }

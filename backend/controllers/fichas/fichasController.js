@@ -30,6 +30,13 @@ export const createFichaDesaparicion = async (req, res) => {
             ubicacion_desaparicion,
             id_tipo_lugar_desaparicion,
             foto_perfil,
+            // Nuevos campos
+            edad_estimada,
+            genero,
+            estatura,
+            complexion,
+            peso,
+            // Fin de nuevos campos
             rasgos_fisicos,
             vestimenta,
         } = req.body;
@@ -54,13 +61,13 @@ export const createFichaDesaparicion = async (req, res) => {
 
         const id_ubicacion_desaparicion = ubicacionResult.lastID;
 
-        // 2. Insertar la ficha principal
+        // 2. Insertar la ficha principal con los nuevos campos
         const fichaResult = await db.run(
             `INSERT INTO fichas_desaparicion (
                 id_usuario_creador, nombre, segundo_nombre, apellido_paterno, apellido_materno,
                 fecha_desaparicion, id_ubicacion_desaparicion, id_tipo_lugar_desaparicion,
-                foto_perfil
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                foto_perfil, edad_estimada, genero, estatura, complexion, peso
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 id_usuario_creador,
                 nombre,
@@ -71,6 +78,11 @@ export const createFichaDesaparicion = async (req, res) => {
                 id_ubicacion_desaparicion,
                 id_tipo_lugar_desaparicion,
                 foto_perfil,
+                edad_estimada,
+                genero,
+                estatura,
+                complexion,
+                peso,
             ]
         );
 
@@ -105,6 +117,11 @@ export const createFichaDesaparicion = async (req, res) => {
         // 5. Búsqueda de coincidencias
         const matches = await findMatchesForFicha({
             id_ficha: idFicha,
+            edad_estimada,
+            genero,
+            estatura,
+            complexion,
+            peso,
             ubicacion_desaparicion,
             rasgos_fisicos,
             vestimenta,
@@ -148,6 +165,9 @@ export const actualizarFicha = async (req, res) => {
             nombre, segundo_nombre, apellido_paterno, apellido_materno,
             fecha_desaparicion, id_tipo_lugar_desaparicion, foto_perfil,
             estado_ficha, fecha_registro_encontrado,
+            // Nuevos campos
+            edad_estimada, genero, estatura, complexion, peso,
+            // Fin de nuevos campos
             ubicacion_desaparicion, rasgos_fisicos, vestimenta,
         } = req.body;
 
@@ -189,7 +209,8 @@ export const actualizarFicha = async (req, res) => {
         const mainFields = {
             nombre, segundo_nombre, apellido_paterno, apellido_materno,
             fecha_desaparicion, id_tipo_lugar_desaparicion, foto_perfil,
-            estado_ficha, fecha_registro_encontrado
+            estado_ficha, fecha_registro_encontrado,
+            edad_estimada, genero, estatura, complexion, peso
         };
         for (const key in mainFields) {
             if (mainFields[key] !== undefined && mainFields[key] !== null) {
@@ -261,6 +282,13 @@ export const getAllFichas = async (req, res) => {
                 fd.fecha_desaparicion,
                 fd.foto_perfil,
                 fd.estado_ficha,
+                -- Nuevos campos agregados
+                fd.edad_estimada,
+                fd.genero,
+                fd.estatura,
+                fd.complexion,
+                fd.peso,
+                -- Fin de nuevos campos
                 u.estado,
                 u.municipio,
                 ctl.nombre_tipo AS tipo_lugar,
@@ -385,10 +413,12 @@ export const searchFichas = async (req, res) => {
 
         const queryTerm = `%${searchTerm.toLowerCase()}%`;
         const selectFields = resumen
-            ? 'fd.id_ficha, fd.nombre, fd.segundo_nombre, fd.apellido_paterno, fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, u.estado, u.municipio'
-            : `fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno, fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha, u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.latitud, u.longitud, u.codigo_postal, ctl.nombre_tipo AS tipo_lugar,
-                json_group_array(DISTINCT json_object('tipo_rasgo', frf.tipo_rasgo, 'descripcion_detalle', frf.descripcion_detalle, 'nombre_parte', cpc.nombre_parte)) FILTER (WHERE frf.id_rasgo IS NOT NULL) AS rasgos_fisicos_json,
-                json_group_array(DISTINCT json_object('color', fv.color, 'marca', fv.marca, 'caracteristica_especial', fv.caracteristica_especial, 'tipo_prenda', cp.tipo_prenda)) FILTER (WHERE fv.id_vestimenta IS NOT NULL) AS vestimenta_json
+            ? `fd.id_ficha, fd.nombre, fd.segundo_nombre, fd.apellido_paterno, fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, fd.genero, fd.edad_estimada, u.estado, u.municipio`
+            : `fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno, fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha,
+               fd.edad_estimada, fd.genero, fd.estatura, fd.complexion, fd.peso,
+               u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.latitud, u.longitud, u.codigo_postal, ctl.nombre_tipo AS tipo_lugar,
+               json_group_array(DISTINCT json_object('tipo_rasgo', frf.tipo_rasgo, 'descripcion_detalle', frf.descripcion_detalle, 'nombre_parte', cpc.nombre_parte)) FILTER (WHERE frf.id_rasgo IS NOT NULL) AS rasgos_fisicos_json,
+               json_group_array(DISTINCT json_object('color', fv.color, 'marca', fv.marca, 'caracteristica_especial', fv.caracteristica_especial, 'tipo_prenda', cp.tipo_prenda)) FILTER (WHERE fv.id_vestimenta IS NOT NULL) AS vestimenta_json
             `;
 
         const fichasSql = `

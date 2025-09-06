@@ -14,6 +14,7 @@ import { useFormHallazgos } from "@/hooks/hallazgos/useFormHallazgos";
 import { useHallazgos } from "@/hooks/hallazgos/useHallazgosHook";
 import { useAuth } from '@/context/AuthContext';
 
+// MODIFICACIÓN: Se agregan los nuevos campos al estado inicial
 const INITIAL_FORM_STATE = {
     nombre: "",
     segundo_nombre: "",
@@ -21,7 +22,14 @@ const INITIAL_FORM_STATE = {
     apellido_materno: "",
     fecha_hallazgo: "",
     descripcion_general_hallazgo: "",
-    id_tipo_lugar_hallazgo: null, // Asumimos que es un ID numérico
+    id_tipo_lugar_hallazgo: null, 
+    // Nuevos campos
+    edad_estimada: "",
+    genero: "",
+    estatura: "",
+    complexion: "",
+    peso: "",
+    // Fin de nuevos campos
     ubicacion_hallazgo: {
         estado: "",
         municipio: "",
@@ -32,10 +40,8 @@ const INITIAL_FORM_STATE = {
 
 export default function HallazgoCreateLayout() {
     const navigate = useNavigate();
-    // Obtiene el usuario y el estado de carga del contexto de autenticación
     const { user, loading: authLoading } = useAuth();
     
-    // Usa el hook universal de formularios para manejar el estado
     const {
         formData,
         handleChange,
@@ -45,7 +51,6 @@ export default function HallazgoCreateLayout() {
         removeArrayItem,
     } = useFormHallazgos(INITIAL_FORM_STATE);
 
-    // Usa el hook de la API para las acciones de creación
     const {
         createHallazgo,
         isLoading: formLoading,
@@ -55,7 +60,6 @@ export default function HallazgoCreateLayout() {
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
 
-        // Obtener el ID del usuario del contexto
         const idUsuario = user?.id ?? null;
 
         console.log("👤 user en handleSubmit:", user);
@@ -81,6 +85,10 @@ export default function HallazgoCreateLayout() {
                 marca: prenda.marca,
                 caracteristica_especial: prenda.caracteristica_especial,
             })),
+            // Aseguramos que los valores numéricos se envíen como números
+            edad_estimada: formData.edad_estimada ? parseInt(formData.edad_estimada) : null,
+            estatura: formData.estatura ? parseFloat(formData.estatura) : null,
+            peso: formData.peso ? parseFloat(formData.peso) : null,
         };
 
         console.log("✈️ Datos enviados al backend:", hallazgoDataToSend);
@@ -95,7 +103,6 @@ export default function HallazgoCreateLayout() {
         }
     }, [formData, user, authLoading, createHallazgo, navigate]);
 
-    // Muestra un estado de carga mientras los datos de auth se cargan
     if (authLoading) {
         return <div>Cargando...</div>;
     }
