@@ -55,8 +55,8 @@ export const useHallazgos = () => {
     }
 
     // Condición de éxito: Si el usuario existe, llamar a fetchHallazgos
-    if (user?.id_usuario) {
-        console.log('✅ Usuario logueado (ID:', user.id_usuario, '). Llamando a fetchHallazgos...');
+    if (user?.id) {
+        console.log('✅ Usuario logueado (ID:', user.id, '). Llamando a fetchHallazgos...');
         fetchHallazgos();
     } else {
         // Condición de error/no-logueado: No hay usuario, no se hace el fetch
@@ -89,7 +89,7 @@ export const useHallazgos = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const dataWithUser = { ...hallazgoData, id_usuario_buscador: user.id_usuario };
+            const dataWithUser = { ...hallazgoData, id_usuario_buscador: user.id };
             const response = await api.post('/api/hallazgos', dataWithUser);
             console.log("✅ Hallazgo creado con éxito:", response.data);
             fetchHallazgos();
@@ -138,7 +138,7 @@ export const useHallazgos = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.get(`/api/hallazgos/buscar?searchTerm=${encodeURIComponent(searchTerm)}&id_usuario_buscador=${user.id_usuario}`);
+            const response = await api.get(`/api/hallazgos/buscar?searchTerm=${encodeURIComponent(searchTerm)}&id_usuario_buscador=${user.id}`);
             setHallazgos(response.data.data);
         } catch (err) {
             console.error("❌ Error al buscar hallazgos:", err.response?.data || err.message);

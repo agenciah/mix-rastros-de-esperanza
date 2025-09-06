@@ -543,3 +543,147 @@
 [2025-09-06 08:47:42] INFO: → GET /api/hallazgos/?limit=10&offset=0
 [2025-09-06 08:47:42] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/?limit=10&offset=0
 [2025-09-06 08:47:42] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: → GET /api/hallazgos/by-user
+[2025-09-06 08:55:59] INFO: → GET /api/hallazgos/by-user
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/by-user
+[2025-09-06 08:55:59] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: → GET /api/hallazgos/by-user
+[2025-09-06 08:55:59] INFO: → GET /api/hallazgos/by-user
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/by-user
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-06 08:55:59] INFO: → GET /api/hallazgos/by-user
+[2025-09-06 08:55:59] INFO: → GET /api/hallazgos/by-user
+[2025-09-06 08:55:59] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/by-user
+[2025-09-06 08:56:00] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 08:56:00] INFO: → GET /api/hallazgos/by-user
+[2025-09-06 08:56:00] INFO: → GET /api/hallazgos/by-user
+[2025-09-06 08:56:00] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/by-user
+[2025-09-06 08:56:00] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 08:56:01] INFO: → GET /api/hallazgos/by-user
+[2025-09-06 08:56:01] INFO: → GET /api/hallazgos/by-user
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/by-user
+[2025-09-06 08:56:01] INFO: → GET /api/hallazgos/3
+[2025-09-06 08:56:01] INFO: → GET /api/hallazgos/3
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/3
+[2025-09-06 08:56:01] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 08:56:01] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 08:56:01] INFO: → GET /api/hallazgos/by-user
+[2025-09-06 08:56:01] INFO: → GET /api/hallazgos/by-user
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/by-user
+[2025-09-06 08:56:01] INFO: → GET /api/hallazgos/3
+[2025-09-06 08:56:01] INFO: → GET /api/hallazgos/3
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/3
+[2025-09-06 08:56:01] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 08:56:01] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:01] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:02] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:02] INFO: → GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:02] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/tipos-lugar
+[2025-09-06 08:56:02] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:02] INFO: → GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:02] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/partes-cuerpo
+[2025-09-06 08:56:02] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:02] INFO: → GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:02] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/catalogos/prendas
+[2025-09-06 08:56:06] INFO: → GET /api/feed/dashboard
+[2025-09-06 08:56:06] INFO: → GET /api/feed/dashboard
+[2025-09-06 08:56:06] INFO: → GET /api/feed/dashboard
+[2025-09-06 08:56:06] INFO: → GET /api/feed/dashboard
