@@ -8,53 +8,58 @@ import logger from '../../utils/logger.js';
  */
 export const getFichaCompletaById = async (id) => {
     const db = await openDb();
-    const fichaSql = `
+
+    // 1. Obtener los datos principales de la ficha y su ubicación
+    const fichaPrincipalSql = `
         SELECT
-            fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,
-            fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha,
-            -- Campos nuevos para la ficha
-            fd.edad_estimada, fd.genero, fd.estatura, fd.peso, fd.complexion,
-            json_object(
-                'id_ubicacion', u.id_ubicacion, 'estado', u.estado, 'municipio', u.municipio,
-                'localidad', u.localidad, 'calle', u.calle, 'referencias', u.referencias,
-                'latitud', u.latitud, 'longitud', u.longitud, 'codigo_postal', u.codigo_postal
-            ) AS ubicacion_desaparicion,
-            ctl.nombre_tipo AS tipo_lugar,
-            json_group_array(DISTINCT json_object(
-                'tipo_rasgo', frf.tipo_rasgo, 'descripcion_detalle', frf.descripcion_detalle,
-                'nombre_parte', cpc.nombre_parte, 'id_parte_cuerpo', cpc.id_parte_cuerpo
-            )) FILTER (WHERE frf.id_rasgo IS NOT NULL) AS rasgos_fisicos_json,
-            json_group_array(DISTINCT json_object(
-                'color', fv.color, 'marca', fv.marca, 'caracteristica_especial', fv.caracteristica_especial,
-                'tipo_prenda', cp.tipo_prenda, 'id_prenda', cp.id_prenda
-            )) FILTER (WHERE fv.id_vestimenta IS NOT NULL) AS vestimenta_json
+            fd.*,
+            u.estado, u.municipio, u.localidad, u.calle, u.referencias,
+            u.latitud, u.longitud, u.codigo_postal,
+            ctl.nombre_tipo AS tipo_lugar
         FROM fichas_desaparicion AS fd
         LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
         LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
-        LEFT JOIN ficha_rasgos_fisicos AS frf ON fd.id_ficha = frf.id_ficha
-        LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
-        LEFT JOIN ficha_vestimenta AS fv ON fd.id_ficha = fv.id_ficha
-        LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
-        WHERE fd.id_ficha = ?
-        GROUP BY fd.id_ficha;
+        WHERE fd.id_ficha = ?;
     `;
-    const fichaResult = await db.get(fichaSql, [id]);
+    const ficha = await db.get(fichaPrincipalSql, [id]);
 
-    if (!fichaResult) {
-        return null;
+    if (!ficha) {
+        return null; // Si no se encuentra la ficha, terminamos aquí
     }
 
-    const fichaCompleta = {
-        ...fichaResult,
-        ubicacion_desaparicion: JSON.parse(fichaResult.ubicacion_desaparicion),
-        rasgos_fisicos: JSON.parse(fichaResult.rasgos_fisicos_json)[0] === null ? [] : JSON.parse(fichaResult.rasgos_fisicos_json),
-        vestimenta: JSON.parse(fichaResult.vestimenta_json)[0] === null ? [] : JSON.parse(fichaResult.vestimenta_json)
+    // 2. Obtener TODOS los rasgos físicos en una consulta separada
+    const rasgosSql = `
+        SELECT
+            frf.tipo_rasgo,
+            frf.descripcion_detalle,
+            cpc.nombre_parte,
+            cpc.id_parte_cuerpo
+        FROM ficha_rasgos_fisicos AS frf
+        LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
+        WHERE frf.id_ficha = ?;
+    `;
+    const rasgos_fisicos = await db.all(rasgosSql, [id]);
+
+    // 3. Obtener TODA la vestimenta en una consulta separada
+    const vestimentaSql = `
+        SELECT
+            fv.color,
+            fv.marca,
+            fv.caracteristica_especial,
+            cp.tipo_prenda,
+            cp.id_prenda
+        FROM ficha_vestimenta AS fv
+        LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
+        WHERE fv.id_ficha = ?;
+    `;
+    const vestimenta = await db.all(vestimentaSql, [id]);
+
+    // 4. Unir todo en un solo objeto en JavaScript
+    return {
+        ...ficha,
+        rasgos_fisicos: rasgos_fisicos || [], // Aseguramos que sea un array
+        vestimenta: vestimenta || []         // Aseguramos que sea un array
     };
-
-    delete fichaCompleta.rasgos_fisicos_json;
-    delete fichaCompleta.vestimenta_json;
-
-    return fichaCompleta;
 };
 
 /**
@@ -572,6 +577,27 @@ export const getAllPublicFichas = async (limit = 10, offset = 0) => {
         return fichas;
     } catch (error) {
         logger.error(`❌ Error al obtener las fichas públicas: ${error.message}`);
+        throw error;
+    }
+};
+
+/**
+ * Cuenta el número de fichas activas para un usuario específico.
+ * @param {number} userId - El ID del usuario.
+ * @returns {Promise<number>} - El número de fichas activas.
+ */
+export const countActiveFichasByUserId = async (userId) => {
+    const db = await openDb();
+    const sql = `
+        SELECT COUNT(*) AS count 
+        FROM fichas_desaparicion 
+        WHERE id_usuario_creador = ? AND estado_ficha = 'activa';
+    `;
+    try {
+        const result = await db.get(sql, [userId]);
+        return result.count || 0;
+    } catch (error) {
+        logger.error(`❌ Error al contar las fichas activas del usuario ${userId}: ${error.message}`);
         throw error;
     }
 };

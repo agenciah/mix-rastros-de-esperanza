@@ -12,6 +12,7 @@ import {
     getMatchDetail, 
     updateMatchReviewStatus 
 } from '../controllers/admin/adminMatchesController.js';
+import { getPagosPendientes, obtenerPagosRecientes, marcarPago, revertirPago } from '../controllers/admin/adminPagosController.js';
 
 const router = express.Router();
 
@@ -36,5 +37,11 @@ router.use('/hallazgos', hallazgosRoutes);
 router.get('/matches', getRecentMatches);
 router.get('/matches/:id_coincidencia', getMatchDetail);
 router.put('/matches/:id_coincidencia/review', updateMatchReviewStatus);
+
+// --- RUTAS PARA GESTIÓN DE PAGOS ---
+router.get('/pagos-pendientes', authenticateAdminToken, getPagosPendientes);
+router.get('/pagos-recientes', authenticateAdminToken, obtenerPagosRecientes);
+router.post('/marcar-pago', authenticateAdminToken, marcarPago);
+router.post('/revertir-pago', authenticateAdminToken, revertirPago);
 
 export default router;

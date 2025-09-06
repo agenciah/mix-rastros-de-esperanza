@@ -11,7 +11,8 @@ import {
     obtenerCatalogoTiposLugar,
     obtenerCatalogoPartesCuerpo,
     obtenerCatalogoPrendas,
-    getPublicFichasFeed
+    getPublicFichasFeed,
+    getUserFichaStats
 } from '../controllers/fichas/fichasController.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 import logger from '../utils/logger.js';
@@ -43,6 +44,9 @@ router.get('/buscar', authenticateToken, async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 });
+
+// GET /api/fichas/user-stats
+router.get('/user-stats', authenticateToken, getUserFichaStats);
 
 // GET /api/fichas/:id
 router.get('/:id', authenticateToken, getFichaById)

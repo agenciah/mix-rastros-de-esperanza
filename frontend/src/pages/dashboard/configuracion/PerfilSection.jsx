@@ -1,12 +1,14 @@
+
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '@/context/AuthContext'
 import api from '@/lib/axios'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const schema = z.object({
   nombre: z.string().min(2, 'Debe tener al menos 2 caracteres'),
@@ -23,6 +25,34 @@ const PerfilSection = () => {
     confirmar: '',
   })
   const [cargandoPass, setCargandoPass] = useState(false)
+   // --- INICIO: Lógica para Donación Dinámica ---
+    // 1. Estados para guardar el conteo de fichas y el estado de carga
+  const [activeFichasCount, setActiveFichasCount] = useState(0);
+  const [loadingFichas, setLoadingFichas] = useState(true);
+
+   // 2. useEffect para buscar el número de fichas activas del usuario
+    useEffect(() => {
+        const fetchFichaStats = async () => {
+            try {
+                const response = await api.get('/api/fichas/user-stats');
+                setActiveFichasCount(response.data.data.activeFichasCount);
+            } catch (error) {
+                console.error("Error al obtener estadísticas de fichas:", error);
+                // No mostramos un error al usuario, simplemente no se mostrará el monto dinámico
+            } finally {
+                setLoadingFichas(false);
+            }
+        };
+
+        fetchFichaStats();
+    }, []); // El array vacío asegura que se ejecute solo una vez
+
+    // 3. Lógica para calcular el monto sugerido
+    let monto_sugerido = 60; // Monto base para 1 ficha
+    if (activeFichasCount > 1) {
+        monto_sugerido = 100; // Monto para 2 o más fichas
+    }
+    // --- FIN: Lógica para Donación Dinámica ---
 
   const {
     register,
@@ -172,7 +202,40 @@ const PerfilSection = () => {
           </Button>
         </div>
       </div>
+      {/* --- INICIO: Tarjeta de Donación Dinámica Actualizada --- */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Donaciones para Mantenimiento de la Plataforma "Rastros de Esperanza"</CardTitle>
+                    <CardDescription>
+                        Para mantener tu ficha activa después del primer mes, te pedimos una donación mensual, durante el tiempo que utilices la plataforma..
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                    <div className="bg-blue-50 p-3 rounded-lg text-center">
+                        <p className="text-sm text-blue-800">Tu Número de Referencia (úsalo en el concepto del pago):</p>
+                        <p className="text-2xl font-bold text-blue-900 tracking-widest">{user?.numero_referencia_unico}</p>
+                    </div>
+
+                    {loadingFichas ? (
+                        <p>Calculando monto sugerido...</p>
+                    ) : (
+                        <>
+                            <p>Fichas activas actualmente: <strong>{activeFichasCount}</strong></p>
+                            <p>Monto de donación: <strong className="text-xl">${monto_sugerido.toFixed(2)} MXN mensuales.</strong></p>
+                        </>
+                    )}
+                    
+                    <div className="pt-2">
+                        <p><strong>Banco:</strong> [Nombre de tu Banco]</p>
+                        <p><strong>CLABE Interbancaria:</strong> [Tu número de CLABE]</p>
+                        <p><strong>Número de Tarjeta:</strong> [Tu número de tarjeta para depósitos]</p>
+                    </div>
+                </CardContent>
+            </Card>
+             {/* --- FIN: Tarjeta de Donación Dinámica Actualizada --- */}
     </div>
+
+    
   )
 }
 

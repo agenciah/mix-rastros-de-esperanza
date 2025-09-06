@@ -5,7 +5,6 @@ import logger from './utils/logger.js';
 
 import authRoutes from './routes/auth.js';
 import cancelacionesRoutes from './routes/cancelaciones.js';
-import mercadoPagoRoutes from './routes/mercadoPagoRoutes.js';
 import excelRoutes from './routes/excel.js';
 import paymentRoutes from './routes/payment.js';
 import usuariosRoutes from './routes/usuarios.js';
@@ -29,7 +28,6 @@ app.use((req, _res, next) => {
 // Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/cancelaciones', cancelacionesRoutes);
-app.use('/api/mercadopago', mercadoPagoRoutes);
 app.use('/api/excel', excelRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/usuarios', usuariosRoutes);

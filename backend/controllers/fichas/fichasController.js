@@ -3,7 +3,7 @@
 import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 import { findMatchesForFicha } from './matchingService.js';
-import { getFichaCompletaById, getAllPublicFichas } from '../../db/queries/fichasAndHallazgosQueries.js';
+import { getFichaCompletaById, getAllPublicFichas, countActiveFichasByUserId } from '../../db/queries/fichasAndHallazgosQueries.js';
 
 /**
  * @fileoverview Controlador para la gestión de Fichas de Desaparición.
@@ -528,5 +528,18 @@ export const getPublicFichasFeed = async (req, res) => {
     } catch (error) {
         logger.error(`❌ Error al obtener el feed de fichas públicas: ${error.message}`);
         res.status(500).json({ success: false, message: 'Error al obtener las fichas.' });
+    }
+};
+
+/**
+ * Obtiene las estadísticas de fichas para el usuario autenticado.
+ */
+export const getUserFichaStats = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const activeFichasCount = await countActiveFichasByUserId(userId);
+        res.json({ success: true, data: { activeFichasCount } });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error al obtener estadísticas de fichas.' });
     }
 };

@@ -164,6 +164,39 @@ export async function openDb() {
     return dbInstance;
 }
 
+// --- NUEVA FUNCIÓN AUXILIAR ---
+// Esta función se encargará de actualizar los usuarios que no tienen un número de referencia.
+async function actualizarUsuariosSinReferencia(db) {
+    console.log("🔄 Verificando usuarios sin número de referencia...");
+    const usersToUpdate = await db.all('SELECT id FROM users WHERE numero_referencia_unico IS NULL');
+    
+    if (usersToUpdate.length === 0) {
+        console.log("✅ Todos los usuarios ya tienen un número de referencia.");
+        return;
+    }
+
+    console.log(`⏳ Encontrados ${usersToUpdate.length} usuarios para actualizar.`);
+    
+    // Función para generar un número único (la movimos aquí para reutilizarla)
+    const generarNumeroUnico = async () => {
+        let isUnique = false;
+        let referenceNumber;
+        while (!isUnique) {
+            referenceNumber = Math.floor(100000 + Math.random() * 900000).toString();
+            const existingUser = await db.get('SELECT id FROM users WHERE numero_referencia_unico = ?', [referenceNumber]);
+            if (!existingUser) isUnique = true;
+        }
+        return referenceNumber;
+    };
+
+    for (const user of usersToUpdate) {
+        const numeroUnico = await generarNumeroUnico();
+        await db.run('UPDATE users SET numero_referencia_unico = ? WHERE id = ?', [numeroUnico, user.id]);
+        console.log(`   -> Actualizado usuario ID ${user.id} con referencia ${numeroUnico}`);
+    }
+    console.log("✅ Actualización de usuarios completada.");
+}
+
 // ======================
 // 3. Creación y verificación de TODAS las tablas
 // ======================
@@ -206,47 +239,49 @@ export async function ensureAllTables() {
         );
     `);
 
-    const newColumns = [
+    // --- LÓGICA UNIFICADA PARA AÑADIR COLUMNAS ---
+    const columnsToAdd = [
         { name: 'estado_republica', type: 'TEXT' },
         { name: 'ultima_conexion', type: 'TEXT' },
         { name: 'numero_referencia_unico', type: 'TEXT' },
         { name: 'fichas_activas_pagadas', type: 'INTEGER NOT NULL DEFAULT 0' },
-        { name: 'estado_suscripcion', type: "TEXT NOT NULL DEFAULT 'inactivo'" }
+        { name: 'estado_suscripcion', type: "TEXT NOT NULL DEFAULT 'inactivo'" },
+        { name: 'reset_token', type: 'TEXT' },
+        { name: 'reset_token_expiration', type: 'TEXT' },
+        { name: 'acepto_terminos', type: 'BOOLEAN NOT NULL DEFAULT 0' },
+        { name: 'fecha_aceptacion', type: 'TEXT' },
+        { name: 'version_terminos', type: 'TEXT' },
+        { name: 'user_state', type: 'TEXT' },
+        { name: 'simplika_referral_code', type: 'TEXT' },
+        { name: 'simplika_referral_status', type: "TEXT NOT NULL DEFAULT 'inactivo'" }
     ];
-    
+
     const existingColumns = await db.all(`PRAGMA table_info(users);`);
     const existingColumnNames = existingColumns.map(col => col.name);
-    
-    for (const col of newColumns) {
+
+    for (const col of columnsToAdd) {
         if (!existingColumnNames.includes(col.name)) {
             console.log(`➕ Agregando columna '${col.name}' a la tabla users...`);
             await db.exec(`ALTER TABLE users ADD COLUMN ${col.name} ${col.type};`);
         }
     }
     
+    // --- LLAMADA A LA FUNCIÓN DE ACTUALIZACIÓN ---
+    // Esto asegura que los usuarios ya existentes reciban su número de referencia.
+    await actualizarUsuariosSinReferencia(db);
+
+    // --- CREACIÓN DE ÍNDICES ÚNICOS ---
+    // Esta es la forma segura de garantizar la unicidad en columnas existentes.
     await db.exec(`
         CREATE UNIQUE INDEX IF NOT EXISTS idx_users_numero_referencia_unico
         ON users(numero_referencia_unico);
     `);
-    
-    const refreshedColumns = await db.all(`PRAGMA table_info(users);`);
-    const userColNames = refreshedColumns.map(col => col.name);
-    
-    const safeColumns = [
-        { name: 'reset_token', type: 'TEXT' },
-        { name: 'reset_token_expiration', type: 'TEXT' },
-        { name: 'acepto_terminos', type: 'BOOLEAN NOT NULL DEFAULT 0' },
-        { name: 'fecha_aceptacion', type: 'TEXT' },
-        { name: 'version_terminos', type: 'TEXT' },
-        { name: 'user_state', type: 'TEXT' }
-    ];
-    
-    for (const col of safeColumns) {
-        if (!userColNames.includes(col.name)) {
-            console.log(`➕ Agregando columna '${col.name}' a tabla users`);
-            await db.exec(`ALTER TABLE users ADD COLUMN ${col.name} ${col.type};`);
-        }
-    }
+    await db.exec(`
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_users_simplika_referral_code
+        ON users(simplika_referral_code);
+    `);
+
+    // --- AQUÍ CONTINÚA EL RESTO DE TUS CREATE TABLE ---
 
     await db.exec(`
         CREATE TABLE IF NOT EXISTS estado_servicio (

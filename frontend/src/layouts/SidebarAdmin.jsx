@@ -14,6 +14,7 @@ const SidebarAdmin = () => {
     { to: "/admin/usuarios", label: "Editor de Usuarios" },
     { to: "/admin/fichas", label: "Administrar Fichas" },
     { to: "/admin/hallazgos", label: "Administrar Hallazgos" },
+    { to: "/admin/gestion-pagos", label: "Gestión de Pagos" },
     { to: "/admin/configuracion", label: "Configuración" },
     { to: "/admin/historial", label: "Historial de Movimientos" },
     { to: "/admin/matches", label: "Coincidencias" },

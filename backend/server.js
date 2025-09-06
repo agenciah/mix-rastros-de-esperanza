@@ -21,7 +21,6 @@ import { WebSocketServer } from 'ws';
 import authRoutes from './routes/auth.js';
 import errorHandler from './middleware/errorHandler.js';
 import cancelacionesRoutes from './routes/cancelaciones.js';
-import mercadoPagoRoutes from './routes/mercadoPagoRoutes.js';
 import excelRoutes from './routes/excel.js';
 import paymentRoutes from './routes/payment.js';
 import usuariosRoutes from './routes/usuarios.js';
@@ -68,7 +67,6 @@ async function main() {
         // 5️⃣ Rutas
         app.use('/api/auth', authRoutes);
         app.use('/api/cancelaciones', cancelacionesRoutes);
-        app.use('/api/mercadopago', mercadoPagoRoutes);
         app.use('/api/excel', excelRoutes);
         app.use('/api/payment', paymentRoutes);
         app.use('/api/usuarios', usuariosRoutes);
