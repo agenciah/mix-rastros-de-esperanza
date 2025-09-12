@@ -620,6 +620,19 @@ for (const col of fichaNewColumns) {
     }
     // --- FIN DEL NUEVO BLOQUE DE CÓDIGO ---
 
+    await db.exec(`
+    CREATE TABLE IF NOT EXISTS notificaciones (
+        id_notificacion INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_usuario_destinatario INTEGER NOT NULL,
+        tipo TEXT NOT NULL, -- ej: 'nuevo_mensaje', 'nueva_coincidencia'
+        contenido TEXT NOT NULL,
+        url_destino TEXT, -- ej: '/dashboard/mensajes/123'
+        estado TEXT NOT NULL DEFAULT 'no_leido', -- 'no_leido' o 'leido'
+        fecha_creacion TEXT NOT NULL DEFAULT (datetime('now')),
+        FOREIGN KEY (id_usuario_destinatario) REFERENCES users(id)
+    );
+`);
+
 // ---------------------------------
 // Alteraciones para agregar campos clave a Hallazgos
 // ---------------------------------

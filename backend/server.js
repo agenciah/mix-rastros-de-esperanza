@@ -1,17 +1,12 @@
-// ✅ ¡Aquí está el console.log que necesitas!
-console.log("Intentando importar las rutas...");
 import dotenv from 'dotenv';
 dotenv.config();
 
-// ✅ ¡Aquí está el console.log que necesitas!
 console.log("Intentando importar las rutas...");
 import express from 'express';
 import cors from 'cors';
 import logger from './utils/logger.js';
 import app from './app.js';
-
-// ✅ ¡Aquí está el console.log que necesitas!
-console.log("Intentando importar las rutas...");
+import jwt from 'jsonwebtoken';
 
 // 🆕 Importamos los módulos de 'http' y 'ws'
 import http from 'http';
@@ -31,6 +26,8 @@ import hallazgosRoutes from './routes/hallazgosRoutes.js';
 import matchRoutes from './routes/matchRoutes.js';
 import feedRoutes from './routes/feedRoutes.js';
 import messagingRoutes from './routes/messagingRoutes.js';
+import notificationsRoutes from './routes/notificationsRoutes.js';
+
 
 import { iniciarExpiracionTrialsJob } from './cron/expireTrialsJob.js';
 import { iniciarLimpiezaUsuariosJob } from './cron/cleanupUsersJob.js';
@@ -78,6 +75,7 @@ async function main() {
         app.use('/api/matches', matchRoutes);
         app.use('/api/feed', feedRoutes);
         app.use('/api/messaging', messagingRoutes);
+        app.use('/api/notifications', notificationsRoutes);
 
         app.get('/', (_req, res) => {
             res.send('<pre>API de gastos y bot de WhatsApp funcionando 🚀</pre>');
@@ -94,30 +92,57 @@ async function main() {
         // 🛠️ CORRECCIÓN: Ahora usamos el constructor 'WebSocketServer'.
         const wss = new WebSocketServer({ server });
 
+        // Un Map para guardar la conexión de cada usuario logueado
+        // la clave será el userId, el valor será el objeto de conexión (ws)
+        const clients = new Map();
+
+        // Función auxiliar para enviar una notificación a un usuario específico
+        const sendNotificationToUser = (userId, message) => {
+            const client = clients.get(userId);
+            if (client && client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify(message));
+            }
+        };
+
+        // Hacemos la función accesible globalmente (o la exportamos/pasamos de una forma más elegante)
+        // Para este caso, adjuntarla al objeto 'app' es una forma sencilla de lograrlo.
+        app.locals.sendNotificationToUser = sendNotificationToUser;
+
+
         wss.on('connection', (ws) => {
             console.log('Cliente de WebSocket conectado');
 
             ws.on('message', (message) => {
-                console.log(`Mensaje recibido: ${message}`);
-                
-                // Reenviamos el mensaje a todos los clientes (broadcasting)
-                wss.clients.forEach((client) => {
-                    if (client.readyState === WebSocket.OPEN) {
-                        client.send(message.toString());
+                try {
+                    const data = JSON.parse(message);
+                    
+                    // Cuando un cliente se conecta, debe enviar su token para autenticarse
+                    if (data.type === 'auth' && data.token) {
+                        jwt.verify(data.token, process.env.JWT_SECRET, (err, decoded) => {
+                            if (err) {
+                                ws.send(JSON.stringify({ type: 'error', message: 'Token inválido' }));
+                                ws.close();
+                            } else {
+                                const userId = decoded.id;
+                                // Asociamos el userId con su conexión de WebSocket
+                                clients.set(userId, ws);
+                                console.log(`Usuario ${userId} autenticado y asociado a la conexión WebSocket.`);
+
+                                ws.on('close', () => {
+                                    clients.delete(userId); // Limpiamos la conexión cuando se desconecta
+                                    console.log(`Cliente de WebSocket del usuario ${userId} desconectado.`);
+                                });
+                            }
+                        });
                     }
-                });
+                } catch (error) {
+                    console.error('Error procesando mensaje de WebSocket:', error);
+                }
             });
 
-            ws.on('close', () => {
-                console.log('Cliente de WebSocket desconectado');
-            });
-
-            ws.on('error', (error) => {
-                console.error('Error en el websocket:', error);
-            });
-
-            ws.send('¡Hola! Estás conectado al servidor de websockets.');
+            ws.on('error', (error) => console.error('Error en el websocket:', error));
         });
+
 
         server.listen(PORT, () => {
             logger.info(`🚀 Servidor corriendo en http://localhost:${PORT}`);

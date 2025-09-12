@@ -15,54 +15,26 @@ import {
 } from '../fichas/matchingService.js';
 
 
-// Nueva función para obtener todas las fichas completas
+// ✅ REEMPLAZA TU FUNCIÓN 'getAllFichasCompletas' CON ESTA
 const getAllFichasCompletas = async () => {
     const db = await openDb();
-    const fichasQuery = `
-        SELECT
-            fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,
-            fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha,
-            -- Campos nuevos
-            fd.edad_estimada, fd.genero, fd.estatura, fd.peso, fd.complexion,
-            json_object(
-                'id_ubicacion', u.id_ubicacion, 'estado', u.estado, 'municipio', u.municipio
-            ) AS ubicacion_desaparicion_json,
-            json_group_array(DISTINCT json_object(
-                'tipo_rasgo', frf.tipo_rasgo, 'descripcion_detalle', frf.descripcion_detalle,
-                'nombre_parte', cpc.nombre_parte, 'id_parte_cuerpo', cpc.id_parte_cuerpo
-            )) FILTER (WHERE frf.id_rasgo IS NOT NULL) AS rasgos_fisicos_json,
-            json_group_array(DISTINCT json_object(
-                'color', fv.color, 'marca', fv.marca, 'caracteristica_especial', fv.caracteristica_especial,
-                'tipo_prenda', cp.tipo_prenda, 'id_prenda', cp.id_prenda
-            )) FILTER (WHERE fv.id_vestimenta IS NOT NULL) AS vestimenta_json
-        FROM fichas_desaparicion AS fd
-        LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
-        LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
-        LEFT JOIN ficha_rasgos_fisicos AS frf ON fd.id_ficha = frf.id_ficha
-        LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
-        LEFT JOIN ficha_vestimenta AS fv ON fd.id_ficha = fv.id_ficha
-        LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
-        WHERE fd.estado_ficha = 'activa'
-        GROUP BY fd.id_ficha;
-    `;
-    const fichasResult = await db.all(fichasQuery);
+    
+    // 1. Primero, obtenemos los IDs de todas las fichas activas. Es una consulta muy rápida.
+    const fichasActivasIds = await db.all(`
+        SELECT id_ficha FROM fichas_desaparicion WHERE estado_ficha = 'activa'
+    `);
 
-    return fichasResult.map(ficha => {
-        const rasgos = JSON.parse(ficha.rasgos_fisicos_json);
-        const vestimenta = JSON.parse(ficha.vestimenta_json);
-        const ubicacion = JSON.parse(ficha.ubicacion_desaparicion_json);
+    if (!fichasActivasIds || fichasActivasIds.length === 0) {
+        return [];
+    }
 
-        delete ficha.rasgos_fisicos_json;
-        delete ficha.vestimenta_json;
-        delete ficha.ubicacion_desaparicion_json;
+    // 2. Luego, para cada ID, usamos la función 'getFichaCompletaById' que ya sabemos que es 100% confiable.
+    // Usamos Promise.all para hacer las búsquedas en paralelo y mejorar el rendimiento.
+    const fichasCompletasPromises = fichasActivasIds.map(ficha => getFichaCompletaById(ficha.id_ficha));
+    const fichasCompletas = await Promise.all(fichasCompletasPromises);
 
-        return {
-            ...ficha,
-            ubicacion_desaparicion: ubicacion,
-            rasgos_fisicos: rasgos[0] === null ? [] : rasgos,
-            vestimenta: vestimenta[0] === null ? [] : vestimenta,
-        };
-    });
+    // Filtramos cualquier resultado nulo que pudiera ocurrir
+    return fichasCompletas.filter(Boolean);
 };
 
 /**

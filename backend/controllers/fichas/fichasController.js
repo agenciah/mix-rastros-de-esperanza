@@ -115,7 +115,7 @@ export const createFichaDesaparicion = async (req, res) => {
         await db.exec('COMMIT');
 
         // 5. Búsqueda de coincidencias
-        const matches = await findMatchesForFicha({
+        const matches = await findMatchesForFicha(req, {
             id_ficha: idFicha,
             edad_estimada,
             genero,
@@ -255,6 +255,13 @@ export const actualizarFicha = async (req, res) => {
         }
 
         await db.exec('COMMIT');
+        logger.info(`✅ Ficha ${id} actualizada. Re-ejecutando búsqueda de coincidencias...`);
+        
+        await findMatchesForFicha(req, {
+            id_ficha: id,
+            ...req.body // Pasamos todos los datos actualizados al servicio de matching
+        });
+        // --- FIN DE LA NUEVA LÓGICA ---
         res.json({ success: true, message: 'Ficha actualizada correctamente' });
     } catch (error) {
         await db.exec('ROLLBACK');

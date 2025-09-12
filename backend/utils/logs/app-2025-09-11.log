@@ -630,3 +630,104 @@
 [2025-09-11 18:38:23] INFO: → GET /api/feed/dashboard
 [2025-09-11 18:38:23] INFO: → GET /api/feed/dashboard
 [2025-09-11 18:38:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:46:27] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 18:47:11] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 18:47:53] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 18:47:56] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 18:48:08] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 18:48:14] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 18:48:46] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 18:50:32] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 18:51:39] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 18:53:32] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 18:54:59] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:54:59] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:54:59] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:54:59] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:54:59] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:54:59] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:54:59] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:55:10] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:55:10] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:55:10] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:55:10] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:55:10] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:55:10] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:55:10] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:55:10] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:55:10] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:55:10] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:55:10] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:55:10] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:55:10] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:55:10] INFO: → GET /api/feed/dashboard
+[2025-09-11 19:31:28] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 19:31:57] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 19:32:00] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 19:32:19] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 19:33:23] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 19:34:16] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 19:38:34] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 19:38:57] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 19:39:25] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 19:39:59] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 19:40:45] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 19:42:00] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 19:45:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 19:45:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 19:45:13] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 19:45:13] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 19:45:13] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 19:45:13] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 19:45:13] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 19:45:13] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 19:45:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 19:45:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 19:45:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 19:45:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 19:45:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 19:45:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 19:47:18] INFO: → GET /api/notifications
+[2025-09-11 19:47:19] INFO: → GET /api/notifications
+[2025-09-11 19:47:19] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 19:47:19] INFO: → GET /api/notifications
+[2025-09-11 19:47:19] INFO: → GET /api/notifications
+[2025-09-11 19:47:19] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 19:47:19] INFO: → GET /api/notifications
+[2025-09-11 19:47:19] INFO: → GET /api/notifications
+[2025-09-11 19:47:19] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 19:47:19] INFO: → GET /api/notifications
+[2025-09-11 19:47:19] INFO: → GET /api/notifications
+[2025-09-11 19:47:19] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 19:47:36] INFO: → GET /api/notifications
+[2025-09-11 19:47:36] INFO: → GET /api/notifications
+[2025-09-11 19:47:36] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 19:47:36] INFO: → GET /api/notifications
+[2025-09-11 19:47:36] INFO: → GET /api/notifications
+[2025-09-11 19:47:36] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 19:47:38] INFO: → GET /api/notifications
+[2025-09-11 19:47:38] INFO: → GET /api/notifications
+[2025-09-11 19:47:39] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 19:47:39] INFO: → GET /api/notifications
+[2025-09-11 19:47:39] INFO: → GET /api/notifications
+[2025-09-11 19:47:39] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 19:47:49] INFO: → GET /api/messaging/conversations
+[2025-09-11 19:47:49] INFO: → GET /api/messaging/conversations
+[2025-09-11 19:47:49] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 19:47:49] INFO: → GET /api/messaging/conversations
+[2025-09-11 19:47:49] INFO: → GET /api/messaging/conversations
+[2025-09-11 19:47:49] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 20:03:09] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:03:32] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:05:36] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:06:11] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:10:56] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:14:17] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:14:20] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:16:55] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:17:21] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:17:53] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:18:10] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:18:14] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:18:37] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 20:18:40] INFO: 🚀 Servidor corriendo en http://localhost:3001

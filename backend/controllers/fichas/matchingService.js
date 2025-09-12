@@ -5,13 +5,14 @@ import logger from '../../utils/logger.js';
 import { sendMatchNotification } from '../../utils/emailService.js';
 import { getFichaCompletaById, getAllHallazgosCompletos } from '../../db/queries/fichasAndHallazgosQueries.js';
 import { insertSystemNotification, insertPossibleMatch } from '../../db/queries/messagingQueries.js';
+import { createNotification } from '../../db/queries/notificationsQueries.js';
 
 /**
  * Busca posibles coincidencias entre una nueva ficha de desaparición y los hallazgos existentes.
  * @param {object} fichaData - Los datos de la ficha de desaparición recién creada.
  * @returns {Promise<Array<object>>} - Una lista de hallazgos que coinciden, ordenada por un puntaje de relevancia.
  */
-export async function findMatchesForFicha(fichaData) {
+export async function findMatchesForFicha(req, fichaData) {
     logger.info(`🔍 Buscando coincidencias para la ficha: ${fichaData.id_ficha}`);
     
     try {
@@ -246,35 +247,56 @@ export function checkNameMatch(ficha, hallazgo) {
 }
 
 /**
- * Notifica a los usuarios de los hallazgos coincidentes.
+ * Notifica al CREADOR DE LA FICHA sobre las posibles coincidencias encontradas.
  */
-async function notifyMatchedUsers(matches, nombreFicha) {
-    const db = await openDb();
-    const notifiedUsers = new Set();
-    
-    for (const match of matches) {
-        const idUsuarioHallazgo = match.id_usuario_reporte;
-        if (!notifiedUsers.has(idUsuarioHallazgo)) {
-            const usuarioHallazgo = await db.get('SELECT email, nombre FROM users WHERE id = ?', [idUsuarioHallazgo]);
-            if (usuarioHallazgo) {
-                // Enviar el correo electrónico
-                const subject = `🚨 ¡Posible coincidencia encontrada!`;
-                const message = `Hola ${usuarioHallazgo.nombre},\n\nHemos encontrado una posible coincidencia para el hallazgo que reportaste, con la ficha de búsqueda de ${nombreFicha}. Por favor, revisa tu cuenta para más detalles.\n\nSaludos,\nEl equipo de Rastros de Esperanza.`;
-                await sendMatchNotification(usuarioHallazgo.email, subject, message);
+async function notifyMatchedUsers(req, topMatches, fichaCompleta) {
+    if (topMatches.length === 0) {
+        return;
+    }
 
-                // Insertar notificación en la base de datos
-                const notificationContent = `Se ha encontrado una **posible coincidencia** con el reporte que hiciste. Por favor, revisa la ficha de ${nombreFicha} para ver los detalles y decidir si es un match.`;
-                
-                await insertSystemNotification(
-                    idUsuarioHallazgo,
-                    notificationContent,
-                    'match_found',
-                    match.id_ficha,
-                    match.id_hallazgo
-                );
-                
-                notifiedUsers.add(idUsuarioHallazgo);
+    const db = await openDb();
+    const creadorDeLaFicha = await db.get('SELECT id, nombre, email FROM users WHERE id = ?', [fichaCompleta.id_usuario_creador]);
+
+    if (!creadorDeLaFicha) {
+        logger.warn(`No se encontró al usuario creador (ID: ${fichaCompleta.id_usuario_creador}) para notificar.`);
+        return;
+    }
+
+    // Preparamos un resumen de las coincidencias para las notificaciones
+    const resumenCoincidencias = topMatches.map(match => `- Hallazgo #${match.id_hallazgo} (Puntaje: ${match.score})`).join('\n');
+
+    // 1. Notificación por Email
+    const subject = `🚨 ¡Posibles coincidencias para la búsqueda de ${fichaCompleta.nombre}!`;
+    const message = `Hola ${creadorDeLaFicha.nombre},\n\nHemos encontrado ${topMatches.length} posible(s) coincidencia(s) para tu ficha de búsqueda de ${fichaCompleta.nombre}. Por favor, inicia sesión para revisar los detalles.\n\nCoincidencias:\n${resumenCoincidencias}\n\nSaludos,\nEl equipo de Rastros de Esperanza.`;
+    
+    await sendMatchNotification(creadorDeLaFicha.email, subject, message);
+    logger.info(`📧 Email de coincidencia enviado a ${creadorDeLaFicha.email}`);
+    
+    // Suponemos que solo hay una coincidencia principal para la notificación inicial
+    const matchPrincipal = topMatches[0];
+
+    // 2. Notificación guardada en la Base de Datos
+    const notificationContent = `¡Encontramos una posible coincidencia para tu búsqueda de ${fichaCompleta.nombre}! Revisa el Hallazgo #${matchPrincipal.id_hallazgo}.`;
+    const urlDestino = `/dashboard/hallazgos-list/${matchPrincipal.id_hallazgo}`; // URL para ver el detalle del hallazgo
+    
+    await createNotification(
+        creadorDeLaFicha.id,
+        'nueva_coincidencia',
+        notificationContent,
+        urlDestino
+    );
+    logger.info(`💾 Notificación de coincidencia guardada en la BD para el usuario ${creadorDeLaFicha.id}.`);
+
+    // 3. Notificación por WebSocket
+    const { sendNotificationToUser } = req.app.locals;
+    if (sendNotificationToUser) {
+        sendNotificationToUser(creadorDeLaFicha.id, {
+            type: 'NEW_MATCH',
+            payload: {
+                contenido: notificationContent,
+                url: urlDestino
             }
-        }
+        });
+        logger.info(`🔌 Notificación de coincidencia enviada por WebSocket al usuario ${creadorDeLaFicha.id}.`);
     }
 }

@@ -6,11 +6,49 @@ import logger from '../../utils/logger.js';
 import { findMatchesForHallazgo } from './matchController.js'; 
 import { sendMatchNotification } from '../../utils/emailService.js'; // Asume que este archivo existe
 import { searchHallazgosByKeyword } from '../../db/queries/fichasAndHallazgosQueries.js';
+import { createNotification } from '../../db/queries/notificationsQueries.js';
 
 /**
  * @fileoverview Controlador para la gestión de Hallazgos.
  * Permite a los usuarios crear, actualizar, eliminar y consultar hallazgos.
  */
+
+// --- INICIO: Nueva Función Auxiliar para Notificaciones ---
+// La creamos para no repetir el mismo código en 'create' y 'update'.
+async function notificarUsuariosDeFichas(req, matches, hallazgo) {
+    if (!matches || matches.length === 0) return;
+
+    const db = await openDb();
+    const { sendNotificationToUser } = req.app.locals;
+
+    for (const match of matches) {
+        const usuarioFicha = await db.get(`SELECT id, nombre, email FROM users WHERE id = ?`, [match.id_usuario_creador]);
+        
+        if (usuarioFicha) {
+            const subject = `🚨 ¡Posible coincidencia para tu ficha de búsqueda!`;
+            const message = `Hola ${usuarioFicha.nombre},\n\nUn nuevo hallazgo reportado podría ser una coincidencia para una de tus fichas de búsqueda. Por favor, inicia sesión para revisar los detalles.\n\nHallazgo ID: #${hallazgo.id_hallazgo}\n\nSaludos,\nEl equipo de Rastros de Esperanza.`;
+            
+            // 1. Enviar Email
+            await sendMatchNotification(usuarioFicha.email, subject, message);
+            logger.info(`📧 Email de coincidencia enviado a ${usuarioFicha.email}`);
+
+            // 2. Guardar Notificación en la BD
+            const notificationContent = `¡Un nuevo hallazgo coincide con tu ficha! Revisa el Hallazgo #${hallazgo.id_hallazgo}.`;
+            const urlDestino = `/dashboard/hallazgos-list/${hallazgo.id_hallazgo}`;
+            await createNotification(usuarioFicha.id, 'nueva_coincidencia', notificationContent, urlDestino);
+            logger.info(`💾 Notificación de coincidencia guardada para el usuario ${usuarioFicha.id}`);
+
+            // 3. Enviar Notificación por WebSocket
+            if (sendNotificationToUser) {
+                sendNotificationToUser(usuarioFicha.id, {
+                    type: 'NEW_MATCH',
+                    payload: { contenido: notificationContent, url: urlDestino }
+                });
+                logger.info(`🔌 Notificación de coincidencia enviada por WebSocket al usuario ${usuarioFicha.id}`);
+            }
+        }
+    }
+}
 
 // --- Funciones del CRUD de Hallazgos ---
 
@@ -159,6 +197,9 @@ export const createHallazgo = async (req, res) => {
                 }
             }
         }
+
+        // ✅ Lógica de notificación AÑADIDA
+        await notificarUsuariosDeFichas(req, matches, hallazgoData);
 
         // 6. Responder al cliente
         if (matches && matches.length > 0) {
@@ -449,6 +490,15 @@ export const actualizarHallazgo = async (req, res) => {
         }
 
         await db.exec('COMMIT');
+
+        // --- INICIO DE LA NUEVA LÓGICA ---
+        logger.info(`✅ Hallazgo ${id} actualizado. Re-ejecutando búsqueda de coincidencias...`);
+        const hallazgoData = { id_hallazgo: id, ...req.body };
+        const matches = await findMatchesForHallazgo(hallazgoData);
+        
+        await notificarUsuariosDeFichas(req, matches, hallazgoData);
+        // --- FIN DE LA NUEVA LÓGICA ---
+        
         res.json({ success: true, message: 'Hallazgo actualizado correctamente' });
     } catch (error) {
         await db.exec('ROLLBACK');

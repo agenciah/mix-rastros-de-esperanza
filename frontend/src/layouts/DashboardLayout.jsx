@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Edit, LogOut, Menu, Home, PlusCircle, List, Settings, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import NotificationsDropdown from '@/pages/dashboard/NotificationsDropDown';
 
 const DashboardLayout = () => {
     const { user, logout } = useAuth();
@@ -35,6 +36,7 @@ const DashboardLayout = () => {
                 </NavLink>
             ))}
             <div className="pt-4 md:hidden">
+                <NotificationsDropdown/>
                 <Button variant="outline" onClick={logout} className="w-full flex gap-2 items-center">
                     <LogOut size={16} /> Cerrar sesión
                 </Button>
@@ -80,6 +82,7 @@ const DashboardLayout = () => {
                         Bienvenido, <span className="text-gray-800">{user?.nombre || 'Usuario'}</span>
                     </h1>
                 </div>
+                <NotificationsDropdown/>
                 {/* Botón de cerrar sesión para desktop */}
                 <Button variant="outline" onClick={logout} className="hidden md:flex gap-2 items-center">
                     <LogOut size={16} /> Cerrar sesión

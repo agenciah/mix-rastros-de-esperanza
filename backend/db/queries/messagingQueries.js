@@ -111,7 +111,9 @@ export async function markMessagesAsRead(conversationId, userId) {
  */
 export async function insertNewMessage(conversationId, senderId, receiverId, content) {
     const db = await openDb();
-    await db.run(`
+    
+    // ✅ CORRECCIÓN: Guardamos el resultado de la inserción en una variable 'result'
+    const result = await db.run(`
         INSERT INTO mensajes (conversation_id, id_remitente, id_destinatario, contenido)
         VALUES (?, ?, ?, ?)
     `, [conversationId, senderId, receiverId, content]);
@@ -121,6 +123,10 @@ export async function insertNewMessage(conversationId, senderId, receiverId, con
         SET last_message_at = datetime('now')
         WHERE id = ?
     `, [conversationId]);
+
+    // Ahora 'result.lastID' existe y podemos usarlo para obtener el mensaje recién creado
+    const newMessage = await db.get('SELECT * FROM mensajes WHERE id_mensaje = ?', [result.lastID]);
+    return newMessage;
 }
 
 /**

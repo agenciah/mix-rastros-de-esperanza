@@ -9,6 +9,7 @@ import {
     createReport
 } from '../db/queries/messagingQueries.js';
 import { openDb } from '../db/users/initDb.js';
+import { createNotification } from '../db/queries/notificationsQueries.js';
 
 // Obtiene la lista de conversaciones
 export const getConversations = async (req, res) => {
@@ -57,8 +58,30 @@ export const sendMessage = async (req, res) => {
 
     try {
         const conversationId = await getOrCreateConversation(senderId, receiverId);
-        // CORRECCIÓN: Ahora pasamos el receiverId a insertNewMessage
-        await insertNewMessage(conversationId, senderId, receiverId, content);
+        const newMessage = await insertNewMessage(conversationId, senderId, receiverId, content);
+        
+
+        // --- INICIO DE LA NUEVA LÓGICA DE NOTIFICACIÓN ---
+        const { sendNotificationToUser } = req.app.locals;
+        if (sendNotificationToUser) {
+            sendNotificationToUser(receiverId, {
+                type: 'NEW_MESSAGE',
+                payload: {
+                    message: newMessage,
+                    conversationId: conversationId,
+                    senderName: req.user.nombre // El nombre del que envía
+                }
+            });
+        }
+        // --- FIN DE LA NUEVA LÓGICA DE NOTIFICACIÓN ---
+
+        // 2. Guardado en la base de datos (NUEVO)
+        await createNotification(
+            receiverId,
+            'nuevo_mensaje',
+            `Has recibido un nuevo mensaje de ${req.user.nombre}.`,
+            `/dashboard/mensajes/${conversationId}`
+        );
 
         res.status(201).json({ message: "Mensaje enviado." });
     } catch (error) {
