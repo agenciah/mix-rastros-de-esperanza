@@ -11,6 +11,8 @@ import AdminFichasPage from '@/pages/admin/fichas/AdminFichasPages';
 import AdminHallazgosPage from '@/pages/admin/hallazgos/AdminHallazgosPape';
 import AdminMatchesDashboard from '@/pages/admin/AdminMatchesDashboard';
 import GestionPagos from '@/pages/admin/GestionPagos';
+import MensajesAdmin from '@/pages/admin/MessagesAdmin';
+import GestionReportes from '@/pages/admin/GestionReportes'; // Asegúrate de importar la página de gestión de reportes
 
 // Exportamos un array de objetos de ruta
 export const adminRoutesConfig = [
@@ -24,6 +26,8 @@ export const adminRoutesConfig = [
       { path: "hallazgos", element: <AdminHallazgosPage /> },
       { path: "matches", element: <AdminMatchesDashboard /> },
       { path: "gestion-pagos", element: <GestionPagos /> },
+      {path: "gestion-reportes", element: <GestionReportes /> }, // Añade la ruta para la gestión de reportes
+      { path: "mensajes", element: <MensajesAdmin /> },
       { path: "configuracion", element: <Configuracion /> },
       { path: "historial", element: <Historial /> },
     ],

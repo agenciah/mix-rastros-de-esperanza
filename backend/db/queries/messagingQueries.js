@@ -191,3 +191,25 @@ export async function insertPossibleMatch(db, id_ficha, id_hallazgo, puntaje, cr
         throw error;
     }
 }
+
+/**
+ * Crea un nuevo reporte de mal uso para una conversación.
+ * @param {number} conversationId - ID de la conversación reportada.
+ * @param {number} reportadorId - ID del usuario que reporta.
+ * @param {number} reportadoId - ID del usuario reportado.
+ * @param {string} motivo - La razón del reporte.
+ */
+export async function createReport(conversationId, reportadorId, reportadoId, motivo) {
+    const db = await openDb();
+    const sql = `
+        INSERT INTO mensajes_reporte (conversation_id, id_reportador, id_reportado, motivo)
+        VALUES (?, ?, ?, ?);
+    `;
+    try {
+        const result = await db.run(sql, [conversationId, reportadorId, reportadoId, motivo]);
+        return result.lastID;
+    } catch (error) {
+        logger.error(`Error al crear reporte: ${error.message}`);
+        throw error;
+    }
+}

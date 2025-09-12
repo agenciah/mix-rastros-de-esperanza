@@ -5,7 +5,8 @@ import {
     getMessagesByConversationId, 
     markMessagesAsRead as dbMarkMessagesAsRead, // CORRECCIÓN: Renombra la importación para evitar conflictos
     getOrCreateConversation, 
-    insertNewMessage 
+    insertNewMessage,
+    createReport
 } from '../db/queries/messagingQueries.js';
 import { openDb } from '../db/users/initDb.js';
 
@@ -100,5 +101,27 @@ export const markMessagesAsRead = async (req, res) => {
     } catch (error) {
         console.error('Error en markMessagesAsRead:', error.message);
         res.status(500).json({ message: 'Error al marcar mensajes como leídos.', error: error.message });
+    }
+};
+
+/**
+ * Permite a un usuario reportar una conversación por mal uso.
+ */
+export const reportConversation = async (req, res) => {
+    try {
+        const { conversationId, reportedUserId, reason } = req.body;
+        const reporterId = req.user.id;
+
+        if (!conversationId || !reportedUserId || !reason) {
+            return res.status(400).json({ message: 'Faltan datos para crear el reporte.' });
+        }
+
+        const reportId = await createReport(conversationId, reporterId, reportedUserId, reason);
+
+        res.status(201).json({ success: true, message: 'Reporte enviado con éxito. Un administrador lo revisará pronto.', reportId });
+
+    } catch (error) {
+        console.error('Error en reportConversation:', error.message);
+        res.status(500).json({ message: 'Error al enviar el reporte.' });
     }
 };

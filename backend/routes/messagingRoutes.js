@@ -1,7 +1,7 @@
 // backend/routes/messagingRoutes.js
 
 import express from 'express';
-import { getConversations, getMessages, sendMessage, startOrGetConversation, markMessagesAsRead } from '../controllers/messagingController.js';
+import { getConversations, getMessages, sendMessage, startOrGetConversation, markMessagesAsRead, reportConversation } from '../controllers/messagingController.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -20,5 +20,8 @@ router.post('/messages', authenticateToken, sendMessage);
 
 // Ruta para iniciar una nueva conversación
 router.post('/conversations', authenticateToken, startOrGetConversation);
+
+// Ruta para que un usuario reporte una conversación
+router.post('/report', authenticateToken, reportConversation);
 
 export default router;

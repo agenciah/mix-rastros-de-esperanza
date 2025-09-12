@@ -82,7 +82,8 @@ const RoutesApp = () => {
             { path: "fichas-list", element: <FeedFichasList /> },
             { path: "fichas-list/:id", element: <FichaDetail /> },
             { path: "configuracion", element: <Configuracion /> },
-            { path: "mensajes", element: <Mensajes /> }, // <-- Agrega esta línea
+            { path: "mensajes", element: <Mensajes /> },
+            { path: "mensajes/:conversationId", element: <Mensajes /> },
             
             // Rutas del feed de hallazgos
             { path: "hallazgos-list", element: <FeedHallazgosList /> },

@@ -322,3 +322,47 @@ Error: ENOENT: no such file or directory, open '/home/alex1986/test_gastos_bot/g
 [2025-09-06 14:16:21] ERROR: ❌ Error al iniciar la app: SQLITE_ERROR: Cannot add a UNIQUE column
 [2025-09-06 14:16:40] ERROR: ❌ Error al iniciar la app: SQLITE_ERROR: Cannot add a UNIQUE column
 [2025-09-06 14:47:22] ERROR: ❌ Error al iniciar la app: SQLITE_ERROR: near "/": syntax error
+[2025-09-11 15:47:06] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:06] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:06] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:06] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:18] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:18] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:18] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:18] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:53:27] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:53:27] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:53:27] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:53:27] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 17:41:18] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:18] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:27] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:27] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:38] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:38] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:38] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:38] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:45:03] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:45:03] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:45:06] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:45:06] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:45:06] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:45:06] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:00] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:00] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:17] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:17] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:31] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:31] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:34] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:34] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:34] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:34] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:48:39] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.motivo
+[2025-09-11 17:48:39] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.motivo
+[2025-09-11 17:48:39] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.motivo
+[2025-09-11 17:48:39] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.motivo
+[2025-09-11 17:55:10] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:55:10] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:55:10] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:55:10] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte

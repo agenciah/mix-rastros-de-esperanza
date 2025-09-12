@@ -542,20 +542,37 @@ export async function ensureAllTables() {
       );`
     );
     
-    await db.exec(`
-      CREATE TABLE IF NOT EXISTS mensajes_reporte (
-        id_mensaje INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_remitente INTEGER NOT NULL,
-        id_destinatario INTEGER,
-        tipo_reporte TEXT DEFAULT 'general',
-        asunto TEXT,
-        contenido TEXT NOT NULL,
+    // 1. Modifica el CREATE TABLE
+await db.exec(`
+    CREATE TABLE IF NOT EXISTS mensajes_reporte (
+        id_reporte INTEGER PRIMARY KEY AUTOINCREMENT, -- Renombrado para claridad
+        conversation_id INTEGER, -- <-- LA NUEVA COLUMNA
+        id_reportador INTEGER NOT NULL, -- Renombrado para claridad
+        id_reportado INTEGER NOT NULL, -- Renombrado para claridad
+        motivo TEXT NOT NULL, -- Renombrado de 'contenido'
         estado TEXT NOT NULL DEFAULT 'pendiente',
         fecha_creacion TEXT NOT NULL DEFAULT (datetime('now')),
-        estado_leido INTEGER DEFAULT 0,
-        FOREIGN KEY (id_remitente) REFERENCES users(id)
-      );`
+        FOREIGN KEY (conversation_id) REFERENCES conversations(id),
+        FOREIGN KEY (id_reportador) REFERENCES users(id),
+        FOREIGN KEY (id_reportado) REFERENCES users(id)
     );
+`);
+
+// 2. Añade la lógica ALTER TABLE para usuarios existentes
+const reporteColumns = [
+    { name: 'conversation_id', type: 'INTEGER' },
+    { name: 'id_reportado', type: 'INTEGER' },
+    // También puedes renombrar las otras columnas si lo deseas, pero requiere más pasos
+];
+const existingReporteColumns = await db.all(`PRAGMA table_info(mensajes_reporte);`);
+const existingReporteColumnNames = existingReporteColumns.map(col => col.name);
+
+for (const col of reporteColumns) {
+    if (!existingReporteColumnNames.includes(col.name)) {
+        console.log(`➕ Agregando columna '${col.name}' a la tabla mensajes_reporte...`);
+        await db.exec(`ALTER TABLE mensajes_reporte ADD COLUMN ${col.name} ${col.type};`);
+    }
+}
     
     await db.exec(`
       CREATE TABLE IF NOT EXISTS mensajes_administrador (
@@ -565,7 +582,8 @@ export async function ensureAllTables() {
         tipo_mensaje TEXT DEFAULT 'info',
         contenido TEXT NOT NULL,
         fecha_creacion TEXT NOT NULL DEFAULT (datetime('now')),
-        estado_leido INTEGER DEFAULT 0
+        estado_leido INTEGER DEFAULT 0,
+        estado TEXT DEFAULT 'activo'
       );`
     );
 
@@ -589,6 +607,18 @@ for (const col of fichaNewColumns) {
         await db.exec(`ALTER TABLE fichas_desaparicion ADD COLUMN ${col.name} ${col.type};`);
     }
 }
+
+ // --- INICIO DEL NUEVO BLOQUE DE CÓDIGO ---
+    // Lógica para añadir la columna 'estado' si no existe en una instalación ya existente
+    const adminMessagesColumns = await db.all(`PRAGMA table_info(mensajes_administrador);`);
+    const adminMessagesColumnNames = adminMessagesColumns.map(col => col.name);
+
+    if (!adminMessagesColumnNames.includes('estado')) {
+        console.log("➕ Agregando columna 'estado' a la tabla mensajes_administrador...");
+        // Añadimos la columna con su valor por defecto
+        await db.exec(`ALTER TABLE mensajes_administrador ADD COLUMN estado TEXT DEFAULT 'activo'`);
+    }
+    // --- FIN DEL NUEVO BLOQUE DE CÓDIGO ---
 
 // ---------------------------------
 // Alteraciones para agregar campos clave a Hallazgos

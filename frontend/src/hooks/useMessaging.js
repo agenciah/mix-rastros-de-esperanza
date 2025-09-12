@@ -73,7 +73,7 @@ export const useMessaging = () => {
             const conversationId = response.data.conversationId;
 
             // Navega directamente a la conversación
-            navigate(`/mensajes/${conversationId}`);
+            navigate(`/dashboard/mensajes/${conversationId}`);
             
             return conversationId; // Podrías devolver el ID, aunque ya no es necesario para el HallazgoDetail
         } catch (err) {

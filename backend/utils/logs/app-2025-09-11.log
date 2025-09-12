@@ -1,0 +1,632 @@
+[2025-09-11 14:00:56] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 14:11:31] INFO: → GET /api/admin/estadisticas
+[2025-09-11 14:11:31] INFO: → GET /api/admin/estadisticas
+[2025-09-11 14:11:31] INFO: → GET /api/admin/estadisticas
+[2025-09-11 14:11:31] INFO: → GET /api/admin/estadisticas
+[2025-09-11 14:11:44] INFO: → POST /api/admin/login
+[2025-09-11 14:11:44] INFO: → POST /api/admin/login
+[2025-09-11 14:11:44] INFO: → GET /api/admin/estadisticas
+[2025-09-11 14:11:44] INFO: → GET /api/admin/estadisticas
+[2025-09-11 14:11:44] INFO: → GET /api/admin/estadisticas
+[2025-09-11 14:11:44] INFO: → GET /api/admin/estadisticas
+[2025-09-11 14:12:16] INFO: → GET /api/admin/estadisticas
+[2025-09-11 14:12:16] INFO: → GET /api/admin/estadisticas
+[2025-09-11 14:12:16] INFO: → GET /api/admin/estadisticas
+[2025-09-11 14:12:16] INFO: → GET /api/admin/estadisticas
+[2025-09-11 14:12:17] INFO: → GET /api/admin/usuarios
+[2025-09-11 14:12:17] INFO: → GET /api/admin/usuarios
+[2025-09-11 14:12:17] INFO: → GET /api/admin/usuarios
+[2025-09-11 14:12:17] INFO: → GET /api/admin/usuarios
+[2025-09-11 14:12:17] INFO: → GET /api/admin/fichas?searchTerm=
+[2025-09-11 14:12:17] INFO: → GET /api/admin/fichas?searchTerm=
+[2025-09-11 14:12:17] INFO: → GET /api/admin/fichas?searchTerm=
+[2025-09-11 14:12:17] INFO: → GET /api/admin/fichas?searchTerm=
+[2025-09-11 14:12:18] INFO: → GET /api/admin/hallazgos?searchTerm=
+[2025-09-11 14:12:18] INFO: → GET /api/admin/hallazgos?searchTerm=
+[2025-09-11 14:12:18] INFO: → GET /api/admin/hallazgos?searchTerm=
+[2025-09-11 14:12:18] INFO: → GET /api/admin/hallazgos?searchTerm=
+[2025-09-11 14:12:20] INFO: → GET /api/admin/pagos-pendientes
+[2025-09-11 14:12:20] INFO: → GET /api/admin/pagos-pendientes
+[2025-09-11 14:12:20] INFO: → GET /api/admin/pagos-recientes
+[2025-09-11 14:12:20] INFO: → GET /api/admin/pagos-recientes
+[2025-09-11 14:12:20] INFO: → GET /api/admin/pagos-pendientes
+[2025-09-11 14:12:20] INFO: → GET /api/admin/pagos-pendientes
+[2025-09-11 14:12:20] INFO: → GET /api/admin/pagos-recientes
+[2025-09-11 14:12:20] INFO: → GET /api/admin/pagos-recientes
+[2025-09-11 14:12:24] INFO: → GET /api/admin/matches?page=1&limit=10&status=all
+[2025-09-11 14:12:24] INFO: → GET /api/admin/matches?page=1&limit=10&status=all
+[2025-09-11 14:12:24] INFO: → GET /api/admin/matches?page=1&limit=10&status=all
+[2025-09-11 14:12:24] INFO: → GET /api/admin/matches?page=1&limit=10&status=all
+[2025-09-11 14:12:49] INFO: → POST /api/admin/mensajes
+[2025-09-11 14:12:49] INFO: → POST /api/admin/mensajes
+[2025-09-11 14:13:01] INFO: → POST /api/auth/login
+[2025-09-11 14:13:01] INFO: [LOGIN] email=alejandro.agenciah@gmail.com encontrado=true
+[2025-09-11 14:13:02] INFO: → GET /api/feed/dashboard
+[2025-09-11 14:13:02] INFO: → GET /api/feed/dashboard
+[2025-09-11 14:13:02] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 14:13:02] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 14:13:02] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 14:13:02] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 14:13:02] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 14:13:02] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 14:13:02] INFO: → GET /api/feed/dashboard
+[2025-09-11 14:13:02] INFO: → GET /api/feed/dashboard
+[2025-09-11 14:13:02] INFO: → GET /api/feed/dashboard
+[2025-09-11 14:13:02] INFO: → GET /api/feed/dashboard
+[2025-09-11 14:13:02] INFO: → GET /api/feed/dashboard
+[2025-09-11 14:13:02] INFO: → GET /api/feed/dashboard
+[2025-09-11 14:14:25] INFO: → GET /api/fichas/user-stats
+[2025-09-11 14:14:25] INFO: → GET /api/fichas/user-stats
+[2025-09-11 14:14:25] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/user-stats
+[2025-09-11 14:14:25] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 14:14:25] INFO: → GET /api/fichas/user-stats
+[2025-09-11 14:14:25] INFO: → GET /api/fichas/user-stats
+[2025-09-11 14:14:25] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/user-stats
+[2025-09-11 14:14:25] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 14:18:27] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 15:22:39] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 15:23:02] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 15:23:20] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 15:23:27] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 15:23:33] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 15:23:48] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 15:45:39] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 15:47:06] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:06] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:06] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:47:06] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:47:06] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:47:06] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:47:06] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:47:06] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:47:06] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:06] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:06] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:06] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:06] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:06] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:06] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:06] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:06] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:06] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:18] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:18] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:18] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:18] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:47:18] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:47:18] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:47:18] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:18] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:18] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:47:18] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:47:18] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:47:18] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:18] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:18] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:18] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:47:18] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:18] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:47:18] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:48:03] INFO: → POST /api/admin/login
+[2025-09-11 15:48:03] INFO: → POST /api/admin/login
+[2025-09-11 15:48:03] INFO: → GET /api/admin/estadisticas
+[2025-09-11 15:48:03] INFO: → GET /api/admin/estadisticas
+[2025-09-11 15:48:03] INFO: → GET /api/admin/estadisticas
+[2025-09-11 15:48:03] INFO: → GET /api/admin/estadisticas
+[2025-09-11 15:48:05] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:48:05] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:48:05] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:48:05] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:48:09] INFO: → GET /api/admin/pagos-pendientes
+[2025-09-11 15:48:09] INFO: → GET /api/admin/pagos-pendientes
+[2025-09-11 15:48:09] INFO: → GET /api/admin/pagos-recientes
+[2025-09-11 15:48:09] INFO: → GET /api/admin/pagos-recientes
+[2025-09-11 15:48:09] INFO: → GET /api/admin/pagos-pendientes
+[2025-09-11 15:48:09] INFO: → GET /api/admin/pagos-pendientes
+[2025-09-11 15:48:09] INFO: → GET /api/admin/pagos-recientes
+[2025-09-11 15:48:09] INFO: → GET /api/admin/pagos-recientes
+[2025-09-11 15:48:10] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:48:10] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:48:10] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:48:10] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:48:21] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:48:21] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:48:21] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:48:21] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:49:27] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:49:27] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:49:27] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:49:27] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:49:45] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:49:45] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:49:45] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:49:45] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:52:49] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 15:52:52] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:52:52] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:52:52] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:52:52] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:53:09] INFO: → PUT /api/admin/mensajes/1
+[2025-09-11 15:53:09] INFO: → PUT /api/admin/mensajes/1
+[2025-09-11 15:53:09] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:53:09] INFO: → GET /api/admin/mensajes
+[2025-09-11 15:53:26] INFO: → POST /api/auth/login
+[2025-09-11 15:53:26] INFO: [LOGIN] email=alejandro.agenciah@gmail.com encontrado=true
+[2025-09-11 15:53:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:53:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:53:27] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:53:27] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:53:27] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:53:27] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:53:27] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:53:27] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:53:27] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 15:53:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:53:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:53:27] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:53:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:53:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:53:27] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 15:53:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:53:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 15:53:27] ERROR: ❌ Error al obtener mensajes del administrador: SQLITE_ERROR: no such column: estado
+[2025-09-11 16:12:10] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 16:12:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 16:12:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 16:12:27] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 16:12:27] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 16:12:27] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 16:12:27] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 16:12:27] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 16:12:27] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 16:12:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 16:12:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 16:12:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 16:12:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 16:12:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 16:12:27] INFO: → GET /api/feed/dashboard
+[2025-09-11 17:25:35] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:25:57] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:26:04] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:26:14] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:26:22] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:26:30] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:26:43] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:26:54] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:26:59] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:28:03] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:28:25] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:28:27] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:29:00] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:31:12] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:31:21] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:31:39] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:35:00] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:35:23] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:35:33] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:35:45] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:36:09] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:38:35] INFO: → POST /api/admin/login
+[2025-09-11 17:38:35] INFO: → POST /api/admin/login
+[2025-09-11 17:38:35] INFO: → GET /api/admin/estadisticas
+[2025-09-11 17:38:35] INFO: → GET /api/admin/estadisticas
+[2025-09-11 17:38:35] INFO: → GET /api/admin/estadisticas
+[2025-09-11 17:38:35] INFO: → GET /api/admin/estadisticas
+[2025-09-11 17:38:37] INFO: → GET /api/admin/reports
+[2025-09-11 17:38:37] INFO: → GET /api/admin/reports
+[2025-09-11 17:38:37] INFO: → GET /api/admin/reports
+[2025-09-11 17:38:37] INFO: → GET /api/admin/reports
+[2025-09-11 17:38:38] INFO: → GET /api/admin/estadisticas
+[2025-09-11 17:38:38] INFO: → GET /api/admin/estadisticas
+[2025-09-11 17:38:38] INFO: → GET /api/admin/estadisticas
+[2025-09-11 17:38:38] INFO: → GET /api/admin/estadisticas
+[2025-09-11 17:38:39] INFO: → GET /api/admin/usuarios
+[2025-09-11 17:38:39] INFO: → GET /api/admin/usuarios
+[2025-09-11 17:38:39] INFO: → GET /api/admin/usuarios
+[2025-09-11 17:38:39] INFO: → GET /api/admin/usuarios
+[2025-09-11 17:38:40] INFO: → GET /api/admin/fichas?searchTerm=
+[2025-09-11 17:38:40] INFO: → GET /api/admin/fichas?searchTerm=
+[2025-09-11 17:38:40] INFO: → GET /api/admin/fichas?searchTerm=
+[2025-09-11 17:38:40] INFO: → GET /api/admin/fichas?searchTerm=
+[2025-09-11 17:38:41] INFO: → GET /api/admin/hallazgos?searchTerm=
+[2025-09-11 17:38:41] INFO: → GET /api/admin/hallazgos?searchTerm=
+[2025-09-11 17:38:41] INFO: → GET /api/admin/hallazgos?searchTerm=
+[2025-09-11 17:38:41] INFO: → GET /api/admin/hallazgos?searchTerm=
+[2025-09-11 17:38:41] INFO: → GET /api/admin/pagos-pendientes
+[2025-09-11 17:38:41] INFO: → GET /api/admin/pagos-pendientes
+[2025-09-11 17:38:41] INFO: → GET /api/admin/pagos-recientes
+[2025-09-11 17:38:41] INFO: → GET /api/admin/pagos-recientes
+[2025-09-11 17:38:41] INFO: → GET /api/admin/pagos-pendientes
+[2025-09-11 17:38:41] INFO: → GET /api/admin/pagos-pendientes
+[2025-09-11 17:38:41] INFO: → GET /api/admin/pagos-recientes
+[2025-09-11 17:38:41] INFO: → GET /api/admin/pagos-recientes
+[2025-09-11 17:38:43] INFO: → GET /api/admin/mensajes
+[2025-09-11 17:38:43] INFO: → GET /api/admin/mensajes
+[2025-09-11 17:38:43] INFO: → GET /api/admin/mensajes
+[2025-09-11 17:38:43] INFO: → GET /api/admin/mensajes
+[2025-09-11 17:38:45] INFO: → GET /api/admin/reports
+[2025-09-11 17:38:45] INFO: → GET /api/admin/reports
+[2025-09-11 17:38:45] INFO: → GET /api/admin/reports
+[2025-09-11 17:38:45] INFO: → GET /api/admin/reports
+[2025-09-11 17:38:53] INFO: → GET /api/admin/reports
+[2025-09-11 17:38:53] INFO: → GET /api/admin/reports
+[2025-09-11 17:38:54] INFO: → GET /api/admin/reports
+[2025-09-11 17:38:54] INFO: → GET /api/admin/reports
+[2025-09-11 17:41:18] INFO: → GET /api/admin/reportes
+[2025-09-11 17:41:18] INFO: → GET /api/admin/reportes
+[2025-09-11 17:41:18] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:18] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:27] INFO: → GET /api/admin/reportes
+[2025-09-11 17:41:27] INFO: → GET /api/admin/reportes
+[2025-09-11 17:41:27] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:27] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:38] INFO: → GET /api/admin/reportes
+[2025-09-11 17:41:38] INFO: → GET /api/admin/reportes
+[2025-09-11 17:41:38] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:38] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:38] INFO: → GET /api/admin/reportes
+[2025-09-11 17:41:38] INFO: → GET /api/admin/reportes
+[2025-09-11 17:41:38] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:41:38] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:42:21] INFO: → GET /api/admin/reports
+[2025-09-11 17:42:21] INFO: → GET /api/admin/reports
+[2025-09-11 17:43:10] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:43:16] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:43:17] INFO: → GET /api/admin/reports
+[2025-09-11 17:43:17] INFO: → GET /api/admin/reports
+[2025-09-11 17:43:17] INFO: → GET /api/admin/reports
+[2025-09-11 17:43:17] INFO: → GET /api/admin/reports
+[2025-09-11 17:45:03] INFO: → GET /api/admin/reportes
+[2025-09-11 17:45:03] INFO: → GET /api/admin/reportes
+[2025-09-11 17:45:03] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:45:03] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:45:06] INFO: → GET /api/admin/reportes
+[2025-09-11 17:45:06] INFO: → GET /api/admin/reportes
+[2025-09-11 17:45:06] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:45:06] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:45:06] INFO: → GET /api/admin/reportes
+[2025-09-11 17:45:06] INFO: → GET /api/admin/reportes
+[2025-09-11 17:45:06] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:45:06] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:00] INFO: → GET /api/admin/reportes
+[2025-09-11 17:46:00] INFO: → GET /api/admin/reportes
+[2025-09-11 17:46:00] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:00] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:17] INFO: → GET /api/admin/reportes
+[2025-09-11 17:46:17] INFO: → GET /api/admin/reportes
+[2025-09-11 17:46:17] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:17] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:31] INFO: → GET /api/admin/reportes
+[2025-09-11 17:46:31] INFO: → GET /api/admin/reportes
+[2025-09-11 17:46:31] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:31] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:34] INFO: → GET /api/admin/reportes
+[2025-09-11 17:46:34] INFO: → GET /api/admin/reportes
+[2025-09-11 17:46:34] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:34] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:34] INFO: → GET /api/admin/reportes
+[2025-09-11 17:46:34] INFO: → GET /api/admin/reportes
+[2025-09-11 17:46:34] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:46:34] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:48:34] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:48:39] INFO: → GET /api/admin/reportes
+[2025-09-11 17:48:39] INFO: → GET /api/admin/reportes
+[2025-09-11 17:48:39] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.motivo
+[2025-09-11 17:48:39] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.motivo
+[2025-09-11 17:48:39] INFO: → GET /api/admin/reportes
+[2025-09-11 17:48:39] INFO: → GET /api/admin/reportes
+[2025-09-11 17:48:39] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.motivo
+[2025-09-11 17:48:39] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.motivo
+[2025-09-11 17:52:57] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:53:40] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:53:49] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:53:58] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:55:03] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 17:55:10] INFO: → GET /api/admin/reportes
+[2025-09-11 17:55:10] INFO: → GET /api/admin/reportes
+[2025-09-11 17:55:10] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:55:10] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:55:10] INFO: → GET /api/admin/reportes
+[2025-09-11 17:55:10] INFO: → GET /api/admin/reportes
+[2025-09-11 17:55:10] ERROR: ❌ Error al obtener los reportes pendientes: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 17:55:10] ERROR: ❌ Error en el controlador getReports: SQLITE_ERROR: no such column: mr.id_reporte
+[2025-09-11 18:12:59] INFO: 🚀 Servidor corriendo en http://localhost:3001
+[2025-09-11 18:13:05] INFO: → GET /api/admin/reportes
+[2025-09-11 18:13:05] INFO: → GET /api/admin/reportes
+[2025-09-11 18:13:05] INFO: → GET /api/admin/reportes
+[2025-09-11 18:13:05] INFO: → GET /api/admin/reportes
+[2025-09-11 18:13:11] INFO: → GET /api/admin/estadisticas
+[2025-09-11 18:13:11] INFO: → GET /api/admin/estadisticas
+[2025-09-11 18:13:11] INFO: → GET /api/admin/estadisticas
+[2025-09-11 18:13:11] INFO: → GET /api/admin/estadisticas
+[2025-09-11 18:15:53] INFO: → POST /api/auth/login
+[2025-09-11 18:15:53] INFO: [LOGIN] email=alejandro.agenciah@gmail.com encontrado=true
+[2025-09-11 18:15:53] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:15:53] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:15:53] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:15:53] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:15:53] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:15:53] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:15:53] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:15:53] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:15:53] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:15:53] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:15:53] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:15:53] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:15:53] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:15:53] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:18:47] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-11 18:18:47] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-11 18:18:47] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/?limit=10&offset=0
+[2025-09-11 18:18:47] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:18:47] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-11 18:18:47] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-11 18:18:47] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/?limit=10&offset=0
+[2025-09-11 18:18:47] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:18:48] INFO: → GET /api/hallazgos/by-user
+[2025-09-11 18:18:48] INFO: → GET /api/hallazgos/by-user
+[2025-09-11 18:18:48] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/by-user
+[2025-09-11 18:18:48] INFO: → GET /api/hallazgos/1
+[2025-09-11 18:18:48] INFO: → GET /api/hallazgos/1
+[2025-09-11 18:18:48] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/1
+[2025-09-11 18:18:48] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:18:48] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:18:48] INFO: → GET /api/hallazgos/by-user
+[2025-09-11 18:18:48] INFO: → GET /api/hallazgos/by-user
+[2025-09-11 18:18:48] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/by-user
+[2025-09-11 18:18:48] INFO: → GET /api/hallazgos/1
+[2025-09-11 18:18:48] INFO: → GET /api/hallazgos/1
+[2025-09-11 18:18:48] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/1
+[2025-09-11 18:18:48] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:18:48] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:19:56] INFO: → POST /api/messaging/conversations
+[2025-09-11 18:19:56] INFO: → POST /api/messaging/conversations
+[2025-09-11 18:19:56] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:19:56] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:19:56] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:19:56] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:19:56] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:19:56] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:19:56] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:19:56] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:19:56] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:19:56] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:19:56] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:19:56] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:19:56] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:19:56] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:19:56] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:19] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:28:19] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:28:19] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:19] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:28:19] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:28:19] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:23] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:28:23] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:28:23] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:28:23] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:28:23] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:28:23] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:28:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:27] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-11 18:28:27] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-11 18:28:27] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/?limit=10&offset=0
+[2025-09-11 18:28:27] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:27] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-11 18:28:27] INFO: → GET /api/hallazgos/?limit=10&offset=0
+[2025-09-11 18:28:27] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/?limit=10&offset=0
+[2025-09-11 18:28:27] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:29] INFO: → GET /api/hallazgos/by-user
+[2025-09-11 18:28:29] INFO: → GET /api/hallazgos/by-user
+[2025-09-11 18:28:29] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/by-user
+[2025-09-11 18:28:29] INFO: → GET /api/hallazgos/3
+[2025-09-11 18:28:29] INFO: → GET /api/hallazgos/3
+[2025-09-11 18:28:29] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/3
+[2025-09-11 18:28:29] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:29] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:29] INFO: → GET /api/hallazgos/by-user
+[2025-09-11 18:28:29] INFO: → GET /api/hallazgos/by-user
+[2025-09-11 18:28:29] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/by-user
+[2025-09-11 18:28:29] INFO: → GET /api/hallazgos/3
+[2025-09-11 18:28:29] INFO: → GET /api/hallazgos/3
+[2025-09-11 18:28:29] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/3
+[2025-09-11 18:28:29] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:29] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:30] INFO: → POST /api/messaging/conversations
+[2025-09-11 18:28:30] INFO: → POST /api/messaging/conversations
+[2025-09-11 18:28:30] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:30] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:30] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:30] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:28:30] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:28:30] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:28:30] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:28:30] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:28:30] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:28:30] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:30] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:30] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:30] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:30] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:30] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:28:32] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:28:32] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:28:32] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:32] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:28:32] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:28:32] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:37] INFO: → GET /api/messaging/conversations/2/messages
+[2025-09-11 18:28:37] INFO: → GET /api/messaging/conversations/2/messages
+[2025-09-11 18:28:37] INFO: → PUT /api/messaging/conversations/2/read
+[2025-09-11 18:28:37] INFO: → PUT /api/messaging/conversations/2/read
+[2025-09-11 18:28:37] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:37] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:40] INFO: → POST /api/messaging/messages
+[2025-09-11 18:28:40] INFO: → POST /api/messaging/messages
+[2025-09-11 18:28:40] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:57] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:28:57] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:28:57] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:57] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:28:57] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:28:57] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:58] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-11 18:28:58] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-11 18:28:58] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-11 18:28:58] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-11 18:28:58] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:58] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:59] INFO: → GET /api/messaging/conversations/2/messages
+[2025-09-11 18:28:59] INFO: → GET /api/messaging/conversations/2/messages
+[2025-09-11 18:28:59] INFO: → PUT /api/messaging/conversations/2/read
+[2025-09-11 18:28:59] INFO: → PUT /api/messaging/conversations/2/read
+[2025-09-11 18:28:59] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:28:59] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:29:00] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-11 18:29:00] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-11 18:29:00] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-11 18:29:00] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-11 18:29:00] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:29:00] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:30:57] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:30:57] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:30:57] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:31:51] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:31:51] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:31:51] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:31:53] INFO: → GET /api/hallazgos/by-user
+[2025-09-11 18:31:53] INFO: → GET /api/hallazgos/by-user
+[2025-09-11 18:31:53] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/by-user
+[2025-09-11 18:31:53] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:31:53] INFO: → GET /api/hallazgos/by-user
+[2025-09-11 18:31:53] INFO: → GET /api/hallazgos/by-user
+[2025-09-11 18:31:53] INFO: 🚨 Solicitud en la ruta de hallazgos: GET /api/hallazgos/by-user
+[2025-09-11 18:31:53] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:31:54] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:31:54] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:31:54] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:31:54] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:31:54] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:31:54] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:31:55] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-11 18:31:55] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-11 18:31:55] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-11 18:31:55] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-11 18:31:55] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:31:55] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:32:03] INFO: → POST /api/messaging/report
+[2025-09-11 18:32:03] INFO: → POST /api/messaging/report
+[2025-09-11 18:32:03] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:32:07] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:32:07] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:32:07] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:32:07] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:32:07] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:32:07] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:32:07] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:32:07] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:32:07] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:32:07] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:32:07] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:32:07] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:32:07] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:32:07] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:32:15] INFO: → POST /api/admin/login
+[2025-09-11 18:32:15] INFO: → POST /api/admin/login
+[2025-09-11 18:32:16] INFO: → GET /api/admin/estadisticas
+[2025-09-11 18:32:16] INFO: → GET /api/admin/estadisticas
+[2025-09-11 18:32:16] INFO: → GET /api/admin/estadisticas
+[2025-09-11 18:32:16] INFO: → GET /api/admin/estadisticas
+[2025-09-11 18:32:19] INFO: → GET /api/admin/reportes
+[2025-09-11 18:32:19] INFO: → GET /api/admin/reportes
+[2025-09-11 18:32:19] INFO: → GET /api/admin/reportes
+[2025-09-11 18:32:19] INFO: → GET /api/admin/reportes
+[2025-09-11 18:32:20] INFO: → GET /api/admin/conversations/1
+[2025-09-11 18:32:20] INFO: → GET /api/admin/conversations/1
+[2025-09-11 18:38:12] INFO: → POST /api/auth/login
+[2025-09-11 18:38:12] INFO: [LOGIN] email=alejandro.agenciah@gmail.com encontrado=true
+[2025-09-11 18:38:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:13] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:13] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:13] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:13] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:13] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:13] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:13] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:15] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:38:15] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:38:15] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:38:15] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:38:15] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:38:15] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:38:17] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:17] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:17] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:17] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:17] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:17] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:17] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:17] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:17] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:17] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:17] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:17] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:17] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:17] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:18] INFO: → GET /api/fichas/1
+[2025-09-11 18:38:18] INFO: → GET /api/fichas/1
+[2025-09-11 18:38:18] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/1
+[2025-09-11 18:38:18] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:38:18] INFO: → GET /api/fichas/1
+[2025-09-11 18:38:18] INFO: → GET /api/fichas/1
+[2025-09-11 18:38:18] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/1
+[2025-09-11 18:38:18] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:38:20] INFO: → POST /api/messaging/conversations
+[2025-09-11 18:38:20] INFO: → POST /api/messaging/conversations
+[2025-09-11 18:38:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:38:20] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:38:20] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:38:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:38:20] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:38:20] INFO: → GET /api/messaging/conversations
+[2025-09-11 18:38:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:38:20] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-11 18:38:20] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-11 18:38:20] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-11 18:38:20] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-11 18:38:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:38:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:38:20] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-11 18:38:20] INFO: → PUT /api/messaging/conversations/1/read
+[2025-09-11 18:38:20] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-11 18:38:20] INFO: → GET /api/messaging/conversations/1/messages
+[2025-09-11 18:38:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:38:20] INFO: 📦 Usuario encontrado y parseado:
+[2025-09-11 18:38:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:23] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:23] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:23] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:23] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:23] INFO: → GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:23] INFO: 🚨 Solicitud en la ruta de fichas: GET /api/fichas/publicas?limit=5&offset=0
+[2025-09-11 18:38:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:23] INFO: → GET /api/feed/dashboard
+[2025-09-11 18:38:23] INFO: → GET /api/feed/dashboard

@@ -19,6 +19,7 @@ export const getAdminMessagesData = async () => {
                 contenido, 
                 fecha_creacion
             FROM mensajes_administrador
+            WHERE estado = 'activo'
             ORDER BY fecha_creacion DESC
             LIMIT 5;
         `);
