@@ -67,3 +67,6 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# Credenciales y secretos
+backend/config/serviceAccountKey.json
