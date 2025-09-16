@@ -9,7 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function HallazgosList() {
     const { isAuthLoading: authLoading } = useAuth();
-    const { hallazgos, isLoading, error, eliminarHallazgo } = useHallazgos();
+    const { hallazgos, isLoading, error, eliminarHallazgo } = useHallazgos({ fetchOnMount: true });
 
     const [hallazgoToDelete, setHallazgoToDelete] = useState(null);
 

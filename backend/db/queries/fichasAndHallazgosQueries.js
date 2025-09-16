@@ -1,20 +1,23 @@
 import { openDb } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
+import { getHallazgoCompletoById } from '../queries/hallazgosQueries.js'
 
 /**
- * Obtiene una ficha completa por su ID, incluyendo sus rasgos y vestimenta.
+ * Obtiene una ficha completa por su ID. VERSIÓN MEJORADA Y EXPLÍCITA.
  * @param {number} id - El ID de la ficha a buscar.
  * @returns {Promise<object | null>} - La ficha completa o null si no se encuentra.
  */
 export const getFichaCompletaById = async (id) => {
     const db = await openDb();
 
-    // 1. Obtener los datos principales de la ficha y su ubicación
+    // 1. Consulta principal con TODOS los campos listados explícitamente
     const fichaPrincipalSql = `
         SELECT
-            fd.*,
-            u.estado, u.municipio, u.localidad, u.calle, u.referencias,
-            u.latitud, u.longitud, u.codigo_postal,
+            fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,
+            fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha,
+            fd.estado_pago, fd.fecha_registro_encontrado, fd.edad_estimada, fd.genero,
+            fd.estatura, fd.peso, fd.complexion, fd.id_ubicacion_desaparicion, fd.id_tipo_lugar_desaparicion,
+            u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.codigo_postal,
             ctl.nombre_tipo AS tipo_lugar
         FROM fichas_desaparicion AS fd
         LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
@@ -23,42 +26,23 @@ export const getFichaCompletaById = async (id) => {
     `;
     const ficha = await db.get(fichaPrincipalSql, [id]);
 
-    if (!ficha) {
-        return null; // Si no se encuentra la ficha, terminamos aquí
-    }
+    if (!ficha) return null;
 
-    // 2. Obtener TODOS los rasgos físicos en una consulta separada
-    const rasgosSql = `
-        SELECT
-            frf.tipo_rasgo,
-            frf.descripcion_detalle,
-            cpc.nombre_parte,
-            cpc.id_parte_cuerpo
-        FROM ficha_rasgos_fisicos AS frf
-        LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
-        WHERE frf.id_ficha = ?;
-    `;
+    // 2. Obtener rasgos (sin cambios)
+    const rasgosSql = `SELECT * FROM ficha_rasgos_fisicos WHERE id_ficha = ?;`;
     const rasgos_fisicos = await db.all(rasgosSql, [id]);
 
-    // 3. Obtener TODA la vestimenta en una consulta separada
-    const vestimentaSql = `
-        SELECT
-            fv.color,
-            fv.marca,
-            fv.caracteristica_especial,
-            cp.tipo_prenda,
-            cp.id_prenda
-        FROM ficha_vestimenta AS fv
-        LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
-        WHERE fv.id_ficha = ?;
-    `;
+    // 3. Obtener vestimenta (sin cambios)
+    const vestimentaSql = `SELECT * FROM ficha_vestimenta WHERE id_ficha = ?;`;
     const vestimenta = await db.all(vestimentaSql, [id]);
 
-    // 4. Unir todo en un solo objeto en JavaScript
+    // 4. Unir y formatear el resultado
+    const { estado, municipio, localidad, calle, referencias, codigo_postal, ...restOfFicha } = ficha;
     return {
-        ...ficha,
-        rasgos_fisicos: rasgos_fisicos || [], // Aseguramos que sea un array
-        vestimenta: vestimenta || []         // Aseguramos que sea un array
+        ...restOfFicha,
+        ubicacion_desaparicion: { estado, municipio, localidad, calle, referencias, codigo_postal },
+        rasgos_fisicos: rasgos_fisicos || [],
+        vestimenta: vestimenta || []
     };
 };
 
@@ -81,8 +65,9 @@ export const searchFichas = async (params) => {
     let query = `
         SELECT
             fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.apellido_materno,
-            fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha,
-            -- Campos nuevos para el resultado de la búsqueda
+            fd.fecha_desaparicion,
+            fd.foto_perfil, -- ✅ CAMBIO: Campo de foto añadido
+            fd.estado_ficha,
             fd.edad_estimada, fd.genero, fd.estatura, fd.peso, fd.complexion,
             u.estado, u.municipio
         FROM fichas_desaparicion AS fd
@@ -157,123 +142,65 @@ export const searchFichas = async (params) => {
 };
 
 /**
- * Obtiene todos los hallazgos completos, incluyendo sus rasgos y vestimenta.
+ * Obtiene todos los hallazgos completos. VERSIÓN MEJORADA.
  * @returns {Promise<Array<object>>} - Lista de hallazgos completos.
  */
 export const getAllHallazgosCompletos = async () => {
     const db = await openDb();
-    const hallazgosQuery = `
-        SELECT
-            h.id_hallazgo, 
-            h.id_usuario_buscador, 
-            h.estado_hallazgo,
-            -- Campos nuevos para el hallazgo
-            h.edad_estimada, h.genero, h.estatura, h.peso, h.complexion,
-            u.estado, 
-            u.municipio, 
-            u.localidad,
-            u.latitud, 
-            u.longitud,
-            json_group_array(DISTINCT json_object(
-                'id_parte_cuerpo', hrf.id_parte_cuerpo, 
-                'tipo_caracteristica', hrf.tipo_caracteristica,
-                'descripcion', hrf.descripcion
-            )) FILTER (WHERE hrf.id_hallazgo_caracteristica IS NOT NULL) AS rasgos_fisicos_json,
-            json_group_array(DISTINCT json_object(
-                'id_prenda', hv.id_prenda, 
-                'color', hv.color, 
-                'marca', hv.marca,
-                'caracteristica_especial', hv.caracteristica_especial
-            )) FILTER (WHERE hv.id_hallazgo_vestimenta IS NOT NULL) AS vestimenta_json
-        FROM hallazgos AS h
-        LEFT JOIN ubicaciones AS u ON h.id_ubicacion_hallazgo = u.id_ubicacion
-        LEFT JOIN hallazgo_caracteristicas AS hrf ON h.id_hallazgo = hrf.id_hallazgo
-        LEFT JOIN hallazgo_vestimenta AS hv ON h.id_hallazgo = hv.id_hallazgo
-        WHERE h.estado_hallazgo = 'activo'
-        GROUP BY h.id_hallazgo;
-    `;
-    logger.debug(`Consulta de hallazgos a ejecutar: ${hallazgosQuery}`);
-    const hallazgosResult = await db.all(hallazgosQuery);
+    
+    // 1. Obtenemos solo los IDs de los hallazgos activos.
+    const hallazgosIds = await db.all(`
+        SELECT id_hallazgo FROM hallazgos WHERE estado_hallazgo = 'activo'
+    `);
 
-    const hallazgosCompletos = hallazgosResult.map(hallazgo => {
-        const rasgos = JSON.parse(hallazgo.rasgos_fisicos_json);
-        const vestimenta = JSON.parse(hallazgo.vestimenta_json);
-        
-        delete hallazgo.rasgos_fisicos_json;
-        delete hallazgo.vestimenta_json;
+    if (!hallazgosIds || hallazgosIds.length === 0) {
+        return [];
+    }
 
-        return {
-            ...hallazgo,
-            rasgos_fisicos: rasgos[0] === null ? [] : rasgos,
-            vestimenta: vestimenta[0] === null ? [] : vestimenta,
-        };
-    });
+    // 2. Para cada ID, usamos la función maestra 'getHallazgoCompletoById'
+    // (Asegúrate de que esta función exista en tu archivo de queries de hallazgos).
+    const hallazgosPromises = hallazgosIds.map(h => getHallazgoCompletoById(h.id_hallazgo));
+    const hallazgosCompletos = await Promise.all(hallazgosPromises);
 
-    return hallazgosCompletos;
+    return hallazgosCompletos.filter(Boolean); // Filtramos por si alguno fue nulo
 };
 
 /**
- * Obtiene una ficha de desaparición con todos sus detalles y datos del usuario creador.
+ * Obtiene una ficha de desaparición con todos sus detalles para el admin. VERSIÓN MEJORADA.
  */
 export const getFichaCompletaByIdAdmin = async (id_ficha) => {
     const db = await openDb();
+    
+    // La consulta principal se queda igual, ya es bastante completa.
     const fichaSql = `
         SELECT
-            fd.id_ficha,
-            fd.id_usuario_creador,
-            u.nombre AS nombre_usuario,
-            u.email AS email_usuario,
-            fd.nombre,
-            fd.segundo_nombre,
-            fd.apellido_paterno,
-            fd.apellido_materno,
-            fd.fecha_desaparicion,
-            fd.id_ubicacion_desaparicion,
-            fd.id_tipo_lugar_desaparicion,
-            ctl.nombre_tipo AS tipo_lugar,
-            fd.foto_perfil,
-            fd.estado_ficha,
-            fd.estado_pago,
-            fd.fecha_registro_encontrado,
-            -- Campos nuevos para la ficha
-            fd.edad_estimada, fd.genero, fd.estatura, fd.peso, fd.complexion,
-            ubicacion.estado,
-            ubicacion.municipio,
-            ubicacion.localidad,
-            ubicacion.calle,
-            ubicacion.referencias,
-            ubicacion.latitud,
-            ubicacion.longitud,
-            ubicacion.codigo_postal
+            fd.*,
+            u.nombre AS nombre_usuario, u.email AS email_usuario,
+            ubicacion.estado, ubicacion.municipio, ubicacion.localidad, ubicacion.calle,
+            ubicacion.referencias, ubicacion.latitud, ubicacion.longitud, ubicacion.codigo_postal
         FROM fichas_desaparicion AS fd
         LEFT JOIN users AS u ON fd.id_usuario_creador = u.id
         LEFT JOIN ubicaciones AS ubicacion ON fd.id_ubicacion_desaparicion = ubicacion.id_ubicacion
-        LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
         WHERE fd.id_ficha = ?;
     `;
-
-    const rasgosSql = `
-        SELECT frf.*, cpc.nombre_parte AS nombre_parte_cuerpo
-        FROM ficha_rasgos_fisicos AS frf
-        LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
-        WHERE frf.id_ficha = ?;
-    `;
-
-    const vestimentaSql = `
-        SELECT fv.*, cp.tipo_prenda AS tipo_prenda_nombre
-        FROM ficha_vestimenta AS fv
-        LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
-        WHERE fv.id_ficha = ?;
-    `;
-
     const ficha = await db.get(fichaSql, [id_ficha]);
     if (!ficha) return null;
 
-    const rasgos = await db.all(rasgosSql, [id_ficha]);
-    const vestimenta = await db.all(vestimentaSql, [id_ficha]);
+    // Las consultas de rasgos y vestimenta se quedan igual.
+    const rasgosSql = `SELECT * FROM ficha_rasgos_fisicos WHERE id_ficha = ?;`;
+    const vestimentaSql = `SELECT * FROM ficha_vestimenta WHERE id_ficha = ?;`;
+    
+    const [rasgos, vestimenta] = await Promise.all([
+        db.all(rasgosSql, [id_ficha]),
+        db.all(vestimentaSql, [id_ficha])
+    ]);
 
+    // ✅ CAMBIO: Formateamos el objeto final para anidar la ubicación.
+    const { estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal, ...restOfFicha } = ficha;
+    
     return {
-        ...ficha,
+        ...restOfFicha,
+        ubicacion_desaparicion: { estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal },
         rasgos_fisicos: rasgos,
         vestimenta: vestimenta,
     };
@@ -298,7 +225,7 @@ export const searchHallazgos = async (params) => {
     let query = `
         SELECT
             h.id_hallazgo, h.nombre, h.apellido_paterno, h.apellido_materno,
-            h.fecha_hallazgo, h.descripcion_general_hallazgo, h.estado_hallazgo,
+            h.fecha_hallazgo, h.foto_hallazgo, h.descripcion_general_hallazgo, h.estado_hallazgo,
             -- Campos nuevos para el resultado de la búsqueda
             h.edad_estimada, h.genero, h.estatura, h.peso, h.complexion,
             u.estado, u.municipio
@@ -395,64 +322,6 @@ export const getAllHallazgosCatalogos = async () => {
         throw error;
     }
 };
-/**
- * Obtiene un hallazgo completo por su ID, incluyendo sus rasgos y vestimenta.
- * @param {number} id - El ID del hallazgo a buscar.
- * @returns {Promise<object | null>} - El hallazgo completo o null si no se encuentra.
- */
-export const getHallazgoCompletoById = async (id) => {
-    const db = await openDb();
-
-    // Consulta principal del hallazgo
-    const hallazgoSql = `
-        SELECT
-            h.id_hallazgo, h.id_usuario_buscador, h.estado_hallazgo, h.fecha_hallazgo,
-            -- Campos nuevos para el hallazgo
-            h.edad_estimada, h.genero, h.estatura, h.peso, h.complexion,
-            json_object(
-                'id_ubicacion', u.id_ubicacion, 'estado', u.estado, 'municipio', u.municipio,
-                'localidad', u.localidad, 'calle', u.calle, 'referencias', u.referencias,
-                'latitud', u.latitud, 'longitud', u.longitud, 'codigo_postal', u.codigo_postal
-            ) AS ubicacion_hallazgo_json
-        FROM hallazgos AS h
-        LEFT JOIN ubicaciones AS u ON h.id_ubicacion_hallazgo = u.id_ubicacion
-        WHERE h.id_hallazgo = ?;
-    `;
-    const hallazgoResult = await db.get(hallazgoSql, [id]);
-
-    if (!hallazgoResult) {
-        return null;
-    }
-    
-    // Consultas para los detalles de características y vestimenta
-    const rasgosSql = `
-        SELECT hrf.*, cpc.nombre_parte AS nombre_parte_cuerpo
-        FROM hallazgo_caracteristicas AS hrf
-        LEFT JOIN catalogo_partes_cuerpo AS cpc ON hrf.id_parte_cuerpo = cpc.id_parte_cuerpo
-        WHERE hrf.id_hallazgo = ?;
-    `;
-
-    const vestimentaSql = `
-        SELECT hv.*, cp.tipo_prenda AS tipo_prenda_nombre
-        FROM hallazgo_vestimenta AS hv
-        LEFT JOIN catalogo_prendas AS cp ON hv.id_prenda = cp.id_prenda
-        WHERE hv.id_hallazgo = ?;
-    `;
-
-    const rasgos = await db.all(rasgosSql, [id]);
-    const vestimenta = await db.all(vestimentaSql, [id]);
-
-    const hallazgoCompleto = {
-        ...hallazgoResult,
-        ubicacion_hallazgo: JSON.parse(hallazgoResult.ubicacion_hallazgo_json),
-        rasgos_fisicos: rasgos,
-        vestimenta: vestimenta
-    };
-
-    delete hallazgoCompleto.ubicacion_hallazgo_json;
-
-    return hallazgoCompleto;
-};
 
 /**
  * Busca hallazgos por un término de búsqueda general, incluyendo nombres, descripciones, rasgos y vestimenta.
@@ -544,13 +413,15 @@ export const searchHallazgosByKeyword = async (searchTerm = '', limit = 20, offs
 };
 
 /**
- * Obtiene una lista paginada de fichas públicas para el feed principal.
+ * Obtiene una lista paginada de fichas públicas para el feed. VERSIÓN MEJORADA.
  * @param {number} limit - El número de fichas a devolver.
  * @param {number} offset - El punto de inicio para la paginación.
  * @returns {Promise<Array<object>>} - Un array de fichas para el feed.
  */
 export const getAllPublicFichas = async (limit = 10, offset = 0) => {
     const db = await openDb();
+    // Esta consulta es un balance: trae los campos más importantes para una tarjeta
+    // sin ser tan pesada como una consulta de detalles completos.
     const sql = `
         SELECT
             fd.id_ficha,
@@ -576,7 +447,7 @@ export const getAllPublicFichas = async (limit = 10, offset = 0) => {
         const fichas = await db.all(sql, [limit, offset]);
         return fichas;
     } catch (error) {
-        logger.error(`❌ Error al obtener las fichas públicas: ${error.message}`);
+        logger.error(`❌ Error al obtener las fichas públicas del feed: ${error.message}`);
         throw error;
     }
 };

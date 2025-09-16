@@ -1,173 +1,101 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+// RUTA: src/pages/dashboard/hallazgos/hallazgosCreateLayout.jsx
 
+import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Terminal } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import HallazgoDatosPrincipales from "@/pages/dashboard/hallazgos/hallazgoDatosPrincipales";
-import HallazgoVestimenta from "@/pages/dashboard/hallazgos/hallazgoVestimenta";
-import HallazgoCaracteristicas from "@/pages/dashboard/hallazgos/hallazgoCaracteristicas";
+import { Loader2 } from "lucide-react";
+import { toast } from 'sonner';
 
-// Importa los hooks para la lógica
-import { useFormHallazgos } from "@/hooks/hallazgos/useFormHallazgos";
-import { useHallazgos } from "@/hooks/hallazgos/useHallazgosHook";
-import { useAuth } from '@/context/AuthContext';
+// ✅ 1. Importaciones correctas y finales
+import { useHallazgos } from "@/hooks/useHallazgos";
+import { useHallazgosForm } from "@/hooks/useFormHallazgos";
+import { initialHallazgoFormState } from '@/lib/initialFormState';
 
-// MODIFICACIÓN: Se agregan los nuevos campos al estado inicial
-const INITIAL_FORM_STATE = {
-    nombre: "",
-    segundo_nombre: "",
-    apellido_paterno: "",
-    apellido_materno: "",
-    fecha_hallazgo: "",
-    descripcion_general_hallazgo: "",
-    id_tipo_lugar_hallazgo: null, 
-    // Nuevos campos
-    edad_estimada: "",
-    genero: "",
-    estatura: "",
-    complexion: "",
-    peso: "",
-    // Fin de nuevos campos
-    ubicacion_hallazgo: {
-        estado: "",
-        municipio: "",
-    },
-    caracteristicas: [],
-    vestimenta: [],
-};
+// Sub-componentes
+import HallazgoDatosPrincipales from "./HallazgoDatosPrincipales";
+import HallazgoCaracteristicas from "./HallazgoCaracteristicas";
+import HallazgoVestimenta from "./HallazgoVestimenta";
 
-export default function HallazgoCreateLayout() {
+export default function HallazgosCreateLayout() {
     const navigate = useNavigate();
-    const { user, loading: authLoading } = useAuth();
     
+    // ✅ 2. Desestructuración limpia y con renombramiento claro
+    // El hook de datos nos da la función de la API y su estado de carga
+    const { createHallazgo, isLoading: isApiLoading } = useHallazgos();
+    // El hook de formulario maneja el estado del form y la subida de la imagen
     const {
         formData,
+        isSubmitting,
+        uploadProgress,
+        setImageFile,
         handleChange,
         handleNestedChange,
         handleArrayChange,
         addArrayItem,
         removeArrayItem,
-    } = useFormHallazgos(INITIAL_FORM_STATE);
+        handleSubmit,
+    } = useHallazgosForm(initialHallazgoFormState);
 
-    const {
-        createHallazgo,
-        isLoading: formLoading,
-        error: formError,
-    } = useHallazgos();
-    
-    const handleSubmit = useCallback(async (e) => {
+    const handleCreateSubmit = async (e) => {
         e.preventDefault();
-
-        const idUsuario = user?.id ?? null;
-
-        console.log("👤 user en handleSubmit:", user);
-        console.log("🆔 idUsuario calculado:", idUsuario);
-
-        if (authLoading || !user || !idUsuario) {
-            console.error("Error: Usuario no autenticado o no disponible. Intente de nuevo.");
-            return;
+        const result = await handleSubmit(createHallazgo);
+        if (result?.success) {
+            navigate('/dashboard/hallazgos');
+            toast.info('Buscando coincidencias en segundo plano...');
         }
+    };
 
-        const hallazgoDataToSend = {
-            ...formData,
-            id_usuario_buscador: idUsuario,
-            // Aseguramos que los arrays anidados tengan los campos correctos para el backend
-            caracteristicas: formData.caracteristicas.map(car => ({
-                id_parte_cuerpo: parseInt(car.id_parte_cuerpo),
-                tipo_caracteristica: car.tipo_caracteristica,
-                descripcion: car.descripcion,
-            })),
-            vestimenta: formData.vestimenta.map(prenda => ({
-                id_prenda: parseInt(prenda.id_prenda),
-                color: prenda.color,
-                marca: prenda.marca,
-                caracteristica_especial: prenda.caracteristica_especial,
-            })),
-            // Aseguramos que los valores numéricos se envíen como números
-            edad_estimada: formData.edad_estimada ? parseInt(formData.edad_estimada) : null,
-            estatura: formData.estatura ? parseFloat(formData.estatura) : null,
-            peso: formData.peso ? parseFloat(formData.peso) : null,
-        };
-
-        console.log("✈️ Datos enviados al backend:", hallazgoDataToSend);
-
-        try {
-            const result = await createHallazgo(hallazgoDataToSend);
-            if (result) {
-                navigate('/dashboard/hallazgos');
-            }
-        } catch (err) {
-            console.error("Error al crear hallazgo:", err);
-        }
-    }, [formData, user, authLoading, createHallazgo, navigate]);
-
-    if (authLoading) {
-        return <div>Cargando...</div>;
+    // ✅ 3. Usamos los nombres correctos para el estado de carga combinado
+    const isLoading = isSubmitting || isApiLoading;
+    
+    if (!formData) {
+        return <div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin" /></div>;
     }
 
     return (
-        <div className="max-w-4xl mx-auto p-6 space-y-6">
-            <h1 className="text-2xl font-bold mb-4">Crear Nuevo Hallazgo</h1>
+        <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+            <h1 className="text-2xl font-bold">Reportar Nuevo Hallazgo</h1>
             
-            <form onSubmit={handleSubmit} className="space-y-6">
-                
+            <form onSubmit={handleCreateSubmit} className="space-y-6">
                 <Card>
-                    <CardHeader>
-                        <CardTitle>1. Datos Principales</CardTitle>
-                    </CardHeader>
+                    <CardHeader><CardTitle>1. Datos Principales y Foto</CardTitle></CardHeader>
                     <CardContent>
                         <HallazgoDatosPrincipales
                             form={formData}
                             handleChange={handleChange}
                             handleNestedChange={handleNestedChange}
+                            setImageFile={setImageFile}
                         />
                     </CardContent>
                 </Card>
 
                 <Card>
-                    <CardHeader>
-                        <CardTitle>2. Rasgos Físicos del Hallazgo</CardTitle>
-                    </CardHeader>
+                    <CardHeader><CardTitle>2. Características Físicas</CardTitle></CardHeader>
                     <CardContent>
                         <HallazgoCaracteristicas
-                            caracteristicas={formData.caracteristicas}
-                            handleArrayChange={(index, fieldName, value) => handleArrayChange('caracteristicas', index, fieldName, value)}
-                            addArrayItem={(newItem) => addArrayItem('caracteristicas', newItem)}
+                            caracteristicas={formData.caracteristicas || []}
+                            handleArrayChange={(index, field, value) => handleArrayChange('caracteristicas', index, field, value)}
+                            addArrayItem={() => addArrayItem('caracteristicas', { id_parte_cuerpo: '', tipo_caracteristica: '', descripcion: '' })}
                             removeArrayItem={(index) => removeArrayItem('caracteristicas', index)}
                         />
                     </CardContent>
                 </Card>
-
+                
                 <Card>
-                    <CardHeader>
-                        <CardTitle>3. Vestimenta del Hallazgo</CardTitle>
-                    </CardHeader>
+                    <CardHeader><CardTitle>3. Vestimenta</CardTitle></CardHeader>
                     <CardContent>
                         <HallazgoVestimenta
-                            vestimenta={formData.vestimenta}
-                            handleArrayChange={(index, fieldName, value) => handleArrayChange('vestimenta', index, fieldName, value)}
-                            addArrayItem={(newItem) => addArrayItem('vestimenta', newItem)}
+                            vestimenta={formData.vestimenta || []}
+                            handleArrayChange={(index, field, value) => handleArrayChange('vestimenta', index, field, value)}
+                            addArrayItem={() => addArrayItem('vestimenta', { id_prenda: '', color: '', marca: '', caracteristica_especial: '' })}
                             removeArrayItem={(index) => removeArrayItem('vestimenta', index)}
                         />
                     </CardContent>
                 </Card>
-                
-                {formError && (
-                    <Alert variant="destructive">
-                        <Terminal className="h-4 w-4" />
-                        <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>{formError}</AlertDescription>
-                    </Alert>
-                )}
-                
-                <Button 
-                    type="submit" 
-                    className="w-full" 
-                    disabled={formLoading || authLoading}
-                >
-                    {formLoading ? "Creando..." : "Crear Hallazgo"}
+
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading && <Loader2 className="animate-spin mr-2" />}
+                    {isSubmitting ? `Subiendo... ${Math.round(uploadProgress)}%` : 'Crear Hallazgo'}
                 </Button>
             </form>
         </div>

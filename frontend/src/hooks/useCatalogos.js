@@ -17,10 +17,6 @@ export default function useCatalogos() {
           getPartesCuerpo(),
           getPrendas()
         ]);
-        console.log("Partes cuerpo API:", partesRes);
-        console.log("Prendas API:", prendasRes);
-        console.log("Tipos lugar API:", lugaresRes);
-
 
         // Desestructuramos los arrays dentro de la respuesta
         setTiposLugar(lugaresRes);

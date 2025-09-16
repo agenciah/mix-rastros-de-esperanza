@@ -2,7 +2,8 @@
 
 import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
-import { getFichaCompletaById, getHallazgoCompletoById } from '../../db/queries/fichasAndHallazgosQueries.js';
+import { getFichaCompletaById } from '../../db/queries/fichasAndHallazgosQueries.js';
+import { getHallazgoCompletoById } from '../../db/queries/hallazgosQueries.js';
 
 /**
  * @route GET /api/admin/matches

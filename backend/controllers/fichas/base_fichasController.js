@@ -3,7 +3,7 @@
 import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 import { findMatchesForFicha } from './matchingService.js';
-import { getFichaCompletaById, getAllPublicFichas, countActiveFichasByUserId } from '../../db/queries/fichasAndHallazgosQueries.js';
+import { getFichaCompletaById, getAllPublicFichas, countActiveFichasByUserId, getFichasByUserId } from '../../db/queries/fichasAndHallazgosQueries.js';
 
 /**
  * @fileoverview Controlador para la gestión de Fichas de Desaparición.
@@ -17,6 +17,7 @@ import { getFichaCompletaById, getAllPublicFichas, countActiveFichasByUserId } f
  * y busca automáticamente coincidencias con hallazgos.
  */
 export const createFichaDesaparicion = async (req, res) => {
+    console.log('PASO 2 (BACK-END - Crear): Datos recibidos en el body ->', req.body);
     const db = await openDb();
     await db.exec('BEGIN TRANSACTION');
 
@@ -112,8 +113,6 @@ export const createFichaDesaparicion = async (req, res) => {
             await Promise.all(vestimentaPromises);
         }
 
-        await db.exec('COMMIT');
-
         // 5. Búsqueda de coincidencias
         const matches = await findMatchesForFicha(req, {
             id_ficha: idFicha,
@@ -126,6 +125,8 @@ export const createFichaDesaparicion = async (req, res) => {
             rasgos_fisicos,
             vestimenta,
         });
+
+        await db.exec('COMMIT');
 
         // 6. Responder al cliente
         if (matches && matches.length > 0) {
@@ -150,72 +151,106 @@ export const createFichaDesaparicion = async (req, res) => {
 };
 
 /**
- * Actualiza una ficha existente, verificando la propiedad del usuario. VERSIÓN COMPLETA Y REFACTORIZADA.
+ * Actualiza una ficha existente, verificando la propiedad del usuario.
+ * Se ha mejorado para que la consulta UPDATE sea dinámica,
+ * actualizando solo los campos que se envían desde el frontend.
  */
 export const actualizarFicha = async (req, res) => {
+
+    console.log('PASO 2 (BACK-END - Actualizar): Datos recibidos en el body ->', req.body)
+    // Abre la conexión a la base de datos SQLite
     const db = await openDb();
     await db.exec('BEGIN TRANSACTION');
 
     try {
         const { id } = req.params;
         const {
-            // Desestructuramos para separar los datos que van a tablas diferentes
-            ubicacion_desaparicion,
-            rasgos_fisicos,
-            vestimenta,
-            ...fichaPrincipal // El resto de los campos (nombre, foto_perfil, etc.) se agrupan aquí
+            nombre, segundo_nombre, apellido_paterno, apellido_materno,
+            fecha_desaparicion, id_tipo_lugar_desaparicion, foto_perfil,
+            estado_ficha, fecha_registro_encontrado,
+            // Nuevos campos
+            edad_estimada, genero, estatura, complexion, peso,
+            // Fin de nuevos campos
+            ubicacion_desaparicion, rasgos_fisicos, vestimenta,
         } = req.body;
 
         const id_usuario_creador = req.user.id;
 
-        // 1. Verifica que la ficha exista y pertenezca al usuario que la edita
+        // 1. Verifica la propiedad de la ficha y obtiene el ID de la ubicación
         const ficha = await db.get(
-            `SELECT id_ubicacion_desaparicion FROM fichas_desaparicion WHERE id_ficha = ? AND id_usuario_creador = ?`,
+            `SELECT id_ficha, id_ubicacion_desaparicion FROM fichas_desaparicion WHERE id_ficha = ? AND id_usuario_creador = ?`,
             [id, id_usuario_creador]
         );
 
         if (!ficha) {
             await db.exec('ROLLBACK');
-            return res.status(404).json({ success: false, message: 'Ficha no encontrada o no autorizado para editar' });
+            return res.status(404).json({ success: false, message: 'Ficha no encontrada o no autorizado' });
         }
 
-        // 2. Actualiza la tabla principal 'fichas_desaparicion' de forma dinámica
-        const fichaFields = Object.keys(fichaPrincipal);
-        if (fichaFields.length > 0) {
-            const fichaSetClause = fichaFields.map(key => `${key} = ?`).join(', ');
-            await db.run(
-                `UPDATE fichas_desaparicion SET ${fichaSetClause} WHERE id_ficha = ?`,
-                [...Object.values(fichaPrincipal), id]
-            );
+        // 2. Construye la consulta de actualización de la ubicación de forma dinámica
+        const ubicacionUpdateData = {};
+        // Filtra los datos de ubicacion para solo incluir los que tienen un valor
+        for (const key in ubicacion_desaparicion) {
+            if (ubicacion_desaparicion[key] !== undefined && ubicacion_desaparicion[key] !== null) {
+                ubicacionUpdateData[key] = ubicacion_desaparicion[key];
+            }
         }
 
-        // 3. Actualiza la tabla 'ubicaciones' de forma dinámica
-        if (ubicacion_desaparicion && Object.keys(ubicacion_desaparicion).length > 0) {
-            const ubicacionSetClause = Object.keys(ubicacion_desaparicion).map(key => `${key} = ?`).join(', ');
+        if (Object.keys(ubicacionUpdateData).length > 0) {
+            const ubicacionSetClause = Object.keys(ubicacionUpdateData).map(key => `${key} = ?`).join(', ');
+            const ubicacionValues = Object.values(ubicacionUpdateData);
+
             await db.run(
                 `UPDATE ubicaciones SET ${ubicacionSetClause} WHERE id_ubicacion = ?`,
-                [...Object.values(ubicacion_desaparicion), ficha.id_ubicacion_desaparicion]
+                [...ubicacionValues, ficha.id_ubicacion_desaparicion]
             );
         }
 
-        // 4. Reemplaza los rasgos físicos (borrar y volver a insertar)
+        // 3. Construye la consulta de actualización de la ficha de forma dinámica
+        const fichaUpdateData = {};
+        // Filtra los datos principales para solo incluir los que tienen un valor
+        const mainFields = {
+            nombre, segundo_nombre, apellido_paterno, apellido_materno,
+            fecha_desaparicion, id_tipo_lugar_desaparicion, foto_perfil,
+            estado_ficha, fecha_registro_encontrado,
+            edad_estimada, genero, estatura, complexion, peso
+        };
+        for (const key in mainFields) {
+            if (mainFields[key] !== undefined && mainFields[key] !== null) {
+                fichaUpdateData[key] = mainFields[key];
+            }
+        }
+
+        if (Object.keys(fichaUpdateData).length > 0) {
+            const fichaSetClause = Object.keys(fichaUpdateData).map(key => `${key} = ?`).join(', ');
+            const fichaValues = Object.values(fichaUpdateData);
+
+            await db.run(
+                `UPDATE fichas_desaparicion SET ${fichaSetClause} WHERE id_ficha = ?`,
+                [...fichaValues, id]
+            );
+        }
+
+        // 4. Eliminar y reinsertar rasgos y vestimenta (esta lógica ya era correcta)
         await db.run(`DELETE FROM ficha_rasgos_fisicos WHERE id_ficha = ?`, [id]);
+        await db.run(`DELETE FROM ficha_vestimenta WHERE id_ficha = ?`, [id]);
+
         if (rasgos_fisicos && rasgos_fisicos.length > 0) {
             const rasgosPromises = rasgos_fisicos.map(rasgo =>
                 db.run(
-                    `INSERT INTO ficha_rasgos_fisicos (id_ficha, id_parte_cuerpo, tipo_rasgo, descripcion_detalle) VALUES (?, ?, ?, ?)`,
+                    `INSERT INTO ficha_rasgos_fisicos (id_ficha, id_parte_cuerpo, tipo_rasgo, descripcion_detalle)
+                     VALUES (?, ?, ?, ?)`,
                     [id, rasgo.id_parte_cuerpo, rasgo.tipo_rasgo, rasgo.descripcion_detalle]
                 )
             );
             await Promise.all(rasgosPromises);
         }
 
-        // 5. Reemplaza la vestimenta (borrar y volver a insertar)
-        await db.run(`DELETE FROM ficha_vestimenta WHERE id_ficha = ?`, [id]);
         if (vestimenta && vestimenta.length > 0) {
             const vestimentaPromises = vestimenta.map(prenda =>
                 db.run(
-                    `INSERT INTO ficha_vestimenta (id_ficha, id_prenda, color, marca, caracteristica_especial) VALUES (?, ?, ?, ?, ?)`,
+                    `INSERT INTO ficha_vestimenta (id_ficha, id_prenda, color, marca, caracteristica_especial)
+                     VALUES (?, ?, ?, ?, ?)`,
                     [id, prenda.id_prenda, prenda.color, prenda.marca, prenda.caracteristica_especial]
                 )
             );
@@ -223,121 +258,114 @@ export const actualizarFicha = async (req, res) => {
         }
 
         await db.exec('COMMIT');
+        logger.info(`✅ Ficha ${id} actualizada. Re-ejecutando búsqueda de coincidencias...`);
         
-        // 6. Opcional: Re-ejecutar búsqueda de coincidencias después de la actualización
-        const fichaActualizada = await getFichaCompletaById(id); // getFichaCompletaById debe estar disponible en este archivo
-        if (fichaActualizada) {
-             await findMatchesForFicha(fichaActualizada);
-        }
-       
+        await findMatchesForFicha(req, {
+            id_ficha: id,
+            ...req.body // Pasamos todos los datos actualizados al servicio de matching
+        });
+        // --- FIN DE LA NUEVA LÓGICA ---
         res.json({ success: true, message: 'Ficha actualizada correctamente' });
-
     } catch (error) {
         await db.exec('ROLLBACK');
-        logger.error(`❌ Error al actualizar ficha: ${error.message}`);
-        res.status(500).json({ success: false, message: 'Error interno del servidor al actualizar la ficha.' });
+        console.error(`❌ Error al actualizar ficha: ${error.message}`);
+        res.status(500).json({ success: false, message: 'Error interno del servidor al actualizar ficha' });
     }
 };
 
 /**
- * Obtiene todas las fichas de desaparición con todos sus detalles.
- * VERSIÓN AUTOCONTENIDA Y ROBUSTA.
+ * Obtiene todas las fichas de desaparición con sus detalles.
+ * Versión optimizada para el feed principal.
  */
 export const getAllFichas = async (req, res) => {
     try {
         const db = await openDb();
-        const limit = parseInt(req.query.limit) || 20;
-        const offset = parseInt(req.query.offset) || 0;
 
-        // 1. Obtenemos los datos principales de TODAS las fichas, con paginación
-        const fichasPrincipalesSql = `
+        const fichasSql = `
             SELECT 
-                fd.*, -- Traemos todos los campos de la ficha, incluyendo foto, edad, etc.
-                u.estado, u.municipio,
-                ctl.nombre_tipo AS tipo_lugar
+                fd.id_ficha,
+                fd.id_usuario_creador,
+                fd.nombre,
+                fd.segundo_nombre,
+                fd.apellido_paterno,
+                fd.apellido_materno,
+                fd.fecha_desaparicion,
+                fd.foto_perfil,
+                fd.estado_ficha,
+                -- Nuevos campos agregados
+                fd.edad_estimada,
+                fd.genero,
+                fd.estatura,
+                fd.complexion,
+                fd.peso,
+                -- Fin de nuevos campos
+                u.estado,
+                u.municipio,
+                ctl.nombre_tipo AS tipo_lugar,
+                -- Agregamos los rasgos y vestimenta como JSON
+                json_group_array(DISTINCT json_object(
+                    'tipo_rasgo', frf.tipo_rasgo, 
+                    'descripcion_detalle', frf.descripcion_detalle,
+                    'nombre_parte', cpc.nombre_parte
+                )) FILTER (WHERE frf.id_rasgo IS NOT NULL) AS rasgos_fisicos_json,
+                json_group_array(DISTINCT json_object(
+                    'color', fv.color, 
+                    'marca', fv.marca, 
+                    'caracteristica_especial', fv.caracteristica_especial,
+                    'tipo_prenda', cp.tipo_prenda
+                )) FILTER (WHERE fv.id_vestimenta IS NOT NULL) AS vestimenta_json
             FROM fichas_desaparicion AS fd
             LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
             LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
+            LEFT JOIN ficha_rasgos_fisicos AS frf ON fd.id_ficha = frf.id_ficha
+            LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
+            LEFT JOIN ficha_vestimenta AS fv ON fd.id_ficha = fv.id_ficha
+            LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
+            GROUP BY fd.id_ficha
             ORDER BY fd.fecha_desaparicion DESC
-            LIMIT ? OFFSET ?;
+            LIMIT 20;
         `;
-        const fichasPrincipales = await db.all(fichasPrincipalesSql, [limit, offset]);
+        
+        const fichasResult = await db.all(fichasSql);
 
-        if (fichasPrincipales.length === 0) {
-            return res.json({ success: true, data: [] });
-        }
-
-        // 2. Obtenemos TODOS los rasgos y vestimenta en dos consultas masivas
-        const todosLosRasgos = await db.all(`SELECT * FROM ficha_rasgos_fisicos`);
-        const todaLaVestimenta = await db.all(`SELECT * FROM ficha_vestimenta`);
-
-        // 3. Unimos todo en JavaScript. Esto es mucho más rápido y seguro.
-        const fichasCompletas = fichasPrincipales.map(ficha => {
-            // Filtramos los rasgos que pertenecen a esta ficha
-            const rasgos_fisicos = todosLosRasgos.filter(r => r.id_ficha === ficha.id_ficha);
-            // Filtramos la vestimenta que pertenece a esta ficha
-            const vestimenta = todaLaVestimenta.filter(v => v.id_ficha === ficha.id_ficha);
+        // Parsear los resultados JSON
+        const fichasCompletas = fichasResult.map(ficha => {
+            const rasgos_fisicos = JSON.parse(ficha.rasgos_fisicos_json);
+            const vestimenta = JSON.parse(ficha.vestimenta_json);
             
+            // Eliminar los campos JSON crudos
+            delete ficha.rasgos_fisicos_json;
+            delete ficha.vestimenta_json;
+
             return {
                 ...ficha,
-                rasgos_fisicos,
-                vestimenta
+                rasgos_fisicos: rasgos_fisicos[0] === null ? [] : rasgos_fisicos,
+                vestimenta: vestimenta[0] === null ? [] : vestimenta
             };
         });
 
         res.json({ success: true, data: fichasCompletas });
-
     } catch (error) {
         logger.error(`❌ Error al obtener todas las fichas: ${error.message}`);
         res.status(500).json({ success: false, message: 'Error al obtener las fichas.' });
     }
 };
 
+
 /**
- * Obtiene una ficha de desaparición específica por su ID. VERSIÓN AUTOCONTENIDA.
+ * Obtiene una ficha de desaparición específica por su ID.
+ * Versión actualizada para usar el módulo de queries.
  */
 export const getFichaById = async (req, res) => {
     try {
         const { id } = req.params;
-        const db = await openDb();
+        const fichaCompleta = await getFichaCompletaById(id);
 
-        // 1. Consulta principal (ahora vive dentro del controlador)
-        const fichaSql = `
-            SELECT
-                fd.*,
-                u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.codigo_postal,
-                ctl.nombre_tipo AS tipo_lugar
-            FROM fichas_desaparicion AS fd
-            LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
-            LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
-            WHERE fd.id_ficha = ?;
-        `;
-        const ficha = await db.get(fichaSql, [id]);
-
-        if (!ficha) {
+        if (!fichaCompleta) {
             return res.status(404).json({ success: false, message: 'Ficha no encontrada.' });
         }
-
-        // 2. Consultas para rasgos y vestimenta (ahora viven aquí)
-        const rasgosSql = `SELECT * FROM ficha_rasgos_fisicos WHERE id_ficha = ?;`;
-        const vestimentaSql = `SELECT * FROM ficha_vestimenta WHERE id_ficha = ?;`;
-
-        const [rasgos_fisicos, vestimenta] = await Promise.all([
-            db.all(rasgosSql, [id]),
-            db.all(vestimentaSql, [id])
-        ]);
-
-        // 3. Formateo y respuesta
-        const { estado, municipio, localidad, calle, referencias, codigo_postal, ...restOfFicha } = ficha;
-        const fichaCompleta = {
-            ...restOfFicha,
-            ubicacion_desaparicion: { estado, municipio, localidad, calle, referencias, codigo_postal },
-            rasgos_fisicos: rasgos_fisicos || [],
-            vestimenta: vestimenta || []
-        };
         
         res.json({ success: true, data: fichaCompleta });
-
     } catch (error) {
         logger.error(`❌ Error al obtener la ficha por ID: ${error.message}`);
         res.status(500).json({ success: false, message: 'Error al obtener la ficha.' });
@@ -345,7 +373,8 @@ export const getFichaById = async (req, res) => {
 };
 
 /**
- * Elimina la ficha de desaparición y los registros asociados. VERSIÓN AUTOCONTENIDA.
+ * Elimina la ficha de desaparición y los registros asociados
+ * (La eliminación en cascada es manejada por la DB)
  */
 export const deleteFichaDesaparicion = async (req, res) => {
     const db = await openDb();
@@ -355,78 +384,89 @@ export const deleteFichaDesaparicion = async (req, res) => {
         const { id } = req.params;
         const id_usuario_creador = req.user.id;
 
-        // 1. Verifica la propiedad y obtiene el ID de la ubicación
         const ficha = await db.get(
-            `SELECT id_ubicacion_desaparicion FROM fichas_desaparicion WHERE id_ficha = ? AND id_usuario_creador = ?`,
+            `SELECT id_ficha, id_ubicacion_desaparicion FROM fichas_desaparicion WHERE id_ficha = ? AND id_usuario_creador = ?`,
             [id, id_usuario_creador]
         );
 
         if (!ficha) {
             await db.exec('ROLLBACK');
-            return res.status(404).json({ success: false, message: 'Ficha no encontrada o no autorizado para eliminar.' });
+            return res.status(404).json({ success: false, message: 'Ficha no encontrada o no autorizado' });
         }
 
-        // 2. Elimina la ficha (rasgos y vestimenta se borran en cascada si la BD está configurada así)
+        // La eliminación de rasgos y vestimenta se hará en cascada gracias a la FOREIGN KEY
         await db.run(`DELETE FROM fichas_desaparicion WHERE id_ficha = ?`, [id]);
-        
-        // 3. Elimina la ubicación, que no se borra en cascada
         await db.run(`DELETE FROM ubicaciones WHERE id_ubicacion = ?`, [ficha.id_ubicacion_desaparicion]);
 
         await db.exec('COMMIT');
-        res.json({ success: true, message: 'Ficha eliminada correctamente.' });
-
+        res.json({ success: true, message: 'Ficha y registros asociados eliminados correctamente' });
     } catch (error) {
         await db.exec('ROLLBACK');
         logger.error(`❌ Error al eliminar ficha: ${error.message}`);
-        res.status(500).json({ success: false, message: 'Error interno del servidor al eliminar la ficha.' });
+        res.status(500).json({ success: false, message: 'Error interno del servidor al eliminar ficha' });
     }
 };
 
 /**
- * Busca fichas de desaparición por un término de búsqueda en múltiples campos. VERSIÓN COMPLETA.
+ * Busca fichas de desaparición por un término de búsqueda.
+ * Versión optimizada.
  */
 export const searchFichas = async (req, res) => {
     try {
         const db = await openDb();
-        const { searchTerm = '', limit = 20, offset = 0 } = req.query;
-        const sqlTerm = `%${searchTerm.toLowerCase()}%`;
+        const { searchTerm = '', limit = 20, offset = 0, orderBy = 'fecha_desaparicion', orderDir = 'DESC', resumen = false } = req.query;
 
-        // Esta consulta busca el término en todos los campos relevantes
+        const allowedOrderBy = ['nombre', 'apellido_paterno', 'fecha_desaparicion'];
+        const allowedOrderDir = ['ASC', 'DESC'];
+        const safeOrderBy = allowedOrderBy.includes(orderBy) ? orderBy : 'fecha_desaparicion';
+        const safeOrderDir = allowedOrderDir.includes(orderDir.toUpperCase()) ? orderDir.toUpperCase() : 'DESC';
+
+        const queryTerm = `%${searchTerm.toLowerCase()}%`;
+        const selectFields = resumen
+            ? `fd.id_ficha, fd.nombre, fd.segundo_nombre, fd.apellido_paterno, fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, fd.genero, fd.edad_estimada, u.estado, u.municipio`
+            : `fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno, fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha,
+               fd.edad_estimada, fd.genero, fd.estatura, fd.complexion, fd.peso,
+               u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.latitud, u.longitud, u.codigo_postal, ctl.nombre_tipo AS tipo_lugar,
+               json_group_array(DISTINCT json_object('tipo_rasgo', frf.tipo_rasgo, 'descripcion_detalle', frf.descripcion_detalle, 'nombre_parte', cpc.nombre_parte)) FILTER (WHERE frf.id_rasgo IS NOT NULL) AS rasgos_fisicos_json,
+               json_group_array(DISTINCT json_object('color', fv.color, 'marca', fv.marca, 'caracteristica_especial', fv.caracteristica_especial, 'tipo_prenda', cp.tipo_prenda)) FILTER (WHERE fv.id_vestimenta IS NOT NULL) AS vestimenta_json
+            `;
+
         const fichasSql = `
-            SELECT DISTINCT
-                fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.fecha_desaparicion, 
-                fd.foto_perfil, fd.genero, fd.edad_estimada, u.estado, u.municipio
+            SELECT ${selectFields}
             FROM fichas_desaparicion AS fd
             LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
+            LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
             LEFT JOIN ficha_rasgos_fisicos AS frf ON fd.id_ficha = frf.id_ficha
             LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
             LEFT JOIN ficha_vestimenta AS fv ON fd.id_ficha = fv.id_ficha
             LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
-            LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
-            WHERE fd.estado_ficha = 'activa' AND (
-                LOWER(fd.nombre) LIKE ? OR
-                LOWER(fd.apellido_paterno) LIKE ? OR
-                LOWER(fd.genero) LIKE ? OR
-                LOWER(u.estado) LIKE ? OR
-                LOWER(u.municipio) LIKE ? OR
-                LOWER(frf.descripcion_detalle) LIKE ? OR
-                LOWER(cpc.nombre_parte) LIKE ? OR
-                LOWER(fv.color) LIKE ? OR
-                LOWER(fv.marca) LIKE ? OR
-                LOWER(cp.tipo_prenda) LIKE ? OR
-                LOWER(ctl.nombre_tipo) LIKE ?
-            )
-            ORDER BY fd.fecha_desaparicion DESC
-            LIMIT ? OFFSET ?;
+            WHERE LOWER(fd.nombre || ' ' || IFNULL(fd.segundo_nombre, '') || ' ' || fd.apellido_paterno || ' ' || IFNULL(fd.apellido_materno, '')) LIKE LOWER(?)
+            GROUP BY fd.id_ficha
+            ORDER BY ${safeOrderBy} ${safeOrderDir}
+            LIMIT ? OFFSET ?
         `;
-        
-        // Creamos un array con el término de búsqueda para cada '?' en la consulta
-        const params = Array(11).fill(sqlTerm).concat([limit, offset]);
 
-        const fichas = await db.all(fichasSql, params);
-        
-        res.json({ success: true, data: fichas });
+        const fichasResult = await db.all(fichasSql, [queryTerm, limit, offset]);
 
+        if (resumen) {
+             return res.json({ success: true, data: fichasResult });
+        }
+
+        const fichasCompletas = fichasResult.map(ficha => {
+            const rasgos_fisicos = JSON.parse(ficha.rasgos_fisicos_json);
+            const vestimenta = JSON.parse(ficha.vestimenta_json);
+            
+            delete ficha.rasgos_fisicos_json;
+            delete ficha.vestimenta_json;
+
+            return {
+                ...ficha,
+                rasgos_fisicos: rasgos_fisicos[0] === null ? [] : rasgos_fisicos,
+                vestimenta: vestimenta[0] === null ? [] : vestimenta
+            };
+        });
+
+        res.json({ success: true, data: fichasCompletas });
     } catch (error) {
         logger.error(`❌ Error al buscar fichas: ${error.message}`);
         res.status(500).json({ success: false, message: 'Error al realizar la búsqueda de fichas.' });
@@ -511,5 +551,20 @@ export const getUserFichaStats = async (req, res) => {
         res.json({ success: true, data: { activeFichasCount } });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Error al obtener estadísticas de fichas.' });
+    }
+};
+
+export const getMisFichas = async (req, res) => {
+    try {
+        const userId = req.user.id; // Obtenemos el ID del usuario del token
+        
+        // ✅ CORRECCIÓN: Llamamos a la función directamente por su nombre importado.
+        const fichas = await getFichasByUserId(userId);
+
+        res.json({ success: true, data: fichas });
+    } catch (error) {
+        // Añadimos un log para ver el error específico en la consola del backend
+        logger.error(`❌ Error en getMisFichas: ${error.message}`);
+        res.status(500).json({ success: false, message: 'Error al obtener tus fichas.' });
     }
 };
