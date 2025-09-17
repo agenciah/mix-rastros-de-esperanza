@@ -16,6 +16,8 @@ export const useHallazgos = (options = { fetchOnMount: false }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // --- FUNCIONES DE LECTURA (GET) ---
+
     const fetchHallazgos = useCallback(async () => {
         if (!user) return;
         setIsLoading(true);
@@ -24,15 +26,12 @@ export const useHallazgos = (options = { fetchOnMount: false }) => {
             const response = await api.get('/api/hallazgos/by-user');
             setHallazgos(response.data.data || []);
         } catch (err) {
-            console.error("❌ Error fetching user's hallazgos:", err);
             setError(err.response?.data?.message || 'Error al cargar tus hallazgos.');
         } finally {
             setIsLoading(false);
         }
     }, [user]);
 
-    // Este efecto ahora respeta la opción 'fetchOnMount'.
-    // Solo cargará los datos automáticamente si el componente se lo pide.
     useEffect(() => {
         if (options.fetchOnMount && !isAuthLoading && user) {
             fetchHallazgos();
@@ -46,14 +45,12 @@ export const useHallazgos = (options = { fetchOnMount: false }) => {
             const response = await api.get(`/api/hallazgos/${id}`);
             return response.data.data;
         } catch (err) {
-            console.error(`❌ Error fetching hallazgo ${id}:`, err);
             setError(err.response?.data?.message || 'Error al cargar el detalle.');
             return null;
         } finally {
             setIsLoading(false);
         }
     }, []);
-
     const createHallazgo = useCallback(async (hallazgoData) => {
         setIsLoading(true);
         setError(null);
@@ -107,7 +104,7 @@ export const useHallazgos = (options = { fetchOnMount: false }) => {
         hallazgos,
         isLoading,
         error,
-        fetchHallazgos, // Para que la lista pueda recargar manualmente
+        fetchHallazgos,
         getHallazgoById,
         createHallazgo,
         actualizarHallazgo,
