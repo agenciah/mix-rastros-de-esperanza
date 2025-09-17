@@ -415,6 +415,16 @@ export async function ensureAllTables() {
         FOREIGN KEY (id_tipo_lugar_hallazgo) REFERENCES catalogo_tipo_lugar (id_tipo_lugar)
       );
     `);
+
+    // ✅ PEGA ESTE BLOQUE DE CÓDIGO AQUÍ DEBAJO
+    // --- Lógica para añadir la columna 'foto_hallazgo' a una BD existente ---
+    const hallazgoColumns = await db.all(`PRAGMA table_info(hallazgos);`);
+    const hallazgoColumnNames = hallazgoColumns.map(col => col.name);
+
+    if (!hallazgoColumnNames.includes('foto_hallazgo')) {
+        console.log("➕ Agregando columna 'foto_hallazgo' a la tabla hallazgos...");
+        await db.exec(`ALTER TABLE hallazgos ADD COLUMN foto_hallazgo TEXT`);
+    }
     
     // TABLA FALTANTE: Rasgos físicos del hallazgo. Esta es la que resuelve el error.
     await db.exec(`

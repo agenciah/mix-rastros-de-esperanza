@@ -5,9 +5,7 @@ import logger from '../../utils/logger.js';
 // Asume que este archivo existe y contiene la lógica de matching
 import { findMatchesForHallazgo } from './matchController.js'; 
 import { sendMatchNotification } from '../../utils/emailService.js'; // Asume que este archivo existe
-import { searchHallazgosByKeyword } from '../../db/queries/fichasAndHallazgosQueries.js';
 import { createNotification } from '../../db/queries/notificationsQueries.js';
-import { getHallazgoCompletoById } from '../../db/queries/hallazgosQueries.js';
 import * as hallazgosDB from '../../db/queries/hallazgosQueries.js';
 
 /**
@@ -202,51 +200,67 @@ export const getAllHallazgos = async (req, res) => {
 /**
  * Obtiene un hallazgo específico por su ID. VERSIÓN COMPLETA Y ROBUSTA.
  */
+// export const getHallazgoById = async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const db = await openDb();
+
+//         // 1. Consulta principal con TODOS los campos, incluyendo foto y datos del usuario
+//         const hallazgoSql = `
+//             SELECT 
+//                 h.*, -- Selecciona todos los campos de la tabla hallazgos
+//                 u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.codigo_postal, u.latitud, u.longitud,
+//                 ctl.nombre_tipo AS tipo_lugar,
+//                 creator.nombre AS nombre_usuario_buscador -- Nombre del usuario que lo reportó
+//             FROM hallazgos AS h
+//             LEFT JOIN users AS creator ON h.id_usuario_buscador = creator.id
+//             LEFT JOIN ubicaciones AS u ON h.id_ubicacion_hallazgo = u.id_ubicacion
+//             LEFT JOIN catalogo_tipo_lugar AS ctl ON h.id_tipo_lugar_hallazgo = ctl.id_tipo_lugar
+//             WHERE h.id_hallazgo = ?;
+//         `;
+//         const hallazgo = await db.get(hallazgoSql, [id]);
+
+//         if (!hallazgo) {
+//             return res.status(404).json({ success: false, message: 'Hallazgo no encontrado.' });
+//         }
+
+//         // 2. Consultas separadas para características y vestimenta
+//         const caracteristicasSql = `SELECT * FROM hallazgo_caracteristicas WHERE id_hallazgo = ?;`;
+//         const vestimentaSql = `SELECT * FROM hallazgo_vestimenta WHERE id_hallazgo = ?;`;
+
+//         const [caracteristicas, vestimenta] = await Promise.all([
+//             db.all(caracteristicasSql, [id]),
+//             db.all(vestimentaSql, [id])
+//         ]);
+
+//         // 3. Formateamos el objeto final, anidando la ubicación
+//         const { estado, municipio, localidad, calle, referencias, codigo_postal, latitud, longitud, ...restOfHallazgo } = hallazgo;
+        
+//         const hallazgoCompleto = {
+//             ...restOfHallazgo,
+//             ubicacion_hallazgo: { estado, municipio, localidad, calle, referencias, codigo_postal, latitud, longitud },
+//             caracteristicas: caracteristicas || [],
+//             vestimenta: vestimenta || []
+//         };
+
+//         res.json({ success: true, data: hallazgoCompleto });
+        
+//     } catch (error) {
+//         logger.error(`❌ Error al obtener el hallazgo por ID: ${error.message}`);
+//         res.status(500).json({ success: false, message: 'Error al obtener el hallazgo.' });
+//     }
+// };
+
 export const getHallazgoById = async (req, res) => {
     try {
         const { id } = req.params;
-        const db = await openDb();
+        // ✅ 2. USAMOS EL PREFIJO 'hallazgosDB'
+        const hallazgoCompleto = await hallazgosDB.getHallazgoCompletoById(id);
 
-        // 1. Consulta principal con TODOS los campos, incluyendo foto y datos del usuario
-        const hallazgoSql = `
-            SELECT 
-                h.*, -- Selecciona todos los campos de la tabla hallazgos
-                u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.codigo_postal, u.latitud, u.longitud,
-                ctl.nombre_tipo AS tipo_lugar,
-                creator.nombre AS nombre_usuario_buscador -- Nombre del usuario que lo reportó
-            FROM hallazgos AS h
-            LEFT JOIN users AS creator ON h.id_usuario_buscador = creator.id
-            LEFT JOIN ubicaciones AS u ON h.id_ubicacion_hallazgo = u.id_ubicacion
-            LEFT JOIN catalogo_tipo_lugar AS ctl ON h.id_tipo_lugar_hallazgo = ctl.id_tipo_lugar
-            WHERE h.id_hallazgo = ?;
-        `;
-        const hallazgo = await db.get(hallazgoSql, [id]);
-
-        if (!hallazgo) {
+        if (!hallazgoCompleto) {
             return res.status(404).json({ success: false, message: 'Hallazgo no encontrado.' });
         }
-
-        // 2. Consultas separadas para características y vestimenta
-        const caracteristicasSql = `SELECT * FROM hallazgo_caracteristicas WHERE id_hallazgo = ?;`;
-        const vestimentaSql = `SELECT * FROM hallazgo_vestimenta WHERE id_hallazgo = ?;`;
-
-        const [caracteristicas, vestimenta] = await Promise.all([
-            db.all(caracteristicasSql, [id]),
-            db.all(vestimentaSql, [id])
-        ]);
-
-        // 3. Formateamos el objeto final, anidando la ubicación
-        const { estado, municipio, localidad, calle, referencias, codigo_postal, latitud, longitud, ...restOfHallazgo } = hallazgo;
-        
-        const hallazgoCompleto = {
-            ...restOfHallazgo,
-            ubicacion_hallazgo: { estado, municipio, localidad, calle, referencias, codigo_postal, latitud, longitud },
-            caracteristicas: caracteristicas || [],
-            vestimenta: vestimenta || []
-        };
-
         res.json({ success: true, data: hallazgoCompleto });
-        
     } catch (error) {
         logger.error(`❌ Error al obtener el hallazgo por ID: ${error.message}`);
         res.status(500).json({ success: false, message: 'Error al obtener el hallazgo.' });

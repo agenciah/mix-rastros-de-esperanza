@@ -1,224 +1,141 @@
-// src/pages/dashboard/hallazgos/HallazgoDetail.jsx
+// RUTA: src/pages/dashboard/hallazgos/HallazgoDetail.jsx
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useHallazgos } from '@/hooks/hallazgos/useHallazgosHook';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Loader2, ArrowLeft, Camera, User, MapPin, Calendar, Ruler, Weight, UserCircle, Edit, MessageSquare, Building } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+// ✅ 1. IMPORTAMOS NUESTRO HOOK MAESTRO
+import { useHallazgos } from '@/hooks/useHallazgos';
 import { useMessaging } from '@/hooks/useMessaging';
-import {
-    FaUser,
-    FaMapMarkerAlt,
-    FaRegCalendarAlt,
-    FaArrowLeft,
-    FaCamera,
-    FaEnvelope,
-    FaRulerVertical, // Icono para estatura
-    FaWeight,
-    FaHourglassHalf, // Icono para edad
-    FaMale, // Icono para complexión (se puede cambiar)
-} from 'react-icons/fa';
 
-const HallazgoDetail = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const { getHallazgoById, isLoading, error } = useHallazgos();
-    const { startConversation, isLoading: isStartingChat } = useMessaging();
-
-    const [hallazgo, setHallazgo] = useState(null);
-
-    useEffect(() => {
-        const fetchAndSetHallazgo = async () => {
-            const data = await getHallazgoById(id);
-            if (data) {
-                setHallazgo(data);
-            }
-        };
-
-        fetchAndSetHallazgo();
-    }, [id, getHallazgoById]);
-
-    const handleStartConversation = async () => {
-        // Validación del ID del usuario
-        if (!hallazgo || !hallazgo.id_usuario_buscador) {
-            console.error("No se pudo obtener el ID del usuario para iniciar la conversación.");
-            alert("No se pudo encontrar el usuario para contactar. Por favor, intente de nuevo más tarde.");
-            return;
-        }
-
-        try {
-            const conversationId = await startConversation(hallazgo.id_usuario_buscador);
-            navigate(`/mensajes/${conversationId}`);
-        } catch (err) {
-            console.error('Error al iniciar la conversación:', err);
-            alert('Hubo un error al iniciar la conversación. Por favor, intente de nuevo.');
-        }
-    };
-
-    if (isLoading) {
-        return <div className="text-center py-10">Cargando detalles...</div>;
-    }
-
-    if (error) {
-        return <div className="text-center py-10 text-red-500">{error}</div>;
-    }
-
-    if (!hallazgo) {
-        return <div className="text-center py-10">Hallazgo no encontrado.</div>;
-    }
-
-    const nombreCompleto = `${hallazgo.nombre || ''} ${hallazgo.segundo_nombre || ''} ${hallazgo.apellido_paterno || ''} ${hallazgo.apellido_materno || ''}`.trim();
-
+// Sub-componente para mostrar un detalle y no repetir código
+const DetailItem = ({ icon: Icon, label, value }) => {
+    if (!value) return null;
     return (
-        <div className="container mx-auto p-6">
-            <div className="flex items-center mb-6">
-                <button
-                    onClick={() => navigate(-1)}
-                    className="flex items-center text-blue-600 hover:text-blue-800 transition-colors mr-4"
-                >
-                    <FaArrowLeft className="mr-2" />
-                    Volver
-                </button>
-                <h1 className="text-3xl font-bold text-gray-800">Detalles del Hallazgo</h1>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg p-8 space-y-6">
-                {/* Nueva Sección de Fotos (opcional) */}
-                <div className="flex justify-center items-center mb-6">
-                    {/* Placeholder para la foto principal */}
-                    <div className="w-48 h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-sm">
-                        <FaCamera className="text-4xl" />
-                    </div>
-                </div>
-
-                {/* 1. Sección de Datos Principales */}
-                <div className="space-y-4 border-b pb-4">
-                    <p className="text-lg font-semibold text-blue-600">
-                        Nombre: {nombreCompleto || 'Sin identificar'}
-                    </p>
-                    <div className="flex items-center text-gray-600">
-                        <FaRegCalendarAlt className="mr-2 text-gray-400" />
-                        <span>
-                            Fecha del hallazgo: {hallazgo.fecha_hallazgo ? new Date(hallazgo.fecha_hallazgo).toLocaleDateString() : 'Desconocida'}
-                        </span>
-                    </div>
-
-                    {/* Sección de Ubicación con más detalles */}
-                    <div className="flex items-center text-gray-600">
-                        <FaMapMarkerAlt className="mr-2 text-gray-400" />
-                        <span>
-                            {hallazgo.ubicacion_hallazgo?.calle && `Calle: ${hallazgo.ubicacion_hallazgo.calle}, `}
-                            {hallazgo.ubicacion_hallazgo?.localidad && `Localidad: ${hallazgo.ubicacion_hallazgo.localidad}, `}
-                            {hallazgo.ubicacion_hallazgo?.municipio && `Municipio: ${hallazgo.ubicacion_hallazgo.municipio}, `}
-                            {hallazgo.ubicacion_hallazgo?.estado || 'Desconocido'}
-                        </span>
-                    </div>
-
-                    {/* Descripción General del Hallazgo */}
-                    {hallazgo.descripcion_general_hallazgo && (
-                        <p className="text-gray-700">Descripción: {hallazgo.descripcion_general_hallazgo}</p>
-                    )}
-
-                    {/* Tipo de Lugar del Hallazgo */}
-                    {hallazgo.tipo_lugar && (
-                        <p className="text-gray-700">Tipo de lugar: {hallazgo.tipo_lugar}</p>
-                    )}
-                </div>
-
-                {/* MODIFICACIÓN: Nueva sección para los datos físicos */}
-                <div className="space-y-4 border-b pb-4">
-                    <h4 className="text-xl font-bold text-gray-800 mb-2">Datos Físicos</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {hallazgo.genero && (
-                            <div className="flex items-center">
-                                <FaUser className="mr-2 text-gray-400" />
-                                <span>Género: <span className="font-medium text-gray-700">{hallazgo.genero}</span></span>
-                            </div>
-                        )}
-                        {hallazgo.edad_estimada && (
-                            <div className="flex items-center">
-                                <FaHourglassHalf className="mr-2 text-gray-400" />
-                                <span>Edad estimada: <span className="font-medium text-gray-700">{hallazgo.edad_estimada} años</span></span>
-                            </div>
-                        )}
-                        {hallazgo.estatura && (
-                            <div className="flex items-center">
-                                <FaRulerVertical className="mr-2 text-gray-400" />
-                                <span>Estatura: <span className="font-medium text-gray-700">{hallazgo.estatura} m</span></span>
-                            </div>
-                        )}
-                        {hallazgo.peso && (
-                            <div className="flex items-center">
-                                <FaWeight className="mr-2 text-gray-400" />
-                                <span>Peso: <span className="font-medium text-gray-700">{hallazgo.peso} kg</span></span>
-                            </div>
-                        )}
-                        {hallazgo.complexion && (
-                            <div className="flex items-center">
-                                <FaMale className="mr-2 text-gray-400" />
-                                <span>Complexión: <span className="font-medium text-gray-700">{hallazgo.complexion}</span></span>
-                            </div>
-                        )}
-                    </div>
-                </div>
-                {/* Fin de la nueva sección */}
-
-                {/* 2. Sección de Rasgos Físicos (Características) */}
-                {hallazgo.caracteristicas?.length > 0 && (
-                    <div className="border-b pb-4">
-                        <h4 className="text-xl font-bold text-gray-800 mb-2">Rasgos Físicos</h4>
-                        <ul className="list-disc list-inside ml-4 text-gray-600">
-                            {hallazgo.caracteristicas.map((caracteristica, index) => (
-                                <li key={index}>
-                                    <strong>{caracteristica.nombre_parte || 'Parte desconocida'}</strong>: {caracteristica.tipo_caracteristica || 'Sin característica'}. {caracteristica.descripcion}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-
-                {/* 3. Sección de Vestimenta */}
-                {hallazgo.vestimenta?.length > 0 && (
-                    <div className="border-b pb-4">
-                        <h4 className="text-xl font-bold text-gray-800 mb-2">Vestimenta</h4>
-                        <ul className="list-disc list-inside ml-4 text-gray-600">
-                            {hallazgo.vestimenta.map((prenda, index) => (
-                                <li key={index}>
-                                    <strong>{prenda.tipo_prenda || 'Prenda desconocida'}</strong>: {prenda.color || 'Sin color'}. {prenda.caracteristica_especial}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-
-                {/* 4. Sección de Usuario que reportó */}
-                <div className="pt-4 flex items-center justify-between">
-                    <div>
-                        <h4 className="text-xl font-bold text-gray-800 mb-2">Usuario que reportó</h4>
-                        <div className="flex items-center">
-                            <FaUser className="text-gray-500 mr-2" />
-                            <span className="text-blue-600 font-semibold">
-                                {hallazgo.nombre_usuario || 'Usuario Desconocido'}
-                            </span>
-                        </div>
-                    </div>
-                    {/* Botón para iniciar conversación */}
-                    <button
-                        onClick={handleStartConversation}
-                        disabled={isStartingChat}
-                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
-                    >
-                        {isStartingChat ? (
-                            'Iniciando...'
-                        ) : (
-                            <>
-                                <FaEnvelope className="mr-2" />
-                                Contactar
-                            </>
-                        )}
-                    </button>
-                </div>
-            </div>
+        <div className="flex items-start text-sm text-gray-700">
+            <Icon className="w-4 h-4 mr-3 mt-1 text-gray-400 flex-shrink-0" />
+            <span>
+                <span className="font-semibold">{label}:</span> {value}
+            </span>
         </div>
     );
 };
 
-export default HallazgoDetail;
+export default function HallazgoDetail() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const { getHallazgoById, isLoading, error } = useHallazgos();
+    const { startConversation, isLoading: isStartingChat } = useMessaging();
+    const [hallazgo, setHallazgo] = useState(null);
+
+    useEffect(() => {
+        const fetchHallazgo = async () => {
+            const data = await getHallazgoById(id);
+            if (data) setHallazgo(data);
+        };
+        fetchHallazgo();
+    }, [id, getHallazgoById]);
+
+    const handleStartConversation = async () => {
+        if (!hallazgo?.id_usuario_buscador) return;
+        const conversationId = await startConversation(hallazgo.id_usuario_buscador);
+        if (conversationId) navigate(`/dashboard/mensajes/${conversationId}`);
+    };
+
+    if (isLoading && !hallazgo) {
+        return <div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+    }
+
+    if (error || !hallazgo) {
+        return (
+            <div className="p-6 max-w-4xl mx-auto">
+                <Alert variant="destructive">
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error || "No se pudo encontrar el hallazgo."}</AlertDescription>
+                </Alert>
+            </div>
+        );
+    }
+
+    const nombreCompleto = [hallazgo.nombre, hallazgo.segundo_nombre, hallazgo.apellido_paterno, hallazgo.apellido_materno].filter(Boolean).join(' ');
+    const ubicacionCompleta = [hallazgo.ubicacion_hallazgo?.calle, hallazgo.ubicacion_hallazgo?.localidad, hallazgo.ubicacion_hallazgo?.municipio, hallazgo.ubicacion_hallazgo?.estado].filter(Boolean).join(', ');
+
+    return (
+        <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+            <Button variant="ghost" onClick={() => navigate(-1)} className="self-start">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Volver a la lista
+            </Button>
+
+            <Card>
+                <CardHeader>
+                    {/* ✅ 2. MOSTRAMOS LA FOTO DEL HALLAZGO */}
+                    <div className="w-full h-72 rounded-lg bg-slate-200 mb-6 flex items-center justify-center overflow-hidden">
+                        {hallazgo.foto_hallazgo ? (
+                            <img src={hallazgo.foto_hallazgo} alt={`Foto de ${nombreCompleto}`} className="w-full h-full object-cover" />
+                        ) : (
+                            <Camera className="w-16 h-16 text-slate-400" />
+                        )}
+                    </div>
+                    <CardTitle className="text-3xl font-bold">{nombreCompleto || 'Persona Sin Identificar'}</CardTitle>
+                    <CardDescription>{hallazgo.descripcion_general_hallazgo}</CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                        {/* --- Columna Izquierda --- */}
+                        <div className="space-y-4">
+                            <h3 className="font-semibold border-b pb-1">Datos Físicos</h3>
+                            <DetailItem icon={User} label="Género" value={hallazgo.genero} />
+                            <DetailItem icon={Calendar} label="Edad estimada" value={hallazgo.edad_estimada ? `${hallazgo.edad_estimada} años` : null} />
+                            <DetailItem icon={Ruler} label="Estatura" value={hallazgo.estatura ? `${hallazgo.estatura} cm` : null} />
+                            <DetailItem icon={Weight} label="Peso" value={hallazgo.peso ? `${hallazgo.peso} kg` : null} />
+                            <DetailItem icon={UserCircle} label="Complexión" value={hallazgo.complexion} />
+                        </div>
+                        {/* --- Columna Derecha --- */}
+                        <div className="space-y-4">
+                            <h3 className="font-semibold border-b pb-1">Detalles del Hallazgo</h3>
+                            <DetailItem icon={MapPin} label="Ubicación" value={ubicacionCompleta} />
+                            <DetailItem icon={Building} label="Tipo de lugar" value={hallazgo.tipo_lugar} />
+                            <DetailItem icon={Calendar} label="Fecha del hallazgo" value={new Date(hallazgo.fecha_hallazgo).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })} />
+                        </div>
+                    </div>
+                    
+                    {/* ✅ 3. MOSTRAMOS TODOS LOS DATOS (CARACTERÍSTICAS Y VESTIMENTA) */}
+                    {(hallazgo.caracteristicas?.length > 0) && (
+                        <div>
+                            <h3 className="font-semibold border-b pb-1 mb-2">Características Particulares</h3>
+                            <ul className="list-disc list-inside space-y-1 text-sm text-gray-700 pl-4">
+                                {hallazgo.caracteristicas.map((c, i) => <li key={i}>{c.descripcion}</li>)}
+                            </ul>
+                        </div>
+                    )}
+
+                    {(hallazgo.vestimenta?.length > 0) && (
+                        <div>
+                            <h3 className="font-semibold border-b pb-1 mb-2">Vestimenta</h3>
+                            <ul className="list-disc list-inside space-y-1 text-sm text-gray-700 pl-4">
+                                {hallazgo.vestimenta.map((v, i) => <li key={i}>{`${v.color || ''} ${v.marca || ''}`.trim()}</li>)}
+                            </ul>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Acciones</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col md:flex-row gap-4">
+                    <Button onClick={handleStartConversation} disabled={isStartingChat} className="w-full">
+                        {isStartingChat ? <Loader2 className="animate-spin mr-2" /> : <MessageSquare className="mr-2 h-4 w-4" />}
+                        Contactar a quien reportó
+                    </Button>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}

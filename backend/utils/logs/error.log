@@ -388,3 +388,7 @@ Error: ENOENT: no such file or directory, open '/home/alex1986/test_gastos_bot/g
 [2025-09-17 09:08:38] ERROR: ❌ Error fatal en el servicio de matching: hallazgosQueries is not defined
 [2025-09-17 09:18:30] ERROR: ❌ Error al actualizar ficha: SQLITE_ERROR: no such column: tipo_lugar
 [2025-09-17 09:22:19] ERROR: ❌ Error fatal en el servicio de matching: hallazgosQueries is not defined
+[2025-09-17 10:24:26] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgos has no column named foto_hallazgo
+[2025-09-17 10:30:29] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgos has no column named foto_hallazgo
+[2025-09-17 10:38:16] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgos has no column named foto_hallazgo
+[2025-09-17 10:42:56] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgos has no column named foto_hallazgo
