@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Terminal } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import HallazgoDatosPrincipales from "@/pages/dashboard/hallazgos/hallazgoDatosPrincipales";
+import HallazgoDatosPrincipales from "@/pages/dashboard/hallazgos/HallazgoDatosPrincipales";
 import HallazgoCaracteristicas from "@/pages/dashboard/hallazgos/hallazgoCaracteristicas";
 import HallazgoVestimenta from "@/pages/dashboard/hallazgos/hallazgoVestimenta";
 
