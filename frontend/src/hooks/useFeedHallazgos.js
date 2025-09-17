@@ -1,9 +1,9 @@
-// RUTA: src/hooks/useFeedHallazgos.js
+// RUTA: frontend/hooks/useFeedHallazgos.js
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import api from '@/lib/axios';
 
-export const useFeedHallazgos = (limit = 10) => {
+export const useFeedHallazgos = (limit = 12) => { // Aumentamos el límite a 12 para llenar la cuadrícula
     const [hallazgos, setHallazgos] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20,7 +20,6 @@ export const useFeedHallazgos = (limit = 10) => {
             const offset = (pageToFetch - 1) * limit;
             const params = { limit, offset, searchTerm: currentSearchTerm };
             
-            // Usamos el endpoint de búsqueda del feed, que es más simple
             const response = await api.get('/api/hallazgos/feed/search', { params });
             const newHallazgos = response.data.data || [];
 
@@ -35,31 +34,30 @@ export const useFeedHallazgos = (limit = 10) => {
         }
     }, [limit]);
 
-    // Efecto para manejar el cambio en el término de búsqueda con debounce
+    // Efecto para la búsqueda inicial y con debounce
     useEffect(() => {
-        if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current);
-        }
+        if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+        
         debounceTimeout.current = setTimeout(() => {
-            setPage(1); // Reinicia la página con cada nueva búsqueda
+            setPage(1);
             fetchHallazgos(searchTerm, 1);
-        }, 500); // 500ms de espera
+        }, 300); // 300ms de espera
 
         return () => clearTimeout(debounceTimeout.current);
     }, [searchTerm, fetchHallazgos]);
 
-    // Efecto para cargar más resultados al cambiar de página
-    useEffect(() => {
-        if (page > 1) {
-            fetchHallazgos(searchTerm, page);
-        }
-    }, [page, searchTerm, fetchHallazgos]);
-
+    // Efecto para cargar más resultados
     const loadMore = () => {
         if (hasMore && !isLoading) {
             setPage(prevPage => prevPage + 1);
         }
     };
+     useEffect(() => {
+        if (page > 1) {
+            fetchHallazgos(searchTerm, page);
+        }
+    }, [page]);
+
 
     return { hallazgos, isLoading, error, searchTerm, setSearchTerm, hasMore, loadMore };
 };

@@ -1,218 +1,106 @@
-// src/pages/dashboard/hallazgos/FeedHallazgosList.jsx
+// RUTA: src/pages/dashboard/hallazgos/FeedHallazgosList.jsx
 
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import api from '@/lib/axios';
-import { FaMapMarkerAlt, FaRegCalendarAlt, FaArrowLeft, FaSearch } from 'react-icons/fa';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Loader2, ArrowLeft, Search, Camera } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { FaMapMarkerAlt, FaRegCalendarAlt } from 'react-icons/fa';
+import { useFeedHallazgos } from '@/hooks/useFeedHallazgos';
 
+// --- Sub-componente HallazgoCard (Corregido) ---
+const HallazgoCard = ({ hallazgo }) => {
+    // ✅ Lógica robusta para mostrar la ubicación
+    const ubicacion = (hallazgo.municipio && hallazgo.estado)
+        ? `${hallazgo.municipio}, ${hallazgo.estado}`
+        : 'Ubicación no disponible';
+
+    const titulo = (hallazgo.nombre && hallazgo.apellido_paterno)
+        ? `${hallazgo.nombre} ${hallazgo.apellido_paterno}`
+        : `Hallazgo en ${hallazgo.municipio || 'ubicación desconocida'}`;
+
+    return (
+        <Card className="flex flex-col justify-between transition-all hover:shadow-lg overflow-hidden">
+            <Link to={`/dashboard/hallazgos/${hallazgo.id_hallazgo}`} className="flex flex-col flex-grow">
+                <div className="w-full h-48 bg-slate-200 flex items-center justify-center">
+                    {hallazgo.foto_hallazgo ? (
+                        <img src={hallazgo.foto_hallazgo} alt={`Foto de ${titulo}`} className="w-full h-full object-cover" />
+                    ) : (
+                        <Camera className="text-slate-400 w-12 h-12" />
+                    )}
+                </div>
+                <div className="p-4 flex flex-col flex-grow">
+                    <CardTitle className="text-md font-semibold text-gray-800 truncate">{titulo}</CardTitle>
+                    <CardDescription className="text-sm text-gray-500 mt-1">
+                        <FaRegCalendarAlt className="inline mr-1.5" />
+                        {new Date(hallazgo.fecha_hallazgo).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </CardDescription>
+                    <p className="text-sm text-gray-500 mt-1">
+                        <FaMapMarkerAlt className="inline mr-1.5" />
+                        {ubicacion}
+                    </p>
+                    <div className="flex-grow" /> 
+                    <Button variant="link" className="p-0 h-auto text-blue-600 self-start mt-2">
+                        Ver detalles →
+                    </Button>
+                </div>
+            </Link>
+        </Card>
+    );
+};
+
+
+// --- Componente Principal (Simplificado) ---
 const FeedHallazgosList = () => {
     const navigate = useNavigate();
-    const [hallazgos, setHallazgos] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const limit = 10;
-    
-    // Referencia para el temporizador de debounce
-    const debounceTimeout = useRef(null);
-
-    // Función principal para la carga y búsqueda de hallazgos
-    const fetchHallazgos = async (term = searchTerm, pageToFetch = 1) => {
-        setLoading(true);
-        setError(null);
-        
-        try {
-            let response;
-            let url; // Creamos una variable para la URL
-            
-            // Si hay un término de búsqueda, usamos la nueva ruta de búsqueda
-            if (term.trim() !== '') {
-                url = `/api/hallazgos/feed/search?searchTerm=${encodeURIComponent(term)}&limit=${limit}&offset=${(pageToFetch - 1) * limit}`;
-            } else {
-                // Si no hay término, usamos la ruta general
-                url = `/api/hallazgos/?limit=${limit}&offset=${(pageToFetch - 1) * limit}`;
-            }
-
-            // AQUI: Agregamos el primer console.log para ver la URL y el término
-            console.log(`[Frontend] Término de búsqueda: "${term}"`);
-            console.log(`[Frontend] URL de la petición: ${url}`);
-            
-            response = await api.get(url);
-
-            const newHallazgos = response.data.data;
-
-            // AQUI: Agregamos el segundo console.log para ver el resultado de la petición
-            console.log(`[Frontend] Resultados recibidos:`, newHallazgos);
-
-            setHallazgos(prevHallazgos => pageToFetch === 1 ? newHallazgos : [...prevHallazgos, ...newHallazgos]);
-            setHasMore(newHallazgos.length === limit);
-
-            // Guardar el estado en sessionStorage
-            sessionStorage.setItem('searchTerm', term);
-            sessionStorage.setItem('searchResults', JSON.stringify(newHallazgos));
-        } catch (err) {
-            console.error('Error al obtener la lista de hallazgos:', err);
-            setError('No se pudo cargar la lista de hallazgos. Intente de nuevo más tarde.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Efecto para la carga inicial y el "debouncing" de la búsqueda
-     // useEffect #1: Se ejecuta UNA SOLA VEZ para cargar el estado inicial.
-    useEffect(() => {
-        const storedSearchTerm = sessionStorage.getItem('searchTerm');
-        const storedSearchResults = sessionStorage.getItem('searchResults');
-        
-        if (storedSearchTerm && storedSearchResults && storedSearchResults !== '[]') {
-            setSearchTerm(storedSearchTerm);
-            setHallazgos(JSON.parse(storedSearchResults));
-            setLoading(false);
-        } else {
-            // Carga la lista inicial si no hay nada guardado.
-            fetchHallazgos('');
-        }
-    }, []); // El array vacío [] es la clave para que se ejecute solo una vez.
-
-    // useEffect #2: Se ejecuta CADA VEZ que el usuario escribe en el buscador.
-    useEffect(() => {
-        // Si estamos en la carga inicial (searchTerm aún no se establece desde el storage), no hacemos nada.
-        // Esto evita una doble llamada a la API al inicio.
-        if (loading && !sessionStorage.getItem('searchTerm')) {
-             return;
-        }
-
-        if (searchTerm.trim() === '') {
-            // Si el usuario borra la búsqueda, limpiamos el storage.
-            sessionStorage.removeItem('searchTerm');
-            sessionStorage.removeItem('searchResults');
-            // Recargamos la lista inicial para que no se quede con los últimos resultados.
-            fetchHallazgos('', 1);
-            return;
-        }
-
-        // Lógica del "debounce" para no hacer peticiones en cada tecla.
-        if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current);
-        }
-
-        debounceTimeout.current = setTimeout(() => {
-            setPage(1); 
-            fetchHallazgos(searchTerm, 1);
-        }, 500);
-
-        // Limpieza del temporizador.
-        return () => {
-            if (debounceTimeout.current) {
-                clearTimeout(debounceTimeout.current);
-            }
-        };
-    }, [searchTerm]); // Se ejecuta cada vez que cambia 'searchTerm'.
-
-    // useEffect #3: Para la paginación (este probablemente ya lo tenías bien).
-    useEffect(() => {
-        if (page > 1) {
-            fetchHallazgos(searchTerm, page);
-        }
-    }, [page]);
-
-    // Manejar el cambio del input de búsqueda
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
-    };
-
-    const handleLoadMore = () => {
-        setPage(prevPage => prevPage + 1);
-    };
-
-    const handleGoBack = () => {
-        sessionStorage.removeItem('searchTerm');
-        sessionStorage.removeItem('searchResults');
-        navigate('/dashboard');
-    };
+    const { hallazgos, isLoading, error, searchTerm, setSearchTerm, hasMore, loadMore } = useFeedHallazgos();
 
     if (error) {
         return <div className="text-center py-10 text-red-500">{error}</div>;
     }
 
     return (
-        <div className="container mx-auto p-6">
+        <div className="container mx-auto p-4 md:p-6">
             <div className="flex items-center mb-6">
-                <button onClick={handleGoBack} className="flex items-center text-blue-600 hover:text-blue-800 transition-colors mr-4">
-                    <FaArrowLeft className="mr-2" />
-                    Volver al Dashboard
-                </button>
-                <h1 className="text-3xl font-bold text-gray-800">Listado de Hallazgos</h1>
+                <Button variant="ghost" onClick={() => navigate('/dashboard')} className="mr-4">
+                    <ArrowLeft className="mr-2 h-4 w-4" /> Volver
+                </Button>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Listado de Hallazgos</h1>
             </div>
 
-            {/* Nuevo campo de búsqueda */}
             <div className="mb-6 relative">
-                <input
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <Input
                     type="text"
                     placeholder="Buscar por nombre, descripción, vestimenta, ubicación..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-full pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                    className="w-full pl-10"
                     value={searchTerm}
-                    onChange={handleSearchChange}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
-            {hallazgos.length === 0 && !loading && (
-                <p className="text-center text-gray-500">No se encontraron hallazgos que coincidan con la búsqueda.</p>
+            {hallazgos.length === 0 && isLoading && (
+                 <div className="text-center py-8 flex justify-center"><Loader2 className="animate-spin" /></div>
+            )}
+
+            {hallazgos.length === 0 && !isLoading && (
+                <p className="text-center text-gray-500 mt-8">No se encontraron hallazgos que coincidan con la búsqueda.</p>
             )}
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {hallazgos.map(hallazgo => (
-                    <div key={hallazgo.id_hallazgo} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow flex flex-col justify-between">
-                        <div>
-                            <div className="flex justify-between items-start mb-4">
-                                <div>
-                                    <h3 className="text-xl font-semibold text-blue-600">
-                                        {hallazgo.nombre && hallazgo.apellido_paterno
-                                            ? `${hallazgo.nombre} ${hallazgo.apellido_paterno}`
-                                            : hallazgo.municipio && hallazgo.estado
-                                            ? `Hallazgo en ${hallazgo.municipio}`
-                                            : 'Hallazgo sin identificar'}
-                                    </h3>
-                                </div>
-                            </div>
-                            <div className="space-y-2 text-gray-600 text-sm">
-                                <div className="flex items-center">
-                                    <FaRegCalendarAlt className="mr-2 text-gray-400" />
-                                    <span>Fecha: {new Date(hallazgo.fecha_hallazgo).toLocaleDateString()}</span>
-                                </div>
-                                <div className="flex items-center">
-                                    <FaMapMarkerAlt className="mr-2 text-gray-400" />
-                                    <span>Ubicación: {hallazgo.municipio}, {hallazgo.estado}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mt-4 text-right">
-                            <Link
-                                to={`${hallazgo.id_hallazgo}`}
-                                className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors"
-                            >
-                                Ver detalles completos
-                            </Link>
-                        </div>
-                    </div>
+                    <HallazgoCard key={hallazgo.id_hallazgo} hallazgo={hallazgo} />
                 ))}
             </div>
 
-            {loading && (
-                <div className="text-center py-8">Cargando más hallazgos...</div>
+            {isLoading && hallazgos.length > 0 && (
+                <div className="text-center py-8 flex justify-center"><Loader2 className="animate-spin" /></div>
             )}
             
-            {!loading && hasMore && (
+            {!isLoading && hasMore && (
                 <div className="text-center py-8">
-                    <button
-                        onClick={handleLoadMore}
-                        className="bg-blue-600 text-white px-6 py-2 rounded-full font-semibold shadow-md hover:bg-blue-700 transition-colors"
-                    >
-                        Cargar más
-                    </button>
+                    <Button onClick={loadMore}>Cargar más</Button>
                 </div>
             )}
         </div>
