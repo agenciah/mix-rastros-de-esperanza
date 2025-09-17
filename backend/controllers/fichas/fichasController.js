@@ -292,20 +292,23 @@ export const getAllFichas = async (req, res) => {
 };
 
 /**
- * Obtiene una ficha de desaparición específica por su ID. VERSIÓN AUTOCONTENIDA.
+ * Obtiene una ficha de desaparición específica por su ID. VERSIÓN FINAL Y COMPLETA.
  */
 export const getFichaById = async (req, res) => {
     try {
         const { id } = req.params;
         const db = await openDb();
 
-        // 1. Consulta principal (ahora vive dentro del controlador)
+        // 1. Consulta principal (sin cambios, ya era completa)
         const fichaSql = `
             SELECT
                 fd.*,
                 u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.codigo_postal,
-                ctl.nombre_tipo AS tipo_lugar
+                ctl.nombre_tipo AS tipo_lugar,
+                creator.nombre as nombre_usuario,
+                creator.email as email_usuario
             FROM fichas_desaparicion AS fd
+            LEFT JOIN users AS creator ON fd.id_usuario_creador = creator.id
             LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
             LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
             WHERE fd.id_ficha = ?;
@@ -316,9 +319,19 @@ export const getFichaById = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Ficha no encontrada.' });
         }
 
-        // 2. Consultas para rasgos y vestimenta (ahora viven aquí)
-        const rasgosSql = `SELECT * FROM ficha_rasgos_fisicos WHERE id_ficha = ?;`;
-        const vestimentaSql = `SELECT * FROM ficha_vestimenta WHERE id_ficha = ?;`;
+        // ✅ 2. CORRECCIÓN: Se añaden los JOINs para traer los nombres de los catálogos
+        const rasgosSql = `
+            SELECT frf.*, cpc.nombre_parte 
+            FROM ficha_rasgos_fisicos AS frf
+            LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
+            WHERE frf.id_ficha = ?;
+        `;
+        const vestimentaSql = `
+            SELECT fv.*, cp.tipo_prenda
+            FROM ficha_vestimenta AS fv
+            LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
+            WHERE fv.id_ficha = ?;
+        `;
 
         const [rasgos_fisicos, vestimenta] = await Promise.all([
             db.all(rasgosSql, [id]),
