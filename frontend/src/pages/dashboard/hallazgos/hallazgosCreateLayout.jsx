@@ -13,7 +13,7 @@ import { initialHallazgoFormState } from '@/lib/initialFormState';
 
 // Sub-componentes
 import HallazgoDatosPrincipales from "./HallazgoDatosPrincipales";
-import HallazgoCaracteristicas from "./HallazgoCaracteristicas";
+import HallazgoCaracteristicas from "./hallazgoCaracteristicas";
 import HallazgoVestimenta from "./HallazgoVestimenta";
 
 export default function HallazgosCreateLayout() {

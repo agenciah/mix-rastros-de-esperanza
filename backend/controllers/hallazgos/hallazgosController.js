@@ -251,16 +251,62 @@ export const getAllHallazgos = async (req, res) => {
 //     }
 // };
 
+/**
+ * Obtiene un hallazgo específico por su ID. VERSIÓN FINAL Y COMPLETA.
+ */
 export const getHallazgoById = async (req, res) => {
     try {
         const { id } = req.params;
-        // ✅ 2. USAMOS EL PREFIJO 'hallazgosDB'
-        const hallazgoCompleto = await hallazgosDB.getHallazgoCompletoById(id);
+        const db = await openDb();
 
-        if (!hallazgoCompleto) {
+        const hallazgoSql = `
+            SELECT 
+                h.*,
+                u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.codigo_postal, u.latitud, u.longitud,
+                ctl.nombre_tipo AS tipo_lugar,
+                creator.nombre AS nombre_usuario_buscador
+            FROM hallazgos AS h
+            LEFT JOIN users AS creator ON h.id_usuario_buscador = creator.id
+            LEFT JOIN ubicaciones AS u ON h.id_ubicacion_hallazgo = u.id_ubicacion
+            LEFT JOIN catalogo_tipo_lugar AS ctl ON h.id_tipo_lugar_hallazgo = ctl.id_tipo_lugar
+            WHERE h.id_hallazgo = ?;
+        `;
+        const hallazgo = await db.get(hallazgoSql, [id]);
+
+        if (!hallazgo) {
             return res.status(404).json({ success: false, message: 'Hallazgo no encontrado.' });
         }
+
+        // ✅ CORRECCIÓN: Añadimos los JOINs para traer los nombres de los catálogos
+        const caracteristicasSql = `
+            SELECT hc.*, cpc.nombre_parte 
+            FROM hallazgo_caracteristicas AS hc
+            LEFT JOIN catalogo_partes_cuerpo AS cpc ON hc.id_parte_cuerpo = cpc.id_parte_cuerpo
+            WHERE hc.id_hallazgo = ?;
+        `;
+        const vestimentaSql = `
+            SELECT hv.*, cp.tipo_prenda
+            FROM hallazgo_vestimenta AS hv
+            LEFT JOIN catalogo_prendas AS cp ON hv.id_prenda = cp.id_prenda
+            WHERE hv.id_hallazgo = ?;
+        `;
+
+        const [caracteristicas, vestimenta] = await Promise.all([
+            db.all(caracteristicasSql, [id]),
+            db.all(vestimentaSql, [id])
+        ]);
+
+        const { estado, municipio, localidad, calle, referencias, codigo_postal, latitud, longitud, ...restOfHallazgo } = hallazgo;
+        
+        const hallazgoCompleto = {
+            ...restOfHallazgo,
+            ubicacion_hallazgo: { estado, municipio, localidad, calle, referencias, codigo_postal, latitud, longitud },
+            caracteristicas: caracteristicas || [],
+            vestimenta: vestimenta || []
+        };
+
         res.json({ success: true, data: hallazgoCompleto });
+        
     } catch (error) {
         logger.error(`❌ Error al obtener el hallazgo por ID: ${error.message}`);
         res.status(500).json({ success: false, message: 'Error al obtener el hallazgo.' });

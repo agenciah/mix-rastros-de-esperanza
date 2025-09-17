@@ -109,7 +109,11 @@ export default function HallazgoDetail() {
                         <div>
                             <h3 className="font-semibold border-b pb-1 mb-2">Características Particulares</h3>
                             <ul className="list-disc list-inside space-y-1 text-sm text-gray-700 pl-4">
-                                {hallazgo.caracteristicas.map((c, i) => <li key={i}>{c.descripcion}</li>)}
+                                {hallazgo.caracteristicas.map((c, i) => (
+                                    <li key={i}>
+                                        <strong>{c.nombre_parte || 'Rasgo'}:</strong> {`${c.tipo_caracteristica || ''} - ${c.descripcion || ''}`}
+                                    </li>
+                                ))}
                             </ul>
                         </div>
                     )}
@@ -118,7 +122,11 @@ export default function HallazgoDetail() {
                         <div>
                             <h3 className="font-semibold border-b pb-1 mb-2">Vestimenta</h3>
                             <ul className="list-disc list-inside space-y-1 text-sm text-gray-700 pl-4">
-                                {hallazgo.vestimenta.map((v, i) => <li key={i}>{`${v.color || ''} ${v.marca || ''}`.trim()}</li>)}
+                                {hallazgo.vestimenta.map((v, i) => (
+                                    <li key={i}>
+                                        <strong>{v.tipo_prenda || 'Prenda'}:</strong> {`${v.color || ''} ${v.marca || ''} ${v.caracteristica_especial || ''}`.trim()}
+                                    </li>
+                                ))}
                             </ul>
                         </div>
                     )}
