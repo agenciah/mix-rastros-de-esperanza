@@ -11,7 +11,6 @@ import { useFeedHallazgos } from '@/hooks/useFeedHallazgos';
 
 // --- Sub-componente HallazgoCard (Corregido) ---
 const HallazgoCard = ({ hallazgo }) => {
-    // ✅ Lógica robusta para mostrar la ubicación
     const ubicacion = (hallazgo.municipio && hallazgo.estado)
         ? `${hallazgo.municipio}, ${hallazgo.estado}`
         : 'Ubicación no disponible';
@@ -22,7 +21,8 @@ const HallazgoCard = ({ hallazgo }) => {
 
     return (
         <Card className="flex flex-col justify-between transition-all hover:shadow-lg overflow-hidden">
-            <Link to={`/dashboard/hallazgos/${hallazgo.id_hallazgo}`} className="flex flex-col flex-grow">
+            {/* ✅ CORRECCIÓN: La ruta ahora apunta a 'hallazgos-list' */}
+            <Link to={`/dashboard/hallazgos-list/${hallazgo.id_hallazgo}`} className="flex flex-col flex-grow">
                 <div className="w-full h-48 bg-slate-200 flex items-center justify-center">
                     {hallazgo.foto_hallazgo ? (
                         <img src={hallazgo.foto_hallazgo} alt={`Foto de ${titulo}`} className="w-full h-full object-cover" />
