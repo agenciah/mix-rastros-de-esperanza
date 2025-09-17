@@ -150,7 +150,7 @@ export const createFichaDesaparicion = async (req, res) => {
 };
 
 /**
- * Actualiza una ficha existente, verificando la propiedad del usuario. VERSIÓN COMPLETA Y REFACTORIZADA.
+ * Actualiza una ficha existente, verificando la propiedad del usuario. VERSIÓN FINAL.
  */
 export const actualizarFicha = async (req, res) => {
     const db = await openDb();
@@ -158,17 +158,22 @@ export const actualizarFicha = async (req, res) => {
 
     try {
         const { id } = req.params;
+        const id_usuario_creador = req.user.id;
+
+        // ✅ LA SOLUCIÓN: Desestructuramos para separar y limpiar los datos del body.
         const {
-            // Desestructuramos para separar los datos que van a tablas diferentes
             ubicacion_desaparicion,
             rasgos_fisicos,
             vestimenta,
-            ...fichaPrincipal // El resto de los campos (nombre, foto_perfil, etc.) se agrupan aquí
+            // Ignoramos explícitamente los campos de solo lectura o IDs que no deben actualizarse aquí
+            id_ficha,
+            tipo_lugar,
+            nombre_usuario,
+            email_usuario,
+            ...fichaPrincipal // El resto (nombre, foto_perfil, etc.) queda en este objeto
         } = req.body;
 
-        const id_usuario_creador = req.user.id;
-
-        // 1. Verifica que la ficha exista y pertenezca al usuario que la edita
+        // 1. Verifica la propiedad de la ficha
         const ficha = await db.get(
             `SELECT id_ubicacion_desaparicion FROM fichas_desaparicion WHERE id_ficha = ? AND id_usuario_creador = ?`,
             [id, id_usuario_creador]
@@ -176,20 +181,19 @@ export const actualizarFicha = async (req, res) => {
 
         if (!ficha) {
             await db.exec('ROLLBACK');
-            return res.status(404).json({ success: false, message: 'Ficha no encontrada o no autorizado para editar' });
+            return res.status(404).json({ success: false, message: 'Ficha no encontrada o no autorizado' });
         }
 
-        // 2. Actualiza la tabla principal 'fichas_desaparicion' de forma dinámica
-        const fichaFields = Object.keys(fichaPrincipal);
-        if (fichaFields.length > 0) {
-            const fichaSetClause = fichaFields.map(key => `${key} = ?`).join(', ');
+        // 2. Actualiza la tabla principal 'fichas_desaparicion' con los datos limpios
+        if (Object.keys(fichaPrincipal).length > 0) {
+            const fichaSetClause = Object.keys(fichaPrincipal).map(key => `${key} = ?`).join(', ');
             await db.run(
                 `UPDATE fichas_desaparicion SET ${fichaSetClause} WHERE id_ficha = ?`,
                 [...Object.values(fichaPrincipal), id]
             );
         }
 
-        // 3. Actualiza la tabla 'ubicaciones' de forma dinámica
+        // 3. Actualiza la ubicación
         if (ubicacion_desaparicion && Object.keys(ubicacion_desaparicion).length > 0) {
             const ubicacionSetClause = Object.keys(ubicacion_desaparicion).map(key => `${key} = ?`).join(', ');
             await db.run(
@@ -198,40 +202,34 @@ export const actualizarFicha = async (req, res) => {
             );
         }
 
-        // 4. Reemplaza los rasgos físicos (borrar y volver a insertar)
+        // 4. Reemplaza rasgos y vestimenta
         await db.run(`DELETE FROM ficha_rasgos_fisicos WHERE id_ficha = ?`, [id]);
         if (rasgos_fisicos && rasgos_fisicos.length > 0) {
             const rasgosPromises = rasgos_fisicos.map(rasgo =>
-                db.run(
-                    `INSERT INTO ficha_rasgos_fisicos (id_ficha, id_parte_cuerpo, tipo_rasgo, descripcion_detalle) VALUES (?, ?, ?, ?)`,
-                    [id, rasgo.id_parte_cuerpo, rasgo.tipo_rasgo, rasgo.descripcion_detalle]
-                )
+                db.run(`INSERT INTO ficha_rasgos_fisicos (id_ficha, id_parte_cuerpo, tipo_rasgo, descripcion_detalle) VALUES (?, ?, ?, ?)`,
+                    [id, rasgo.id_parte_cuerpo, rasgo.tipo_rasgo, rasgo.descripcion_detalle])
             );
             await Promise.all(rasgosPromises);
         }
 
-        // 5. Reemplaza la vestimenta (borrar y volver a insertar)
         await db.run(`DELETE FROM ficha_vestimenta WHERE id_ficha = ?`, [id]);
         if (vestimenta && vestimenta.length > 0) {
             const vestimentaPromises = vestimenta.map(prenda =>
-                db.run(
-                    `INSERT INTO ficha_vestimenta (id_ficha, id_prenda, color, marca, caracteristica_especial) VALUES (?, ?, ?, ?, ?)`,
-                    [id, prenda.id_prenda, prenda.color, prenda.marca, prenda.caracteristica_especial]
-                )
+                db.run(`INSERT INTO ficha_vestimenta (id_ficha, id_prenda, color, marca, caracteristica_especial) VALUES (?, ?, ?, ?, ?)`,
+                    [id, prenda.id_prenda, prenda.color, prenda.marca, prenda.caracteristica_especial])
             );
             await Promise.all(vestimentaPromises);
         }
 
         await db.exec('COMMIT');
         
-        // 6. Opcional: Re-ejecutar búsqueda de coincidencias después de la actualización
-        const fichaActualizada = await getFichaCompletaById(id); // getFichaCompletaById debe estar disponible en este archivo
+        // Opcional: Re-ejecutar búsqueda de coincidencias
+        const fichaActualizada = await getFichaCompletaById(id);
         if (fichaActualizada) {
              await findMatchesForFicha(fichaActualizada);
         }
        
         res.json({ success: true, message: 'Ficha actualizada correctamente' });
-
     } catch (error) {
         await db.exec('ROLLBACK');
         logger.error(`❌ Error al actualizar ficha: ${error.message}`);

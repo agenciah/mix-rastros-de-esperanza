@@ -73,14 +73,33 @@ export default function DatosPrincipalesForm({ form, handleChange, handleNestedC
 
             {/* --- Sección de Datos de la Desaparición --- */}
             <div className="space-y-4">
-                 <h3 className="text-md font-semibold text-gray-800">Datos de la Desaparición</h3>
+                <h3 className="text-md font-semibold text-gray-800">Datos de la Desaparición</h3>
                 <div className="space-y-1.5">
                     <Label>Fecha de Desaparición *</Label>
                     <Popover>
                         <PopoverTrigger asChild>
-                            <Button variant="outline" className="w-full justify-start text-left font-normal"><CalendarIcon className="mr-2 h-4 w-4" />{form.fecha_desaparicion ? format(new Date(form.fecha_desaparicion), "PPP", { locale: es }) : <span>Selecciona una fecha</span>}</Button>
+                            <Button variant="outline" className="w-full justify-start text-left font-normal">
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                
+                                {/* ✅ CORRECCIÓN 1: Usamos replace para evitar el error de UTC */}
+                                {form.fecha_desaparicion 
+                                    ? format(new Date(form.fecha_desaparicion.replace(/-/g, '/')), "PPP", { locale: es }) 
+                                    : <span>Selecciona una fecha</span>
+                                }
+
+                            </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={form.fecha_desaparicion ? new Date(form.fecha_desaparicion) : null} onSelect={handleDateChange} initialFocus /></PopoverContent>
+                        <PopoverContent className="w-auto p-0">
+                            <Calendar 
+                                mode="single" 
+                                
+                                // ✅ CORRECCIÓN 2: Hacemos lo mismo aquí
+                                selected={form.fecha_desaparicion ? new Date(form.fecha_desaparicion.replace(/-/g, '/')) : null} 
+                                
+                                onSelect={handleDateChange} 
+                                initialFocus 
+                            />
+                        </PopoverContent>
                     </Popover>
                 </div>
                 {/* ✅ 3. DOS INPUTS SEPARADOS PARA UBICACIÓN */}

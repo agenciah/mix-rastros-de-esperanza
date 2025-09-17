@@ -386,3 +386,5 @@ Error: ENOENT: no such file or directory, open '/home/alex1986/test_gastos_bot/g
 [2025-09-17 08:54:13] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'id_usuario_creador')
 [2025-09-17 08:54:13] ERROR: POST /api/fichas - SQLITE_ERROR: cannot rollback - no transaction is active
 [2025-09-17 09:08:38] ERROR: ❌ Error fatal en el servicio de matching: hallazgosQueries is not defined
+[2025-09-17 09:18:30] ERROR: ❌ Error al actualizar ficha: SQLITE_ERROR: no such column: tipo_lugar
+[2025-09-17 09:22:19] ERROR: ❌ Error fatal en el servicio de matching: hallazgosQueries is not defined
