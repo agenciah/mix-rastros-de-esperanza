@@ -314,7 +314,7 @@ export const getHallazgoById = async (req, res) => {
 };
 
 /**
- * Actualiza un hallazgo existente, verificando la propiedad del usuario. VERSIÓN COMPLETA.
+ * Actualiza un hallazgo existente. VERSIÓN FINAL Y COMPLETA.
  */
 export const actualizarHallazgo = async (req, res) => {
     const db = await openDb();
@@ -322,17 +322,21 @@ export const actualizarHallazgo = async (req, res) => {
 
     try {
         const { id } = req.params;
+        const id_usuario_buscador = req.user.id;
+
+        // ✅ LA SOLUCIÓN: Desestructuramos para separar y limpiar los datos.
         const {
-            // Desestructuramos para separar los datos que van a tablas diferentes
             ubicacion_hallazgo,
             caracteristicas,
             vestimenta,
-            ...hallazgoPrincipal // El resto de campos (nombre, foto_hallazgo, etc.) se agrupan aquí
+            // Ignoramos explícitamente los campos de solo lectura que vienen del GET
+            id_hallazgo,
+            tipo_lugar,
+            nombre_usuario_buscador,
+            ...hallazgoPrincipal // El resto (nombre, foto_hallazgo, etc.) queda aquí
         } = req.body;
 
-        const id_usuario_buscador = req.user.id;
-
-        // 1. Verifica la propiedad del hallazgo y obtiene el ID de la ubicación
+        // 1. Verifica la propiedad del hallazgo
         const hallazgo = await db.get(
             `SELECT id_ubicacion_hallazgo FROM hallazgos WHERE id_hallazgo = ? AND id_usuario_buscador = ?`,
             [id, id_usuario_buscador]
@@ -343,17 +347,16 @@ export const actualizarHallazgo = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Hallazgo no encontrado o no autorizado' });
         }
 
-        // 2. Actualiza la tabla principal 'hallazgos' de forma dinámica
-        const hallazgoFields = Object.keys(hallazgoPrincipal);
-        if (hallazgoFields.length > 0) {
-            const hallazgoSetClause = hallazgoFields.map(key => `${key} = ?`).join(', ');
+        // 2. Actualiza la tabla principal 'hallazgos' con los datos limpios
+        if (Object.keys(hallazgoPrincipal).length > 0) {
+            const hallazgoSetClause = Object.keys(hallazgoPrincipal).map(key => `${key} = ?`).join(', ');
             await db.run(
                 `UPDATE hallazgos SET ${hallazgoSetClause} WHERE id_hallazgo = ?`,
                 [...Object.values(hallazgoPrincipal), id]
             );
         }
 
-        // 3. Actualiza la ubicación de forma dinámica
+        // 3. Actualiza la ubicación
         if (ubicacion_hallazgo && Object.keys(ubicacion_hallazgo).length > 0) {
             const ubicacionSetClause = Object.keys(ubicacion_hallazgo).map(key => `${key} = ?`).join(', ');
             await db.run(
@@ -362,34 +365,20 @@ export const actualizarHallazgo = async (req, res) => {
             );
         }
 
-        // 4. Reemplaza las características y la vestimenta
+        // 4. Reemplaza características y vestimenta
         await db.run(`DELETE FROM hallazgo_caracteristicas WHERE id_hallazgo = ?`, [id]);
         if (caracteristicas && caracteristicas.length > 0) {
-            const caracteristicasPromises = caracteristicas.map(c =>
-                db.run(`INSERT INTO hallazgo_caracteristicas (id_hallazgo, id_parte_cuerpo, tipo_caracteristica, descripcion) VALUES (?, ?, ?, ?)`,
-                    [id, c.id_parte_cuerpo, c.tipo_caracteristica, c.descripcion])
-            );
-            await Promise.all(caracteristicasPromises);
+            const promises = caracteristicas.map(c => db.run(`INSERT INTO hallazgo_caracteristicas (id_hallazgo, id_parte_cuerpo, tipo_caracteristica, descripcion) VALUES (?, ?, ?, ?)`, [id, c.id_parte_cuerpo, c.tipo_caracteristica, c.descripcion]));
+            await Promise.all(promises);
         }
 
         await db.run(`DELETE FROM hallazgo_vestimenta WHERE id_hallazgo = ?`, [id]);
         if (vestimenta && vestimenta.length > 0) {
-            const vestimentaPromises = vestimenta.map(prenda =>
-                db.run(`INSERT INTO hallazgo_vestimenta (id_hallazgo, id_prenda, color, marca, caracteristica_especial) VALUES (?, ?, ?, ?, ?)`,
-                    [id, prenda.id_prenda, prenda.color, prenda.marca, prenda.caracteristica_especial])
-            );
-            await Promise.all(vestimentaPromises);
+            const promises = vestimenta.map(p => db.run(`INSERT INTO hallazgo_vestimenta (id_hallazgo, id_prenda, color, marca, caracteristica_especial) VALUES (?, ?, ?, ?, ?)`, [id, p.id_prenda, p.color, p.marca, p.caracteristica_especial]));
+            await Promise.all(promises);
         }
 
         await db.exec('COMMIT');
-
-        // 5. Opcional: Re-ejecutar búsqueda de coincidencias y notificar
-        logger.info(`✅ Hallazgo ${id} actualizado. Re-ejecutando búsqueda de coincidencias...`);
-        const hallazgoDataCompleta = await getHallazgoById({ params: { id } }, { json: () => {} }); // Simulación para obtener datos
-        if (hallazgoDataCompleta) {
-            const matches = await findMatchesForHallazgo(hallazgoDataCompleta.data);
-            await notificarUsuariosDeFichas(req, matches, hallazgoDataCompleta.data);
-        }
         
         res.json({ success: true, message: 'Hallazgo actualizado correctamente' });
     } catch (error) {

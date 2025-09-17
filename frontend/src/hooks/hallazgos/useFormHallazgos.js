@@ -1,70 +1,105 @@
-import { useState } from 'react';
+// RUTA: frontend/hooks/hallazgos/useFormHallazgos.js
 
-/**
- * @fileoverview Hook universal para manejar el estado y la lógica de formularios de hallazgos.
- * Proporciona funciones para actualizar los campos y manejar arrays de datos dinámicos.
- */
-export const useFormHallazgos = (initialState) => {
-    const [formData, setFormData] = useState(initialState);
+import { useState, useEffect, useCallback } from 'react';
+import { initialHallazgoFormState } from '@/lib/initialFormState';
+import { storage } from "@/lib/firebase";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { toast } from 'sonner';
 
-    // Maneja cambios en campos de nivel superior (nombre, fecha, etc.)
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    // Maneja cambios en campos anidados (e.g., ubicacion_hallazgo)
-    const handleNestedChange = (name, value) => {
-        setFormData(prev => {
-            const [parent, child] = name.split('.');
-            if (parent && child) {
-                return {
-                    ...prev,
-                    [parent]: {
-                        ...prev[parent],
-                        [child]: value,
-                    },
-                };
+const uploadImage = (file, onProgress) => {
+    return new Promise((resolve, reject) => {
+        const storageRef = ref(storage, `hallazgos_images/${Date.now()}_${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+        uploadTask.on('state_changed',
+            (snapshot) => onProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100),
+            (error) => {
+                console.error("Firebase upload error:", error);
+                reject(new Error("Error al subir la imagen."));
+            },
+            async () => {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                resolve(downloadURL);
             }
-            return prev;
-        });
-    };
+        );
+    });
+};
 
-    // Maneja cambios en arrays de objetos (e.g., caracteristicas, vestimenta)
-    const handleArrayChange = (arrayName, index, fieldName, value) => {
+// ✅ CORRECCIÓN 1: El parámetro se llama 'initialData' por convención
+export const useFormHallazgos = (initialData = initialHallazgoFormState) => {
+    const [formData, setFormData] = useState(initialData);
+    const [imageFile, setImageFile] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+
+    useEffect(() => {
+        // Usa 'initialData', no 'initialState'
+        setFormData(initialData || initialHallazgoFormState);
+    }, [initialData]);
+    
+    // --- MANEJADORES DE ESTADO (COMPLETOS Y CORRECTOS) ---
+
+    const handleChange = useCallback((e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    }, []);
+
+    const handleNestedChange = useCallback((path, value) => {
+        const [parent, child] = path.split('.');
+        setFormData(prev => ({ ...prev, [parent]: { ...prev[parent], [child]: value } }));
+    }, []);
+
+    const handleArrayChange = useCallback((arrayName, index, fieldName, value) => {
         setFormData(prev => {
-            const updatedArray = [...prev[arrayName]];
-            updatedArray[index][fieldName] = value;
-            return {
-                ...prev,
-                [arrayName]: updatedArray,
-            };
+            if (!prev || !Array.isArray(prev[arrayName])) return prev;
+            const newArray = [...prev[arrayName]];
+            newArray[index] = { ...newArray[index], [fieldName]: value };
+            return { ...prev, [arrayName]: newArray };
         });
+    }, []);
+    
+    const addArrayItem = useCallback((arrayName, newItem) => {
+        setFormData(prev => ({ ...prev, [arrayName]: [...(prev[arrayName] || []), newItem] }));
+    }, []);
+
+    const removeArrayItem = useCallback((arrayName, index) => {
+        setFormData(prev => ({ ...prev, [arrayName]: (prev[arrayName] || []).filter((_, i) => i !== index) }));
+    }, []);
+
+    // --- LÓGICA DE ENVÍO Y RESET ---
+
+    const handleSubmit = async (submitAction) => {
+        if (!formData) {
+            toast.error("No hay datos en el formulario para guardar.");
+            return null;
+        }
+        setIsSubmitting(true);
+        let imageUrl = formData.foto_hallazgo || null; 
+
+        try {
+            if (imageFile) {
+                toast.info("Subiendo imagen...");
+                imageUrl = await uploadImage(imageFile, setUploadProgress);
+                toast.success("Imagen subida.");
+            }
+            
+            const payload = { ...formData, foto_hallazgo: imageUrl };
+            const response = await submitAction(payload);
+            return response.data;
+        } catch (err) {
+            const errorMsg = err.response?.data?.message || err.message || "Ocurrió un error.";
+            toast.error(errorMsg);
+            console.error("❌ Error en handleSubmit de Hallazgo:", err);
+            return null;
+        } finally {
+            setIsSubmitting(false);
+            setUploadProgress(0);
+        }
     };
 
-    // Agrega un nuevo objeto a un array (e.g., una nueva prenda)
-    const addArrayItem = (arrayName, newItem) => {
-        setFormData(prev => ({
-            ...prev,
-            [arrayName]: [...prev[arrayName], newItem],
-        }));
-    };
-
-    // Elimina un objeto de un array
-    const removeArrayItem = (arrayName, index) => {
-        setFormData(prev => ({
-            ...prev,
-            [arrayName]: prev[arrayName].filter((_, i) => i !== index),
-        }));
-    };
-
-    // Restablece el formulario a su estado inicial
-    const resetForm = () => {
-        setFormData(initialState);
-    };
+    // ✅ CORRECCIÓN 2: La función reset debe usar el estado inicial correcto
+    const resetForm = useCallback(() => {
+        setFormData(initialHallazgoFormState);
+    }, []);
 
     return {
         formData,
@@ -74,6 +109,10 @@ export const useFormHallazgos = (initialState) => {
         handleArrayChange,
         addArrayItem,
         removeArrayItem,
-        resetForm,
+        resetForm, // <-- Exportamos la función de reset
+        setImageFile,
+        handleSubmit,
+        isSubmitting,
+        uploadProgress
     };
 };

@@ -392,3 +392,4 @@ Error: ENOENT: no such file or directory, open '/home/alex1986/test_gastos_bot/g
 [2025-09-17 10:30:29] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgos has no column named foto_hallazgo
 [2025-09-17 10:38:16] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgos has no column named foto_hallazgo
 [2025-09-17 10:42:56] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgos has no column named foto_hallazgo
+[2025-09-17 14:27:26] ERROR: ❌ Error al actualizar hallazgo: SQLITE_ERROR: no such column: tipo_lugar

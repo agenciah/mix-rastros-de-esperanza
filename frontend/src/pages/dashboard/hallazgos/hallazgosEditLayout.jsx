@@ -1,192 +1,112 @@
-import { useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from "react-router-dom";
+// RUTA: src/pages/dashboard/hallazgos/hallazgosEditLayout.jsx
 
+import { useEffect } from 'react';
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Terminal } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Terminal, Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from 'sonner';
+
+// ✅ 1. IMPORTAMOS LOS HOOKS MAESTROS
+import { useHallazgos } from "@/hooks/useHallazgos";
+import { useFormHallazgos } from "@/hooks/hallazgos/useFormHallazgos";
+
+// Sub-componentes
 import HallazgoDatosPrincipales from "@/pages/dashboard/hallazgos/HallazgoDatosPrincipales";
 import HallazgoCaracteristicas from "@/pages/dashboard/hallazgos/hallazgoCaracteristicas";
 import HallazgoVestimenta from "@/pages/dashboard/hallazgos/hallazgoVestimenta";
 
-import { useHallazgos } from "@/hooks/hallazgos/useHallazgosHook";
-import { useFormHallazgos } from "@/hooks/hallazgos/useFormHallazgos";
-import { useAuth } from '@/context/AuthContext';
-
 export default function HallazgoEditLayout() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user, loading: authLoading } = useAuth();
-    const initialState = {
-    nombre: '',
-    // ... otros campos
-    ubicacion_hallazgo: {
-        estado: '',
-        municipio: ''
-    },
-    caracteristicas: [],
-    vestimenta: [],
-};
-    
-    const { 
-        getHallazgoById, 
-        actualizarHallazgo, 
-        isLoading, 
-        error 
-    } = useHallazgos();
 
+    // ✅ 2. USAMOS LA ARQUITECTURA DE HOOKS CORRECTA
+    const { getHallazgoById, actualizarHallazgo, isLoading: isApiLoading, error: apiError } = useHallazgos();
     const {
         formData,
         setFormData,
+        isSubmitting,
+        uploadProgress,
+        setImageFile, // <-- Ahora sí la obtenemos del hook correcto
         handleChange,
         handleNestedChange,
         handleArrayChange,
         addArrayItem,
         removeArrayItem,
-    } = useFormHallazgos({});
+        handleSubmit,
+    } = useFormHallazgos(null); // Empezamos con null para esperar los datos
 
-    // 1. Hook para cargar los datos del hallazgo
     useEffect(() => {
-        const fetchHallazgoData = async () => {
+        const fetchInitialData = async () => {
             if (id) {
                 const data = await getHallazgoById(id);
-                if (data) {
-                    // Aquí la magia ocurre:
-                    // Si el backend ya tiene el formato correcto, esto funcionará:
-                    setFormData(data);
-                }
+                if (data) setFormData(data);
             }
         };
-        fetchHallazgoData();
+        fetchInitialData();
     }, [id, getHallazgoById, setFormData]);
 
-    // 2. Manejador para el envío del formulario de edición
-    const handleSubmit = useCallback(async (e) => {
+    const handleUpdateSubmit = async (e) => {
         e.preventDefault();
-
-        if (authLoading || !user) {
-            console.error("Error: Usuario no autenticado o no disponible. Intente de nuevo.");
-            return;
+        const updateAction = (payload) => actualizarHallazgo(id, payload);
+        const result = await handleSubmit(updateAction);
+        if (result?.success) {
+            navigate('/dashboard/hallazgos');
         }
-
-        const hallazgoDataToSend = {
-            ...formData,
-            id_usuario_buscador: user.id, // Se usa user.id, corregido para consistencia
-            caracteristicas: formData.caracteristicas.map(car => ({
-                id_parte_cuerpo: parseInt(car.id_parte_cuerpo),
-                tipo_caracteristica: car.tipo_caracteristica,
-                descripcion: car.descripcion,
-            })),
-            vestimenta: formData.vestimenta.map(prenda => ({
-                id_prenda: parseInt(prenda.id_prenda),
-                color: prenda.color,
-                marca: prenda.marca,
-                caracteristica_especial: prenda.caracteristica_especial,
-            })),
-        };
-
-        console.log("✈️ Datos enviados al backend:", hallazgoDataToSend);
-
-        try {
-            const result = await actualizarHallazgo(id, hallazgoDataToSend);
-            if (result) {
-                navigate('/dashboard/hallazgos');
-            }
-        } catch (err) {
-            console.error("Error al actualizar hallazgo:", err);
-        }
-    }, [formData, user, actualizarHallazgo, id, navigate, authLoading]);
-
-    // Estados de carga y error
-    if (isLoading || authLoading) {
-        return <div className="text-center p-8">Cargando detalles del hallazgo...</div>;
-    }
+    };
     
-    // Si el usuario no está autenticado después de cargar
-    if (!user) {
-      return (
-        <Alert variant="destructive">
-          <Terminal className="h-4 w-4" />
-          <AlertTitle>Error de Autenticación</AlertTitle>
-          <AlertDescription>No se pudo cargar la información del usuario. Intenta recargar la página.</AlertDescription>
-        </Alert>
-      )
-    }
+    const isLoading = isApiLoading || isSubmitting;
 
-    if (error) {
-        return (
-            <Alert variant="destructive">
-                <Terminal className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-            </Alert>
-        );
-    }
-    
-    // Si el formulario aún no tiene datos, no lo renderizamos
-    if (Object.keys(formData).length === 0) {
-        return null;
+    if (!formData) {
+        if (isApiLoading) return <div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+        return <Alert variant="destructive" className="m-6"><AlertTitle>Error</AlertTitle><AlertDescription>{apiError || "No se pudo encontrar el hallazgo."}</AlertDescription></Alert>;
     }
 
     return (
         <div className="max-w-4xl mx-auto p-6 space-y-6">
             <h1 className="text-2xl font-bold mb-4">Editar Hallazgo</h1>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleUpdateSubmit} className="space-y-6">
                 <Card>
-                    <CardHeader>
-                        <CardTitle>1. Datos Principales</CardTitle>
-                    </CardHeader>
+                    <CardHeader><CardTitle>1. Datos Principales y Foto</CardTitle></CardHeader>
                     <CardContent>
+                        {/* ✅ 3. PASAMOS LA PROP `setImageFile` CORRECTAMENTE */}
                         <HallazgoDatosPrincipales
                             form={formData}
                             handleChange={handleChange}
                             handleNestedChange={handleNestedChange}
+                            setImageFile={setImageFile}
                         />
                     </CardContent>
                 </Card>
 
                 <Card>
-                    <CardHeader>
-                        <CardTitle>2. Rasgos Físicos del Hallazgo</CardTitle>
-                    </CardHeader>
+                    <CardHeader><CardTitle>2. Características Físicas</CardTitle></CardHeader>
                     <CardContent>
                         <HallazgoCaracteristicas
-                            caracteristicas={formData.caracteristicas}
+                            caracteristicas={formData.caracteristicas || []}
                             handleArrayChange={(index, fieldName, value) => handleArrayChange('caracteristicas', index, fieldName, value)}
-                            addArrayItem={(newItem) => addArrayItem('caracteristicas', newItem)}
+                            addArrayItem={() => addArrayItem('caracteristicas', { id_parte_cuerpo: '', tipo_caracteristica: '', descripcion: '' })}
                             removeArrayItem={(index) => removeArrayItem('caracteristicas', index)}
                         />
                     </CardContent>
                 </Card>
 
                 <Card>
-                    <CardHeader>
-                        <CardTitle>3. Vestimenta del Hallazgo</CardTitle>
-                    </CardHeader>
+                    <CardHeader><CardTitle>3. Vestimenta</CardTitle></CardHeader>
                     <CardContent>
                         <HallazgoVestimenta
-                            vestimenta={formData.vestimenta}
+                            vestimenta={formData.vestimenta || []}
                             handleArrayChange={(index, fieldName, value) => handleArrayChange('vestimenta', index, fieldName, value)}
-                            addArrayItem={(newItem) => addArrayItem('vestimenta', newItem)}
+                            addArrayItem={() => addArrayItem('vestimenta', { id_prenda: '', color: '', marca: '', caracteristica_especial: '' })}
                             removeArrayItem={(index) => removeArrayItem('vestimenta', index)}
                         />
                     </CardContent>
                 </Card>
                 
-                {error && (
-                    <Alert variant="destructive">
-                        <Terminal className="h-4 w-4" />
-                        <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                )}
-                
-                <Button 
-                    type="submit" 
-                    className="w-full" 
-                    disabled={isLoading}
-                >
-                    {isLoading ? "Guardando..." : "Guardar Cambios"}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? ( <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {isSubmitting ? `Guardando... ${Math.round(uploadProgress)}%` : 'Procesando...'} </> ) : ( "Guardar Cambios" )}
                 </Button>
             </form>
         </div>
