@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 
 // ✅ 1. Importaciones correctas y finales
 import { useHallazgos } from "@/hooks/useHallazgos";
-import { useHallazgosForm } from "@/hooks/useFormHallazgos";
+import { useHallazgosForm } from "@/hooks/useHallazgosForm";
 import { initialHallazgoFormState } from '@/lib/initialFormState';
 
 // Sub-componentes

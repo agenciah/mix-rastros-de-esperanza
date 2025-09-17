@@ -1,6 +1,7 @@
-// RUTA: frontend/src/hooks/useFirebaseAuth.js
+// RUTA: frontend/hooks/useFirebaseAuth.js
+
 import { useState, useEffect } from 'react';
-import app from '@/lib/firebase';
+import app from '@/lib/firebase'; // Asegúrate que esta es la ruta a tu config de Firebase
 import { getAuth, onAuthStateChanged, signInWithCustomToken, signOut } from 'firebase/auth';
 import { toast } from 'sonner';
 
@@ -8,40 +9,33 @@ const auth = getAuth(app);
 
 export const useFirebaseAuth = () => {
     const [firebaseUser, setFirebaseUser] = useState(null);
-    const [isFirebaseAuthenticated, setIsFirebaseAuthenticated] = useState(false);
     const [isAuthLoading, setIsAuthLoading] = useState(true);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            console.log("useFirebaseAuth: onAuthStateChanged se disparó. Usuario:", user ? user.uid : 'null');
             setFirebaseUser(user);
-            setIsFirebaseAuthenticated(!!user);
             setIsAuthLoading(false);
         });
-        return () => unsubscribe();
+        return () => unsubscribe(); // Limpieza al desmontar
     }, []);
 
-    const signIn = async (firebaseToken) => {
+    const signInToFirebase = async (firebaseToken) => {
         try {
-            console.log("useFirebaseAuth: Intentando signInWithCustomToken...");
-            const userCredential = await signInWithCustomToken(auth, firebaseToken);
-            console.log("✅ useFirebaseAuth: signInWithCustomToken exitoso.");
-            return userCredential.user;
+            await signInWithCustomToken(auth, firebaseToken);
         } catch (error) {
-            console.error("❌ useFirebaseAuth: signInWithCustomToken falló.", error);
+            console.error("❌ Error al iniciar sesión en Firebase:", error);
             toast.error("Error al conectar con los servicios de la aplicación.");
             throw error;
         }
     };
 
-    const logOut = async () => {
+    const signOutFromFirebase = async () => {
         try {
             await signOut(auth);
-            console.log("useFirebaseAuth: Sesión de Firebase cerrada.");
         } catch (error) {
-            console.error("❌ useFirebaseAuth: Error al cerrar sesión de Firebase.", error);
+            console.error("❌ Error al cerrar sesión de Firebase:", error);
         }
     };
 
-    return { firebaseUser, isFirebaseAuthenticated, isAuthLoading, signIn, logOut };
+    return { firebaseUser, isAuthLoading, signInToFirebase, signOutFromFirebase };
 };

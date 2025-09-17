@@ -8,7 +8,7 @@ import { openDb } from '../db/users/initDb.js';
 
 // 🔄 Nuevas rutas a controladores descompuestos
 import { registerUser } from '../controllers/auth/registerController.js';
-import { loginUser } from '../controllers/auth/loginController.js';
+import { loginUser, getFirebaseToken, getProfile } from '../controllers/auth/loginController.js';
 import { resendConfirmationEmail } from '../controllers/auth/resendConfirmationController.js';
 import { forgotPassword, resetPassword } from '../controllers/auth/forgotPasswordController.js';
 
@@ -35,6 +35,15 @@ router.post('/login', [
   body('password').notEmpty().withMessage('Contraseña es requerida'),
   validarCampos
 ], loginUser);
+
+// ✅ 2. AÑADE ESTA RUTA NUEVA
+// Esta ruta estará protegida y solo funcionará si se envía un token válido.
+router.get('/profile', authenticateToken, getProfile);
+
+// AÑADE ESTA RUTA (usualmente después de las de login/register)
+// El frontend la llamará después de que el usuario inicie sesión.
+router.get('/firebase-token', authenticateToken, getFirebaseToken);
+
 
 router.post('/resend-confirmation', [
   body('email').isEmail().withMessage('Email válido requerido'),

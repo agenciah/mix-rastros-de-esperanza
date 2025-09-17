@@ -1,19 +1,19 @@
 // RUTA: backend/lib/firebaseAdmin.js
-import 'dotenv/config';
+
 import admin from 'firebase-admin';
-import serviceAccount from '../config/serviceAccountKey.json' assert { type: "json" };
 
-// ✅ CORRECCIÓN: Leemos la variable sin el prefijo VITE_
-const storageBucket = process.env.FIREBASE_STORAGE_BUCKET;
+// Lee las credenciales desde las variables de entorno
+const serviceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'), // Reemplaza los caracteres de escape
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+};
 
-if (!storageBucket) {
-    console.error("Error: La variable de entorno FIREBASE_STORAGE_BUCKET no está definida en el archivo backend/.env");
-    process.exit(1);
+// Inicializa la app de Firebase Admin solo si no ha sido inicializada antes
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
 }
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    storageBucket: storageBucket 
-});
 
 export default admin;

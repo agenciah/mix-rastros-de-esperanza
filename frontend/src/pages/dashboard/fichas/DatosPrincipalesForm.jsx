@@ -1,206 +1,103 @@
+// RUTA: src/pages/dashboard/fichas/DatosPrincipalesForm.jsx
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { format } from "date-fns";
-import useCatalogos from "../../../hooks/useCatalogos";
+import { es } from 'date-fns/locale'; // Para formato de fecha en español
+import useCatalogos from "@/hooks/useCatalogos";
+import ImageUploader from "@/components/ImageUploader";
 
-export default function DatosPrincipalesForm({ datos, setDatos }) {
-  const { tiposLugar, loading, error } = useCatalogos();
+// ✅ 1. RECIBIMOS LAS PROPS CORRECTAS DEL HOOK UNIFICADO
+export default function DatosPrincipalesForm({ form, handleChange, handleNestedChange, setImageFile }) {
+    const { tiposLugar, isLoading: catalogosLoading, error: catalogosError } = useCatalogos();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setDatos(prevDatos => ({
-      ...prevDatos,
-      [name]: value,
-    }));
-  };
+    // Guardia de seguridad para el primer renderizado
+    if (!form) {
+        return <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>;
+    }
 
-  const handleFecha = (day) => {
-    setDatos(prevDatos => ({
-      ...prevDatos,
-      fecha_desaparicion: format(day, "yyyy-MM-dd"),
-    }));
-  };
+    // --- Handlers específicos para componentes de UI complejos ---
+    const handleDateChange = (date) => {
+        handleChange({ target: { name: "fecha_desaparicion", value: format(date, "yyyy-MM-dd") } });
+    };
 
-  const handleSelectChange = (value, name) => {
-    setDatos(prevDatos => ({
-      ...prevDatos,
-      [name]: value,
-    }));
-  };
+    const handleSelectChange = (name, value) => {
+        handleChange({ target: { name, value } });
+    };
 
-  if (loading) return <p>Cargando catálogos...</p>;
-  if (error) return <p>Error al cargar catálogos: {error}</p>;
+    return (
+        <div className="space-y-6">
+            {/* --- Sección de Datos Personales --- */}
+            <div className="space-y-4">
+                <h3 className="text-md font-semibold text-gray-800">Datos de la Persona</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5"><Label htmlFor="nombre">Nombre(s) *</Label><Input id="nombre" name="nombre" value={form.nombre || ''} onChange={handleChange} required /></div>
+                    <div className="space-y-1.5"><Label htmlFor="segundo_nombre">Segundo Nombre</Label><Input id="segundo_nombre" name="segundo_nombre" value={form.segundo_nombre || ''} onChange={handleChange} /></div>
+                    <div className="space-y-1.5"><Label htmlFor="apellido_paterno">Apellido Paterno *</Label><Input id="apellido_paterno" name="apellido_paterno" value={form.apellido_paterno || ''} onChange={handleChange} required /></div>
+                    <div className="space-y-1.5"><Label htmlFor="apellido_materno">Apellido Materno</Label><Input id="apellido_materno" name="apellido_materno" value={form.apellido_materno || ''} onChange={handleChange} /></div>
+                </div>
+            </div>
 
-  return (
-    <div className="space-y-4 p-4 border rounded-2xl shadow-md bg-white">
-      <div>
-        <Label htmlFor="nombre">Nombre *</Label>
-        <Input 
-          id="nombre" 
-          name="nombre" 
-          value={datos.nombre}
-          onChange={handleChange} 
-          required 
-        />
-      </div>
+             {/* --- Sección de Foto de Perfil --- */}
+            <div className="space-y-4">
+                <h3 className="text-md font-semibold text-gray-800">Foto de Perfil</h3>
+                {form.foto_perfil && (
+                    <div className="mt-2">
+                        <p className="text-sm font-medium text-gray-600">Foto actual:</p>
+                        <img src={form.foto_perfil} alt="Vista previa" className="w-32 h-32 object-cover rounded-md border mt-1"/>
+                    </div>
+                )}
+                <div className="space-y-1.5">
+                    <Label>{form.foto_perfil ? 'Cambiar foto' : 'Sube una foto clara del rostro'}</Label>
+                    {/* ✅ 2. IMPLEMENTACIÓN DE IMAGEUPLOADER */}
+                    <ImageUploader onFileSelect={setImageFile} />
+                </div>
+            </div>
 
-      <div>
-        <Label htmlFor="segundo_nombre">Segundo nombre</Label>
-        <Input 
-          id="segundo_nombre" 
-          name="segundo_nombre" 
-          value={datos.segundo_nombre} 
-          onChange={handleChange} 
-        />
-      </div>
+            {/* --- Sección de Características Físicas --- */}
+            <div className="space-y-4">
+                <h3 className="text-md font-semibold text-gray-800">Características Físicas</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="space-y-1.5"><Label htmlFor="edad_estimada">Edad Estimada</Label><Input id="edad_estimada" name="edad_estimada" type="number" value={form.edad_estimada || ''} onChange={handleChange} /></div>
+                    <div className="space-y-1.5"><Label htmlFor="genero">Género</Label><Select onValueChange={(value) => handleSelectChange('genero', value)} value={form.genero || ''}><SelectTrigger><SelectValue placeholder="Selecciona" /></SelectTrigger><SelectContent><SelectItem value="Masculino">Masculino</SelectItem><SelectItem value="Femenino">Femenino</SelectItem></SelectContent></Select></div>
+                    <div className="space-y-1.5"><Label htmlFor="estatura">Estatura (cm)</Label><Input id="estatura" name="estatura" type="number" value={form.estatura || ''} onChange={handleChange} /></div>
+                    <div className="space-y-1.5"><Label htmlFor="complexion">Complexión</Label><Input id="complexion" name="complexion" value={form.complexion || ''} onChange={handleChange} /></div>
+                    <div className="space-y-1.5"><Label htmlFor="peso">Peso (kg)</Label><Input id="peso" name="peso" type="number" value={form.peso || ''} onChange={handleChange} /></div>
+                </div>
+            </div>
 
-      <div>
-        <Label htmlFor="apellido_paterno">Apellido paterno *</Label>
-        <Input 
-          id="apellido_paterno" 
-          name="apellido_paterno" 
-          value={datos.apellido_paterno} 
-          onChange={handleChange} 
-          required 
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="apellido_materno">Apellido materno</Label>
-        <Input 
-          id="apellido_materno" 
-          name="apellido_materno" 
-          value={datos.apellido_materno} 
-          onChange={handleChange} 
-        />
-      </div>
-
-      <div>
-        <Label>Fecha de desaparición *</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full justify-start text-left font-normal">
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {datos.fecha_desaparicion ? format(new Date(datos.fecha_desaparicion), "PPP") : <span>Selecciona una fecha</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar 
-              mode="single" 
-              selected={datos.fecha_desaparicion ? new Date(datos.fecha_desaparicion) : null} 
-              onSelect={handleFecha} 
-              initialFocus 
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      <div>
-        <Label htmlFor="ubicacion">Ubicación (estado / municipio)</Label>
-        <Input 
-          id="ubicacion" 
-          name="ubicacion" 
-          value={datos.ubicacion_desaparicion.estado} 
-          onChange={(e) => setDatos(prev => ({ 
-            ...prev, 
-            ubicacion_desaparicion: { ...prev.ubicacion_desaparicion, estado: e.target.value }
-          }))} 
-        />
-      </div>
-
-      {/* Nuevos campos para género, edad, estatura, complexión y peso */}
-      <div>
-        <Label htmlFor="genero">Género</Label>
-        <Select
-          onValueChange={(value) => handleSelectChange(value, "genero")}
-          value={datos.genero}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Selecciona el género" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="masculino">Masculino</SelectItem>
-            <SelectItem value="femenino">Femenino</SelectItem>
-            <SelectItem value="otro">Otro</SelectItem>
-            <SelectItem value="desconocido">Desconocido</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
-        <Label htmlFor="edad_estimada">Edad estimada</Label>
-        <Input 
-          id="edad_estimada"
-          name="edad_estimada"
-          type="number"
-          value={datos.edad_estimada}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="estatura">Estatura (cm)</Label>
-        <Input 
-          id="estatura"
-          name="estatura"
-          type="number"
-          value={datos.estatura}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="complexion">Complexión</Label>
-        <Select
-          onValueChange={(value) => handleSelectChange(value, "complexion")}
-          value={datos.complexion}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Selecciona la complexión" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="delgada">Delgada</SelectItem>
-            <SelectItem value="media">Media</SelectItem>
-            <SelectItem value="robusta">Robusta</SelectItem>
-            <SelectItem value="desconocido">Desconocido</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
-        <Label htmlFor="peso">Peso (kg)</Label>
-        <Input 
-          id="peso"
-          name="peso"
-          type="number"
-          value={datos.peso}
-          onChange={handleChange}
-        />
-      </div>
-      
-      <div>
-        <Label>Tipo de lugar *</Label>
-        <Select
-          onValueChange={(value) => handleSelectChange(value, "id_tipo_lugar_desaparicion")}
-          value={datos.id_tipo_lugar_desaparicion}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Selecciona un tipo de lugar" />
-          </SelectTrigger>
-          <SelectContent>
-            {tiposLugar.map((tipo) => (
-              <SelectItem key={tipo.id_tipo_lugar} value={tipo.id_tipo_lugar.toString()}>
-                {tipo.nombre_tipo}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
-  );
+            {/* --- Sección de Datos de la Desaparición --- */}
+            <div className="space-y-4">
+                 <h3 className="text-md font-semibold text-gray-800">Datos de la Desaparición</h3>
+                <div className="space-y-1.5">
+                    <Label>Fecha de Desaparición *</Label>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="outline" className="w-full justify-start text-left font-normal"><CalendarIcon className="mr-2 h-4 w-4" />{form.fecha_desaparicion ? format(new Date(form.fecha_desaparicion), "PPP", { locale: es }) : <span>Selecciona una fecha</span>}</Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={form.fecha_desaparicion ? new Date(form.fecha_desaparicion) : null} onSelect={handleDateChange} initialFocus /></PopoverContent>
+                    </Popover>
+                </div>
+                {/* ✅ 3. DOS INPUTS SEPARADOS PARA UBICACIÓN */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5"><Label htmlFor="estado">Estado *</Label><Input id="estado" value={form.ubicacion_desaparicion?.estado || ''} onChange={(e) => handleNestedChange('ubicacion_desaparicion.estado', e.target.value)} required /></div>
+                    <div className="space-y-1.5"><Label htmlFor="municipio">Municipio *</Label><Input id="municipio" value={form.ubicacion_desaparicion?.municipio || ''} onChange={(e) => handleNestedChange('ubicacion_desaparicion.municipio', e.target.value)} required /></div>
+                </div>
+                <div className="space-y-1.5">
+                    <Label>Tipo de lugar de la desaparición</Label>
+                    <Select onValueChange={(value) => handleSelectChange('id_tipo_lugar_desaparicion', parseInt(value))} value={form.id_tipo_lugar_desaparicion ? String(form.id_tipo_lugar_desaparicion) : ""}>
+                        <SelectTrigger disabled={catalogosLoading || !!catalogosError}><SelectValue placeholder="Selecciona un tipo de lugar" /></SelectTrigger>
+                        <SelectContent>
+                            {tiposLugar.map((tipo) => (<SelectItem key={tipo.id_tipo_lugar} value={String(tipo.id_tipo_lugar)}>{tipo.nombre_tipo}</SelectItem>))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+        </div>
+    );
 }

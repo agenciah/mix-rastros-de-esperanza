@@ -1,52 +1,68 @@
-// src/pages/dashboard/fichas/FichaFormLayout.jsx
+// RUTA: src/pages/dashboard/fichas/FichaFormLayout.jsx
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import api from '@/lib/axios';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Loader2 } from 'lucide-react';
-import useFichaForm from "@/hooks/useFichaForm";
+import api from '@/lib/axios';
+import { toast } from 'sonner';
 
+// --- Hooks ---
+import { useFichaForm } from '@/hooks/useFichaForm';
+import { useFichas } from '@/hooks/useFichas';
+import { initialFichaFormState } from '@/lib/initialFormState';
+
+// --- Sub-componentes del Formulario ---
 import RasgosFisicosForm from "./RasgosFisicosForm";
 import VestimentaForm from "./VestimentaForm";
 import DatosPrincipalesForm from "./DatosPrincipalesForm";
 
 export default function FichaFormLayout() {
-    // --- INICIO: Lógica de Verificación de Límite de Fichas ---
+    const navigate = useNavigate();
+
+    // --- Lógica de Verificación de Límite de Fichas ---
     const [activeFichasCount, setActiveFichasCount] = useState(0);
     const [loadingCheck, setLoadingCheck] = useState(true);
-    const planLimit = 1; // Límite para el plan de donación básico. Puedes cambiarlo a 2 o 3 si lo deseas.
+    const planLimit = 1; // Límite para el plan básico
 
     useEffect(() => {
-        const checkFichaLimit = async () => {
-            try {
-                const response = await api.get('/api/fichas/user-stats');
-                setActiveFichasCount(response.data.data.activeFichasCount);
-            } catch (error) {
-                console.error("Error al verificar el límite de fichas:", error);
-                // En caso de error, asumimos que puede continuar para no bloquear al usuario.
-            } finally {
-                setLoadingCheck(false);
-            }
-        };
-        checkFichaLimit();
+        api.get('/api/fichas/user-stats')
+           .then(res => setActiveFichasCount(res.data.data.activeFichasCount))
+           .catch(err => console.error("Error al verificar límite de fichas:", err))
+           .finally(() => setLoadingCheck(false));
     }, []);
-    // --- FIN: Lógica de Verificación ---
 
-    // El hook del formulario se mantiene igual
-    const form = useFichaForm();
+    // --- Hooks de la Aplicación ---
+    const { createFicha } = useFichas();
     const {
-        datosPrincipales, setDatosPrincipales,
-        rasgosFisicos, setRasgosFisicos,
-        vestimenta, setVestimenta,
-        loading: isSubmitting, // Renombramos 'loading' para evitar conflictos
-        error,
+        formData,
+        isSubmitting,
+        uploadProgress,
+        setImageFile,
+        handleChange,
+        handleNestedChange,
+        handleArrayChange,
+        addArrayItem,
+        removeArrayItem,
         handleSubmit,
-    } = form;
+    } = useFichaForm(initialFichaFormState); // Se pasa el estado inicial para la creación
 
-    // 1. Renderizado condicional: Muestra un spinner mientras se verifica el límite
+     const handleCreateSubmit = async (e) => {
+        e.preventDefault();
+        // ✅ AHORA LLAMA AL `handleSubmit` CORRECTO PASÁNDOLE `createFicha`
+        const result = await handleSubmit(createFicha);
+        if (result?.success) {
+            navigate('/dashboard/fichas');
+            toast.info('Buscando coincidencias en segundo plano...');
+        }
+    };
+
+    const isLoading = loadingCheck || isSubmitting;
+
+    // --- Renderizado Condicional ---
+
     if (loadingCheck) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -56,7 +72,6 @@ export default function FichaFormLayout() {
         );
     }
 
-    // 2. Renderizado condicional: Muestra el mensaje de límite alcanzado
     if (activeFichasCount >= planLimit) {
         return (
             <div className="max-w-lg mx-auto p-6">
@@ -67,24 +82,16 @@ export default function FichaFormLayout() {
                             Límite de Fichas Alcanzado
                         </CardTitle>
                         <CardDescription>
-                            Tu plan de donación actual te permite mantener {planLimit} ficha de búsqueda activa.
+                            Tu plan actual te permite mantener {planLimit} ficha activa.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <p className="mb-4 text-sm text-gray-700">
-                            Para registrar una nueva ficha, puedes desactivar una existente o considerar actualizar tu nivel de donación para apoyar la plataforma y activar más búsquedas.
+                            Para registrar una nueva ficha, puedes desactivar una existente o actualizar tu plan.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button asChild>
-                                <Link to="/dashboard/configuracion">
-                                    Ver Opciones de Donación
-                                </Link>
-                            </Button>
-                             <Button asChild variant="outline">
-                                <Link to="/dashboard/fichas">
-                                    Gestionar mis Fichas
-                                </Link>
-                            </Button>
+                            <Button asChild><Link to="/dashboard/configuracion">Ver Planes</Link></Button>
+                            <Button asChild variant="outline"><Link to="/dashboard/fichas">Gestionar Fichas</Link></Button>
                         </div>
                     </CardContent>
                 </Card>
@@ -92,43 +99,52 @@ export default function FichaFormLayout() {
         );
     }
 
-    // 3. Si todo está en orden, muestra el formulario de creación
+    // Guardia de seguridad por si el formData no se ha inicializado
+    if (!formData) {
+        return <div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+    }
+
     return (
         <div className="max-w-4xl mx-auto p-6 space-y-6">
             <Card className="shadow-md">
                 <CardHeader>
-                    <CardTitle>Registro de Ficha</CardTitle>
+                    <CardTitle>Registro de Ficha de Búsqueda</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                    <section>
-                        <h2 className="text-lg font-semibold mb-2">Datos Principales</h2>
+                <CardContent>
+                    <form onSubmit={handleCreateSubmit} className="space-y-8">
                         <DatosPrincipalesForm
-                            datos={datosPrincipales}
-                            setDatos={setDatosPrincipales}
+                            form={formData}
+                            handleChange={handleChange}
+                            handleNestedChange={handleNestedChange}
+                            setImageFile={setImageFile}
                         />
-                    </section>
-                    <Separator />
-                    <section>
-                        <h2 className="text-lg font-semibold mb-2">Rasgos Físicos</h2>
+                        <Separator />
                         <RasgosFisicosForm
-                            rasgos={rasgosFisicos}
-                            setRasgos={setRasgosFisicos}
+                            rasgos={formData.rasgos_fisicos}
+                            handleArrayChange={(index, field, value) => handleArrayChange('rasgos_fisicos', index, field, value)}
+                            addArrayItem={() => addArrayItem('rasgos_fisicos', { id_parte_cuerpo: '', tipo_rasgo: '', descripcion_detalle: '' })}
+                            removeArrayItem={(index) => removeArrayItem('rasgos_fisicos', index)}
                         />
-                    </section>
-                    <Separator />
-                    <section>
-                        <h2 className="text-lg font-semibold mb-2">Vestimenta</h2>
+                        <Separator />
                         <VestimentaForm
-                            vestimenta={vestimenta}
-                            setVestimenta={setVestimenta}
+                            vestimenta={formData.vestimenta}
+                            handleArrayChange={(index, field, value) => handleArrayChange('vestimenta', index, field, value)}
+                            addArrayItem={() => addArrayItem('vestimenta', { id_prenda: '', color: '', marca: '', caracteristica_especial: '' })}
+                            removeArrayItem={(index) => removeArrayItem('vestimenta', index)}
                         />
-                    </section>
-                    <div className="pt-4">
-                        <Button onClick={handleSubmit} disabled={isSubmitting}>
-                            {isSubmitting ? "Guardando..." : "Crear Ficha"}
-                        </Button>
-                        {error && <p className="text-red-500 mt-2">{error}</p>}
-                    </div>
+                        <div className="pt-4">
+                            <Button type="submit" className="w-full" disabled={isLoading}>
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        {isSubmitting ? `Guardando... ${Math.round(uploadProgress)}%` : 'Verificando...'}
+                                    </>
+                                ) : (
+                                    "Crear Ficha y Buscar Coincidencias"
+                                )}
+                            </Button>
+                        </div>
+                    </form>
                 </CardContent>
             </Card>
         </div>

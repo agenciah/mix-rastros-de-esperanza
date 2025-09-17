@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { findUserByEmail, updateUserUltimaConexion } from '../../db/users/core.js';
 import logger from '../../utils/logger.js';
+import admin from '../../lib/firebaseAdmin.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'tu_clave_secreta';
 
@@ -74,3 +75,31 @@ export async function loginUser(req, res) {
     res.status(500).json({ error: 'Error del servidor.' });
   }
 }
+
+/**
+ * Genera un token personalizado de Firebase para el usuario autenticado.
+ */
+export const getFirebaseToken = async (req, res) => {
+    try {
+        const uid = req.user.id.toString(); // Firebase requiere el UID como string
+
+        // Creamos el token personalizado
+        const firebaseToken = await admin.auth().createCustomToken(uid);
+        
+        res.json({ success: true, firebaseToken });
+
+    } catch (error) {
+        logger.error(`❌ Error al crear el token de Firebase: ${error.message}`);
+        res.status(500).json({ success: false, message: 'Error de autenticación con el servicio de la aplicación.' });
+    }
+};
+
+/**
+ * Obtiene el perfil del usuario actualmente autenticado a través de su token.
+ */
+export const getProfile = (req, res) => {
+    // El middleware 'authenticateToken' ya ha verificado el token
+    // y ha adjuntado los datos del usuario a 'req.user'.
+    // Simplemente devolvemos esa información.
+    res.json({ success: true, user: req.user });
+};

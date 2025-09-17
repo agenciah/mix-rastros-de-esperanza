@@ -1,10 +1,55 @@
-// src/lib/initialFormState.js
+// RUTA: src/lib/initialFormState.js
 
+export const initialFichaFormState = {
+    nombre: '',
+    segundo_nombre: '',
+    apellido_paterno: '',
+    apellido_materno: '',
+    foto_perfil: null,
+    edad_estimada: '',
+    genero: '',
+    estatura: '',
+    complexion: '',
+    peso: '',
+    fecha_desaparicion: '',
+    id_tipo_lugar_desaparicion: null,
+    ubicacion_desaparicion: {
+        estado: '',
+        municipio: '',
+        localidad: '',
+        calle: '',
+        referencias: '',
+        codigo_postal: '',
+    },
+    rasgos_fisicos: [],
+    vestimenta: [],
+};
+
+// ✅ Y también aquí
 export const initialHallazgoFormState = {
-  fecha_hallazgo: '',
-  ubicacion_hallazgo: '',
-  descripcion_general_hallazgo: '',
-  tipo_hallazgo: '',
-  caracteristicas_hallazgo: [],
-  vestimenta_hallazgo: [],
+    nombre: '',
+    segundo_nombre: '',
+    apellido_paterno: '',
+    apellido_materno: '',
+    foto_hallazgo: null,
+    edad_estimada: '',
+    genero: '',
+    estatura: '',
+    complexion: '',
+    peso: '',
+    fecha_hallazgo: '',
+    id_tipo_lugar_hallazgo: null,
+    descripcion_general_hallazgo: '',
+    ubicacion_hallazgo: {
+        estado: '',
+        municipio: '',
+        localidad: '',
+        calle: '',
+        referencias: '',
+        codigo_postal: '',
+        latitud: null,
+        longitud: null,
+    },
+    caracteristicas: [], 
+    vestimenta: [],
 };

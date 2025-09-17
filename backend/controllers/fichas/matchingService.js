@@ -8,99 +8,72 @@ import { insertSystemNotification, insertPossibleMatch } from '../../db/queries/
 import { createNotification } from '../../db/queries/notificationsQueries.js';
 
 /**
- * Busca posibles coincidencias entre una nueva ficha de desaparición y los hallazgos existentes.
- * @param {object} fichaData - Los datos de la ficha de desaparición recién creada.
- * @returns {Promise<Array<object>>} - Una lista de hallazgos que coinciden, ordenada por un puntaje de relevancia.
+ * Orquesta la búsqueda de coincidencias para una ficha.
+ * Su única responsabilidad es comparar una ficha contra todos los hallazgos y devolver un puntaje.
+ * @param {object} fichaData - Los datos completos de la ficha a comparar.
+ * @returns {Promise<Array<object>>} - Una lista de las mejores coincidencias con su puntaje.
  */
-export async function findMatchesForFicha(req, fichaData) {
-    logger.info(`🔍 Buscando coincidencias para la ficha: ${fichaData.id_ficha}`);
+export async function findMatchesForFicha(fichaData) {
+    logger.info(`🔍 Buscando coincidencias para la ficha de: ${fichaData.nombre}`);
     
     try {
-        const { id_ficha, ubicacion_desaparicion, rasgos_fisicos, vestimenta } = fichaData;
-        const db = await openDb();
-
-        const fichaCompleta = await getFichaCompletaById(id_ficha);
-        if (!fichaCompleta) {
-            logger.warn(`Ficha con ID ${id_ficha} no encontrada para matching.`);
+        const hallazgos = await hallazgosQueries.getAllHallazgosCompletos();
+        if (!hallazgos || hallazgos.length === 0) {
+            logger.info("No hay hallazgos en la base de datos para comparar.");
             return [];
         }
-
-        const hallazgos = await getAllHallazgosCompletos();
         
-        if (hallazgos.length > 0) {
-            logger.debug(`Estructura del primer hallazgo para depuración: `, hallazgos[0]);
-        }
-
         const matches = [];
 
         for (const hallazgo of hallazgos) {
             let score = 0;
             let matchedCriteria = [];
 
-            // Coincidencia por datos generales (NUEVA LÓGICA)
-            const generalDataMatch = checkGeneralDataMatch(fichaCompleta, hallazgo);
-            if (generalDataMatch.score > 0) {
-                score += generalDataMatch.score;
-                matchedCriteria.push(...generalDataMatch.criteria);
-            }
+            // Se utilizan las funciones helper para cada comparación
+            const generalMatch = matchHelpers.checkGeneralDataMatch(fichaData, hallazgo);
+            score += generalMatch.score;
+            matchedCriteria.push(...generalMatch.criteria);
 
-            // Coincidencia por Ubicación
-            const locationMatch = checkLocationMatch(ubicacion_desaparicion, hallazgo);
-            if (locationMatch.score > 0) {
-                score += locationMatch.score;
-                matchedCriteria.push(...locationMatch.criteria);
-            }
-
-            // Coincidencia por Rasgos Físicos
-            if (rasgos_fisicos && rasgos_fisicos.length > 0) {
-                const rasgosScore = checkRasgosMatch(rasgos_fisicos, hallazgo.rasgos_fisicos);
-                if (rasgosScore.score > 0) {
-                    score += rasgosScore.score;
-                    matchedCriteria.push(...rasgosScore.criteria);
-                }
-            }
-
-            // Coincidencia por Vestimenta
-            if (vestimenta && vestimenta.length > 0) {
-                const vestimentaScore = checkVestimentaMatch(vestimenta, hallazgo.vestimenta);
-                if (vestimentaScore.score > 0) {
-                    score += vestimentaScore.score;
-                    matchedCriteria.push(...vestimentaScore.criteria);
-                }
-            }
+            const locationMatch = matchHelpers.checkLocationMatch(fichaData.ubicacion_desaparicion, hallazgo.ubicacion_hallazgo);
+            score += locationMatch.score;
+            matchedCriteria.push(...locationMatch.criteria);
             
-            // Coincidencia por Nombre
-            const nameScore = checkNameMatch(fichaCompleta, hallazgo);
-            if (nameScore.score > 0) {
-                score += nameScore.score;
-                matchedCriteria.push(...nameScore.criteria);
-            }
+            const rasgosMatch = matchHelpers.checkRasgosMatch(fichaData.rasgos_fisicos, hallazgo.caracteristicas);
+            score += rasgosMatch.score;
+            matchedCriteria.push(...rasgosMatch.criteria);
 
-            if (score > 0) {
+            const vestimentaMatch = matchHelpers.checkVestimentaMatch(fichaData.vestimenta, hallazgo.vestimenta);
+            score += vestimentaMatch.score;
+            matchedCriteria.push(...vestimentaMatch.criteria);
+
+            const nameMatch = matchHelpers.checkNameMatch(fichaData, hallazgo);
+            score += nameMatch.score;
+            matchedCriteria.push(...nameMatch.criteria);
+
+            // Solo consideramos una coincidencia si el puntaje supera un umbral mínimo
+            if (score > 50) {
                 matches.push({
                     id_hallazgo: hallazgo.id_hallazgo,
                     score,
-                    matchedCriteria,
-                    id_usuario_reporte: hallazgo.id_usuario_buscador
+                    matchedCriteria: [...new Set(matchedCriteria)], // Eliminar criterios duplicados
                 });
             }
         }
 
+        // Ordenamos para tener las mejores coincidencias primero
         matches.sort((a, b) => b.score - a.score);
-        const topMatches = matches.slice(0, 10);
+        
+        const topMatches = matches.slice(0, 5); // Devolvemos solo las 5 mejores
 
-        for (const match of topMatches) {
-            await insertPossibleMatch(db, id_ficha, match.id_hallazgo, match.score, match.matchedCriteria.join(', '));
+        if (topMatches.length > 0) {
+            logger.info(`✅ ${topMatches.length} posibles coincidencias encontradas para la ficha ${fichaData.id_ficha}`);
         }
-        logger.info(`✅ ${topMatches.length} posibles coincidencias guardadas para la ficha ${id_ficha}`);
-
-        await notifyMatchedUsers(topMatches, fichaCompleta.nombre);
 
         return topMatches;
 
     } catch (error) {
-        logger.error('❌ Error en el servicio de matching:', error);
-        throw error;
+        logger.error(`❌ Error fatal en el servicio de matching: ${error.message}`);
+        return []; // Devolvemos un array vacío en caso de error para no detener el flujo.
     }
 }
 

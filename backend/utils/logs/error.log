@@ -381,3 +381,8 @@ Error: ENOENT: no such file or directory, open '/home/alex1986/test_gastos_bot/g
 [2025-09-15 19:18:09] ERROR: ❌ Error al obtener los hallazgos del usuario: Cannot read properties of null (reading 'data')
 [2025-09-15 19:26:43] ERROR: ❌ Error al obtener los hallazgos del usuario: hallazgosDB is not defined
 [2025-09-15 19:26:43] ERROR: ❌ Error al obtener los hallazgos del usuario: hallazgosDB is not defined
+[2025-09-17 08:44:12] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'id_usuario_creador')
+[2025-09-17 08:44:12] ERROR: POST /api/fichas - SQLITE_ERROR: cannot rollback - no transaction is active
+[2025-09-17 08:54:13] ERROR: ❌ Error en el servicio de matching: Cannot read properties of undefined (reading 'id_usuario_creador')
+[2025-09-17 08:54:13] ERROR: POST /api/fichas - SQLITE_ERROR: cannot rollback - no transaction is active
+[2025-09-17 09:08:38] ERROR: ❌ Error fatal en el servicio de matching: hallazgosQueries is not defined

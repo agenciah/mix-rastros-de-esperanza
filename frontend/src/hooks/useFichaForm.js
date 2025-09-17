@@ -1,135 +1,106 @@
-// src/hooks/useFichaForm.js
-import { useState, useEffect } from "react";
-import { toast } from "sonner";
-import useCreateFicha from "@/hooks/useCreateFicha";
+// RUTA: frontend/hooks/useFichaForm.js
 
-// Acepta 'initialData' como argumento para prellenar el formulario
-export default function useFichaForm(initialData = null) {
-  const { createFicha: CreateFicha } = useCreateFicha();
+import { useState, useEffect, useCallback } from 'react';
+import { initialFichaFormState } from '@/lib/initialFormState';
+import { storage } from "@/lib/firebase";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { toast } from 'sonner';
 
-  // El estado se inicializa con los datos de 'initialData' o con un objeto vacío si no se proporcionan datos
-  const [datosPrincipales, setDatosPrincipales] = useState(initialData ? {
-    nombre: initialData.nombre || "",
-    segundo_nombre: initialData.segundo_nombre || "",
-    apellido_paterno: initialData.apellido_paterno || "",
-    apellido_materno: initialData.apellido_materno || "",
-    fecha_desaparicion: initialData.fecha_desaparicion || "",
-    ubicacion_desaparicion: {
-      estado: initialData.ubicacion_desaparicion?.estado || "",
-      municipio: initialData.ubicacion_desaparicion?.municipio || "",
-      localidad: initialData.ubicacion_desaparicion?.localidad || "",
-      calle: initialData.ubicacion_desaparicion?.calle || "",
-      referencias: initialData.ubicacion_desaparicion?.referencias || "",
-      latitud: initialData.ubicacion_desaparicion?.latitud || "",
-      longitud: initialData.ubicacion_desaparicion?.longitud || "",
-      codigo_postal: initialData.ubicacion_desaparicion?.codigo_postal || "",
-    },
-    id_tipo_lugar_desaparicion: initialData.id_tipo_lugar_desaparicion || "",
-    foto_perfil: initialData.foto_perfil || null,
-    edad_estimada: initialData.edad_estimada || "",
-    genero: initialData.genero || "",
-    estatura: initialData.estatura || "",
-    complexion: initialData.complexion || "",
-    peso: initialData.peso || "",
-  } : {
-    nombre: "",
-    segundo_nombre: "",
-    apellido_paterno: "",
-    apellido_materno: "",
-    fecha_desaparicion: "",
-    ubicacion_desaparicion: {
-      estado: "",
-      municipio: "",
-      localidad: "",
-      calle: "",
-      referencias: "",
-      latitud: "",
-      longitud: "",
-      codigo_postal: "",
-    },
-    id_tipo_lugar_desaparicion: "",
-    foto_perfil: null,
-    edad_estimada: "",
-    genero: "",
-    estatura: "",
-    complexion: "",
-    peso: "",
-  });
-
-  const [rasgosFisicos, setRasgosFisicos] = useState(initialData?.rasgos_fisicos || [
-    { id_parte_cuerpo: "", tipo_rasgo: "", descripcion_detalle: "" },
-  ]);
-
-  const [vestimenta, setVestimenta] = useState(initialData?.vestimenta || [
-    { id_prenda: "", color: "", marca: "", caracteristica_especial: "" },
-  ]);
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const resetForm = () => {
-    setDatosPrincipales({
-      nombre: "",
-      segundo_nombre: "",
-      apellido_paterno: "",
-      apellido_materno: "",
-      fecha_desaparicion: "",
-      ubicacion_desaparicion: {
-        estado: "",
-        municipio: "",
-        localidad: "",
-        calle: "",
-        referencias: "",
-        latitud: "",
-        longitud: "",
-        codigo_postal: "",
-      },
-      id_tipo_lugar_desaparicion: "",
-      foto_perfil: null,
-      edad_estimada: "",
-      genero: "",
-      estatura: "",
-      complexion: "",
-      peso: "",
+const uploadImage = (file, onProgress) => {
+    return new Promise((resolve, reject) => {
+        const storageRef = ref(storage, `fichas_images/${Date.now()}_${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+        uploadTask.on('state_changed',
+            (snapshot) => onProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100),
+            (error) => {
+                console.error("Firebase upload error:", error);
+                reject(new Error("Error al subir la imagen. Revisa los permisos de Storage en Firebase."));
+            },
+            async () => {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                resolve(downloadURL);
+            }
+        );
     });
-    setRasgosFisicos([{ id_parte_cuerpo: "", tipo_rasgo: "", descripcion_detalle: "" }]);
-    setVestimenta([{ id_prenda: "", color: "", marca: "", caracteristica_especial: "" }]);
-  };
+};
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    setError(null);
+export const useFichaForm = (initialData = initialFichaFormState) => {
+    const [formData, setFormData] = useState(initialData);
+    const [imageFile, setImageFile] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
 
-    try {
-      const payload = {
-        ...datosPrincipales,
-        rasgos_fisicos: rasgosFisicos,
-        vestimenta,
-      };
+    useEffect(() => {
+        setFormData(initialData || initialFichaFormState);
+    }, [initialData]);
+    
+    // --- MANEJADORES DE ESTADO COMPLETOS ---
+    const handleChange = useCallback((e) => {
+        const { name, value } = e.target;
+        setFormData(prev => (prev ? { ...prev, [name]: value } : null));
+    }, []);
 
-      const res = await CreateFicha(payload);
-      console.log("Respuesta backend:", res);
+    const handleNestedChange = useCallback((path, value) => {
+        const [parent, child] = path.split('.');
+        setFormData(prev => (prev ? { ...prev, [parent]: { ...prev[parent], [child]: value } } : null));
+    }, []);
 
-      if (res.success) {
-        toast.success(res.message || "Ficha creada correctamente");
-        resetForm();
-      } else {
-        toast.error(res.message || "Error al crear ficha");
-      }
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
-      toast.error(err.message || "Error al crear ficha");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const handleArrayChange = useCallback((arrayName, index, fieldName, value) => {
+        setFormData(prev => {
+            if (!prev || !Array.isArray(prev[arrayName])) return prev;
+            const newArray = [...prev[arrayName]];
+            newArray[index] = { ...newArray[index], [fieldName]: value };
+            return { ...prev, [arrayName]: newArray };
+        });
+    }, []);
+    
+    const addArrayItem = useCallback((arrayName, newItem) => {
+        setFormData(prev => ({ ...prev, [arrayName]: [...(prev[arrayName] || []), newItem] }));
+    }, []);
 
-  return {
-    datosPrincipales, setDatosPrincipales,
-    rasgosFisicos, setRasgosFisicos,
-    vestimenta, setVestimenta,
-    loading, error,
-    handleSubmit,
-  };
-}
+    const removeArrayItem = useCallback((arrayName, index) => {
+        setFormData(prev => ({ ...prev, [arrayName]: (prev[arrayName] || []).filter((_, i) => i !== index) }));
+    }, []);
+
+    // ✅ LA VERSIÓN CORRECTA DE handleSubmit QUE SÍ ACEPTA UN ARGUMENTO
+    const handleSubmit = async (submitAction) => {
+        if (!formData) {
+            toast.error("No hay datos en el formulario para guardar.");
+            return null;
+        }
+        setIsSubmitting(true);
+        toast.info("Guardando ficha...");
+        let imageUrl = formData.foto_perfil || null; 
+
+        try {
+            if (imageFile) {
+                toast.info("Subiendo imagen...");
+                imageUrl = await uploadImage(imageFile, setUploadProgress);
+                toast.success("Imagen subida.");
+            }
+            
+            const payload = { ...formData, foto_perfil: imageUrl };
+            
+            // Llama a la función que le pasaron (ej. createFicha)
+            const response = await submitAction(payload);
+
+            toast.success(response.data.message || "Operación exitosa.");
+            return response.data;
+
+        } catch (err) {
+            const errorMsg = err.response?.data?.message || err.message || "Ocurrió un error.";
+            toast.error(errorMsg);
+            console.error("❌ Error en handleSubmit de Ficha:", err);
+            return null;
+        } finally {
+            setIsSubmitting(false);
+            setUploadProgress(0);
+        }
+    };
+    
+    return {
+        formData, setFormData, isSubmitting, uploadProgress, setImageFile,
+        handleChange, handleNestedChange, handleArrayChange, addArrayItem, removeArrayItem,
+        handleSubmit,
+    };
+};

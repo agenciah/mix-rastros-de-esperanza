@@ -1,159 +1,123 @@
+// RUTA: src/pages/dashboard/fichas/fichasEdit/FichaEditLayout.jsx
+
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { Card, CardHeader, CardTitle, CardContent } from "../../../../components/ui/card";
-import { Separator } from "../../../../components/ui/separator";
-import { Button } from "../../../../components/ui/button";
-import useFichaForm from "../../../../hooks/useFichaForm";
-import useFetchFicha from "../../../../hooks/editFicha/useFetchFicha";
-import useEditFicha from "../../../../hooks/editFicha/useEditFicha";
+import { useParams, useNavigate } from "react-router-dom";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal, Lightbulb, Loader2 } from "lucide-react"; // Añadido Loader2
+
+// ✅ 1. IMPORTACIONES CORRECTAS Y UNIFICADAS
+import { useFichas } from "@/hooks/useFichas";
+import { useFichaForm } from "@/hooks/useFichaForm"; // ¡Ahora con llaves y usando el alias @!
+
+// Sub-componentes
 import RasgosFisicosForm from "../RasgosFisicosForm";
 import VestimentaForm from "../VestimentaForm";
 import DatosPrincipalesForm from "../DatosPrincipalesForm";
-import { Alert, AlertDescription, AlertTitle } from "../../../../components/ui/alert";
-import { Terminal, Lightbulb } from "lucide-react";
+import { toast } from "sonner";
+
 
 export default function FichaEditLayout() {
-  // 1. Obtiene el ID de la URL
-  const { id } = useParams();
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-  // 2. Trae los datos de la ficha existente
-  const { data: fichaData, loading: fetching, error: fetchError } = useFetchFicha(id);
+    // ✅ 2. ARQUITECTURA DE HOOKS LIMPIA
+    const { getFichaById, updateFicha, isLoading: isApiLoading, error: apiError } = useFichas();
+    const {
+        formData,
+        setFormData,
+        isSubmitting,
+        uploadProgress,
+        setImageFile,
+        handleChange,
+        handleNestedChange,
+        handleArrayChange,
+        addArrayItem,
+        removeArrayItem,
+        handleSubmit,
+    } = useFichaForm(null); // Empezamos con null para esperar los datos
 
-  // 3. Usa el hook de formulario para gestionar el estado de los inputs
-  const form = useFichaForm();
-  const {
-    datosPrincipales, setDatosPrincipales,
-    rasgosFisicos, setRasgosFisicos,
-    vestimenta, setVestimenta,
-  } = form;
+    // Carga de datos iniciales
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            if (id) {
+                const data = await getFichaById(id);
+                if (data) {
+                    setFormData(data);
+                }
+            }
+        };
+        fetchInitialData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id, getFichaById]);
 
-  // 4. Usa el hook de edición para manejar la actualización
-  const { editFicha, loading: isEditing, error: editError, success: editSuccess } = useEditFicha();
-
-  // 5. Precarga el formulario con los datos obtenidos
-  useEffect(() => {
-    // AHORA CHECAMOS POR 'fichaData' Y 'fichaData.data'
-    if (fichaData && fichaData.data) {
-      // Opcional: para verificar en la consola que los datos se cargan
-      console.log("Datos de la ficha obtenidos del backend:", fichaData.data);
-      
-      // Mapear los datos de la API al estado del formulario
-      const dataToMap = fichaData.data;
-      setDatosPrincipales({
-        nombre: dataToMap.nombre || "",
-        segundo_nombre: dataToMap.segundo_nombre || "",
-        apellido_paterno: dataToMap.apellido_paterno || "",
-        apellido_materno: dataToMap.apellido_materno || "",
-        fecha_desaparicion: dataToMap.fecha_desaparicion || "",
-        ubicacion_desaparicion: dataToMap.ubicacion_desaparicion || {
-          estado: "",
-          municipio: "",
-          localidad: "",
-          calle: "",
-          referencias: "",
-          latitud: "",
-          longitud: "",
-          codigo_postal: "",
-        },
-        id_tipo_lugar_desaparicion: dataToMap.id_tipo_lugar_desaparicion || "",
-        foto_perfil: dataToMap.foto_perfil || null,
-        // --- Nuevos campos para mapear ---
-        genero: dataToMap.genero || "",
-        edad_estimada: dataToMap.edad_estimada || "",
-        estatura: dataToMap.estatura || "",
-        complexion: dataToMap.complexion || "",
-        peso: dataToMap.peso || "",
-        // --- Fin de nuevos campos ---
-      });
-      // AQUI MAPEAMOS LOS ARRAYS, POR ESO ES IMPORTANTE QUE EL BACKEND NOS LOS REGRESE ASI
-      setRasgosFisicos(dataToMap.rasgos_fisicos || [{ id_parte_cuerpo: "", tipo_rasgo: "", descripcion_detalle: "" }]);
-      setVestimenta(dataToMap.vestimenta || [{ id_prenda: "", color: "", marca: "", caracteristica_especial: "" }]);
-    }
-  }, [fichaData, setDatosPrincipales, setRasgosFisicos, setVestimenta]);
-
-  // Manejador del submit
-  const handleEditSubmit = async () => {
-    // Aquí se prepara el objeto de datos
-    const dataToSend = {
-      ...datosPrincipales,
-      rasgos: rasgosFisicos,
-      vestimenta: vestimenta,
+    // Lógica de envío
+    const handleUpdateSubmit = async (e) => {
+        e.preventDefault();
+        const updateAction = (payload) => updateFicha(id, payload);
+        const result = await handleSubmit(updateAction);
+        if (result?.success) {
+            navigate('/dashboard/fichas');
+        }
     };
 
-    // Llama a la función de edición
-    const result = await editFicha(id, dataToSend);
+    const isLoading = isApiLoading || isSubmitting;
 
-    // Puedes manejar la navegación o mostrar un mensaje de éxito aquí
-    if (result.success) {
-      console.log("Ficha actualizada con éxito!");
-      // Aquí podrías redirigir al usuario o mostrar un mensaje
+    // Renderizado Condicional
+    if (!formData) {
+        if (isApiLoading) return <div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+        return (
+            <Alert variant="destructive" className="m-6">
+                <Terminal className="h-4 w-4" />
+                <AlertTitle>Error al Cargar</AlertTitle>
+                <AlertDescription>{apiError || "No se pudo encontrar la ficha."}</AlertDescription>
+            </Alert>
+        );
     }
-  };
 
-  // Manejo de los estados de carga y error
-  if (fetching) {
-    return <div className="text-center p-8">Cargando ficha para edición...</div>;
-  }
-
-  if (fetchError) {
     return (
-      <Alert variant="destructive">
-        <Terminal className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>
-          {fetchError}
-        </AlertDescription>
-      </Alert>
+        <div className="max-w-4xl mx-auto p-6 space-y-6">
+            <Card className="shadow-md">
+                <CardHeader>
+                    <CardTitle>Edición de Ficha: {formData.nombre} {formData.apellido_paterno}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleUpdateSubmit} className="space-y-8">
+                        <DatosPrincipalesForm
+                            form={formData}
+                            handleChange={handleChange}
+                            handleNestedChange={handleNestedChange}
+                            setImageFile={setImageFile}
+                        />
+                        <Separator />
+                        <RasgosFisicosForm
+                            rasgos={formData.rasgos_fisicos || []}
+                            handleArrayChange={(index, field, value) => handleArrayChange('rasgos_fisicos', index, field, value)}
+                            addArrayItem={() => addArrayItem('rasgos_fisicos', { id_parte_cuerpo: '', tipo_rasgo: '', descripcion_detalle: '' })}
+                            removeArrayItem={(index) => removeArrayItem('rasgos_fisicos', index)}
+                        />
+                        <Separator />
+                        <VestimentaForm
+                            vestimenta={formData.vestimenta || []}
+                            handleArrayChange={(index, field, value) => handleArrayChange('vestimenta', index, field, value)}
+                            addArrayItem={() => addArrayItem('vestimenta', { id_prenda: '', color: '', marca: '', caracteristica_especial: '' })}
+                            removeArrayItem={(index) => removeArrayItem('vestimenta', index)}
+                        />
+                        <div className="pt-4">
+                            <Button type="submit" className="w-full" disabled={isLoading}>
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        {`Guardando... ${Math.round(uploadProgress)}%`}
+                                    </>
+                                ) : "Guardar Cambios"}
+                            </Button>
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
     );
-  }
-
-  return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle>Edición de Ficha</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <section>
-            <h2 className="text-lg font-semibold mb-2">Datos Principales</h2>
-            <DatosPrincipalesForm
-              datos={datosPrincipales}
-              setDatos={setDatosPrincipales}
-            />
-          </section>
-          <Separator />
-          <section>
-            <h2 className="text-lg font-semibold mb-2">Rasgos Físicos</h2>
-            <RasgosFisicosForm
-              rasgos={rasgosFisicos}
-              setRasgos={setRasgosFisicos}
-            />
-          </section>
-          <Separator />
-          <section>
-            <h2 className="text-lg font-semibold mb-2">Vestimenta</h2>
-            <VestimentaForm
-              vestimenta={vestimenta}
-              setVestimenta={setVestimenta}
-            />
-          </section>
-          <div className="pt-4">
-            <Button onClick={handleEditSubmit} disabled={isEditing}>
-              {isEditing ? "Actualizando..." : "Actualizar Ficha"}
-            </Button>
-            {editError && <p className="text-red-500 mt-2">{editError}</p>}
-            {editSuccess && (
-              <Alert className="mt-4">
-                <Lightbulb className="h-4 w-4" />
-                <AlertTitle>¡Éxito!</AlertTitle>
-                <AlertDescription>
-                  La ficha ha sido actualizada correctamente.
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
 }
