@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import logoSimplika from "@/pages/components/landing/images/cover.png"
+import logoSimplika from "@/assets/logo.png"
 
 export default function LegalLayout({ children }) {
   return (
