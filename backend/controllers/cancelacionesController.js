@@ -1,4 +1,5 @@
 import { sendCancelacionEmail } from '../utils/emailService.js';
+import { sendHECancelacionEmail } from '../utils/hastaEncontrarteEmailService.js';
 import { differenceInDays, addDays } from 'date-fns';
 import {
   registrarCancelacion,
@@ -42,7 +43,7 @@ export async function solicitarCancelacion(req, res) {
     const diasRestantes = Math.max(0, differenceInDays(fechaFinCalculada, hoy));
 
     try {
-      await sendCancelacionEmail(
+      await sendHECancelacionEmail(
         user.email,
         user.nombre,
         diasRestantes,

@@ -393,3 +393,12 @@ Error: ENOENT: no such file or directory, open '/home/alex1986/test_gastos_bot/g
 [2025-09-17 10:38:16] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgos has no column named foto_hallazgo
 [2025-09-17 10:42:56] ERROR: ❌ Error al crear hallazgo: SQLITE_ERROR: table hallazgos has no column named foto_hallazgo
 [2025-09-17 14:27:26] ERROR: ❌ Error al actualizar hallazgo: SQLITE_ERROR: no such column: tipo_lugar
+[2025-09-18 16:34:11] ERROR: ❌ Error al enviar correo a través de Zoho: Invalid login: 501 Could not do Unknown Authentication
+[2025-09-18 16:41:12] ERROR: ❌ Error al enviar correo a través de Zoho: Invalid login: 501 Could not do Unknown Authentication
+[2025-09-18 16:42:39] ERROR: ❌ Error al enviar correo a través de Zoho: Invalid login: 501 Could not do Unknown Authentication
+[2025-09-18 17:04:51] ERROR: ❌ Error al enviar correo a través de Zoho: Invalid login: 501 Could not do Unknown Authentication
+[2025-09-18 17:04:52] ERROR: ❌ Error al enviar correo a través de Zoho: Invalid login: 501 Could not do Unknown Authentication
+[2025-09-18 17:19:50] ERROR: ❌ Error al enviar correo a través de Zoho: Invalid login: 501 Could not do Unknown Authentication
+[2025-09-18 17:24:29] ERROR: ❌ Error al enviar correo a través de Zoho: Invalid login: 501 Could not do Unknown Authentication
+[2025-09-18 17:28:42] ERROR: ❌ Error al enviar correo a través de Zoho: Invalid login: 501 Could not do Unknown Authentication
+[2025-09-18 17:43:47] ERROR: ❌ Error al enviar correo a través de Zoho: Invalid login: 501 Could not do Unknown Authentication

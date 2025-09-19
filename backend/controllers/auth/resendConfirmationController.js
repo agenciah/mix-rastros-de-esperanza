@@ -2,6 +2,7 @@
 import jwt from 'jsonwebtoken';
 import { findUserByEmail, updateUserConfirmationToken } from '../../db/users/core.js';
 import { sendConfirmationEmail } from '../../utils/emailService.js';
+import { sendHEConfirmationEmail } from '../../utils/hastaEncontrarteEmailService.js';
 import logger from '../../utils/logger.js';
 
 export async function resendConfirmationEmail(req, res) {
@@ -29,7 +30,7 @@ export async function resendConfirmationEmail(req, res) {
     );
 
     await updateUserConfirmationToken(email, confirmationToken);
-    await sendConfirmationEmail(email, confirmationToken);
+    await sendHEConfirmationEmail(email, confirmationToken);
 
     logger.info(`📧 Correo de confirmación reenviado a ${email}`);
     res.json({ message: 'Correo de confirmación reenviado correctamente.' });

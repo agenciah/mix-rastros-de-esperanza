@@ -2,7 +2,7 @@
 
 import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
-import { sendMatchNotification } from '../../utils/emailService.js';
+import { sendHEMatchNotification } from '../../utils/hastaEncontrarteEmailService.js';
 import { getFichaCompletaById, getAllHallazgosCompletos } from '../../db/queries/fichasAndHallazgosQueries.js';
 import { insertSystemNotification, insertPossibleMatch } from '../../db/queries/messagingQueries.js';
 import { createNotification } from '../../db/queries/notificationsQueries.js';
@@ -242,7 +242,7 @@ async function notifyMatchedUsers(req, topMatches, fichaCompleta) {
     const subject = `🚨 ¡Posibles coincidencias para la búsqueda de ${fichaCompleta.nombre}!`;
     const message = `Hola ${creadorDeLaFicha.nombre},\n\nHemos encontrado ${topMatches.length} posible(s) coincidencia(s) para tu ficha de búsqueda de ${fichaCompleta.nombre}. Por favor, inicia sesión para revisar los detalles.\n\nCoincidencias:\n${resumenCoincidencias}\n\nSaludos,\nEl equipo de Rastros de Esperanza.`;
     
-    await sendMatchNotification(creadorDeLaFicha.email, subject, message);
+    await sendHEMatchNotification(creadorDeLaFicha.email, subject, message);
     logger.info(`📧 Email de coincidencia enviado a ${creadorDeLaFicha.email}`);
     
     // Suponemos que solo hay una coincidencia principal para la notificación inicial

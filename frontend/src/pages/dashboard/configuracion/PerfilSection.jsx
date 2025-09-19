@@ -86,7 +86,7 @@ const PerfilSection = () => {
 
     try {
       setCargandoPass(true)
-      await api.put('/usuarios/cambiar-password', {
+      await api.put('/api/usuarios/cambiar-password', {
         actual,
         nueva,
       })
@@ -106,7 +106,7 @@ const PerfilSection = () => {
 
   const onSubmit = async (data) => {
   try {
-    const res = await api.put('/usuarios/perfil', {
+    const res = await api.put('/api/usuarios/perfil', {
       nombre: data.nombre,
       email: data.email,
       telefono: data.telefono,

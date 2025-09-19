@@ -1,7 +1,10 @@
 import { findUserByEmail, findUserById, updateUserProfile } from '../../db/users/core.js';
 import { openDb } from '../../db/users/initDb.js';
 import { plans } from '../../shared/planes.js';
-import { enviarNotificacion } from '../../utils/notificacionesEmail.js';
+
+import { sendHEUserDataChangedEmail, sendHEPlanChangedEmail } from '../../utils/hastaEncontrarteEmailService.js';
+// (Crearemos sendHEPlanChangedEmail en el siguiente paso)
+
 
 export const obtenerPlanes = (req, res) => {
   res.json({ planes: plans });
@@ -49,15 +52,15 @@ export const actualizarPlanes = async (req, res) => {
       userId,
     ]);
 
-    // Llama a la función con 3 argumentos separados
-    await enviarNotificacion(
-      'cambio_plan',
-      req.user.email,
-      {
-        nombre: req.user.nombre, // Asegúrate de pasar el nombre del usuario
-        nuevoPlan: planes.map(plan => plan.nombre).join(', ')
-      }
-    );
+    
+        // ✅ 2. LLAMAMOS A LA NUEVA FUNCIÓN DE CORREO
+        // await sendHEPlanChangedEmail(
+        //     req.user.email, 
+        //     req.user.nombre, 
+        //     planes.map(plan => plan.nombre).join(', ')
+        // );
+        // Nota: He comentado esta línea por ahora, ya que primero necesitamos crear la plantilla.
+
 
     res.json({ mensaje: 'Planes actualizados correctamente', planes });
   } catch (error) {
@@ -67,34 +70,29 @@ export const actualizarPlanes = async (req, res) => {
 };
 
 export const actualizarPerfil = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const { nombre, email, telefono, estado_republica } = req.body;
+    try {
+        const userId = req.user.id;
+        const { nombre, email, telefono, estado_republica } = req.body;
 
-    if (!nombre || !email) {
-      return res.status(400).json({ mensaje: 'Nombre y correo son requeridos' });
+        if (!nombre || !email) {
+            return res.status(400).json({ mensaje: 'Nombre y correo son requeridos' });
+        }
+
+        const existente = await findUserByEmail(email);
+        if (existente && existente.id !== userId) {
+            return res.status(400).json({ mensaje: 'Ese correo ya está en uso' });
+        }
+
+        await updateUserProfile(userId, { nombre, email, telefono, estado_republica });
+        
+        await sendHEUserDataChangedEmail(email, nombre);
+
+        res.json({
+            mensaje: 'Perfil actualizado',
+            usuario: { nombre, email, telefono },
+        });
+    } catch (error) {
+        console.error('Error al actualizar perfil:', error);
+        res.status(500).json({ mensaje: 'Error interno del servidor' });
     }
-
-    const existente = await findUserByEmail(email);
-    if (existente && existente.id !== userId) {
-      return res.status(400).json({ mensaje: 'Ese correo ya está en uso' });
-    }
-
-    await updateUserProfile(userId, { nombre, email, telefono, estado_republica });
-
-    // Llama a la función con 3 argumentos separados
-    await enviarNotificacion(
-      'cambio_datos_personales',
-      email,
-      { nombre }
-    );
-
-    res.json({
-      mensaje: 'Perfil actualizado',
-      usuario: { nombre, email, telefono },
-    });
-  } catch (error) {
-    console.error('Error al actualizar perfil:', error);
-    res.status(500).json({ mensaje: 'Error interno del servidor' });
-  }
 };

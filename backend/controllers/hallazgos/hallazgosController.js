@@ -4,7 +4,7 @@ import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 // Asume que este archivo existe y contiene la lógica de matching
 import { findMatchesForHallazgo } from './matchController.js'; 
-import { sendMatchNotification } from '../../utils/emailService.js'; // Asume que este archivo existe
+import { sendHEMatchNotification } from '../../utils/hastaEncontrarteEmailService.js';
 import { createNotification } from '../../db/queries/notificationsQueries.js';
 import * as hallazgosDB from '../../db/queries/hallazgosQueries.js';
 
@@ -29,7 +29,7 @@ async function notificarUsuariosDeFichas(req, matches, hallazgo) {
             const message = `Hola ${usuarioFicha.nombre},\n\nUn nuevo hallazgo reportado podría ser una coincidencia para una de tus fichas de búsqueda. Por favor, inicia sesión para revisar los detalles.\n\nHallazgo ID: #${hallazgo.id_hallazgo}\n\nSaludos,\nEl equipo de Rastros de Esperanza.`;
             
             // 1. Enviar Email
-            await sendMatchNotification(usuarioFicha.email, subject, message);
+            await sendHEMatchNotification(usuarioFicha.email, subject, message);
             logger.info(`📧 Email de coincidencia enviado a ${usuarioFicha.email}`);
 
             // 2. Guardar Notificación en la BD

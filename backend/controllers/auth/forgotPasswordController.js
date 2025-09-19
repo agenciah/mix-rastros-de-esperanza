@@ -2,7 +2,7 @@
 import { openDb } from '../../db/users/initDb.js'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
-import { sendResetPasswordEmail, sendPasswordChangedNotificationEmail } from '../../utils/emails/passwordRecoveryEmail.js'
+import { sendHEResetPasswordEmail, sendHEPasswordChangedEmail } from '../../utils/hastaEncontrarteEmailService.js'
 import logger from '../../utils/logger.js'
 
 const TOKEN_EXPIRATION_MINUTES = 30
@@ -36,7 +36,7 @@ export const forgotPassword = async (req, res) => {
     )
 
     const resetUrl = `${process.env.FRONTEND_URL}/recuperar/${token}`
-    await sendResetPasswordEmail(user.email, resetUrl)
+    await sendHEResetPasswordEmail(user.email, resetUrl)
 
     logger.info(`[forgotPassword] Token generado y correo enviado a ${user.email}`)
     return res.status(200).json({ message: genericMessage })
@@ -78,7 +78,7 @@ export const resetPassword = async (req, res) => {
       [hashedPassword, user.id]
     )
 
-    await sendPasswordChangedNotificationEmail(user.email)
+    await sendHEPasswordChangedEmail(user.email)
     logger.info(`[resetPassword] Contraseña actualizada correctamente para el usuario ${user.email}`)
 
     return res.status(200).json({ message: 'Contraseña actualizada correctamente' })

@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import logger from '../../utils/logger.js';
 import { sendConfirmationEmail } from '../../utils/emailService.js';
+import { sendHEConfirmationEmail } from '../../utils/hastaEncontrarteEmailService.js';
 import { findUserByEmail, findUserByPhone, createUser } from '../../db/users/core.js';
 import { openDb } from '../../db/users/initDb.js';
 import { crearEstadoServicioInicial } from '../../db/estadoServicio.js';
@@ -95,7 +96,7 @@ logger.info(`[REGISTER] emailNorm=${emailNormalized} telNorm=${telefonoNormalize
 
     logger.info(`[EMAIL] enviando confirmación a ${emailNormalized}`);
     // Enviar correo de confirmación
-    await sendConfirmationEmail(emailNormalized, confirmationToken);
+    await sendHEConfirmationEmail(emailNormalized, confirmationToken);
     logger.info(`[EMAIL] confirmación ENVIADA a ${emailNormalized}`);
 
     res.status(201).json({
