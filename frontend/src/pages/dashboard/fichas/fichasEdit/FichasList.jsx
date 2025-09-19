@@ -43,7 +43,7 @@ function useFetchFichas() {
       setData([]);
 
       try {
-        const res = await api.get("/api/fichas");
+        const res = await api.get('/api/fichas/mis-fichas');
         console.log('Lista de fichas obtenida con éxito:', res.data);
         setData(res.data.data);
       } catch (err) {

@@ -402,3 +402,7 @@ Error: ENOENT: no such file or directory, open '/home/alex1986/test_gastos_bot/g
 [2025-09-18 17:24:29] ERROR: ❌ Error al enviar correo a través de Zoho: Invalid login: 501 Could not do Unknown Authentication
 [2025-09-18 17:28:42] ERROR: ❌ Error al enviar correo a través de Zoho: Invalid login: 501 Could not do Unknown Authentication
 [2025-09-18 17:43:47] ERROR: ❌ Error al enviar correo a través de Zoho: Invalid login: 501 Could not do Unknown Authentication
+[2025-09-19 10:16:43] ERROR: ❌ Error en getMisFichas: fichasQueries is not defined
+[2025-09-19 10:16:43] ERROR: ❌ Error en getMisFichas: fichasQueries is not defined
+[2025-09-19 10:19:33] ERROR: ❌ Error en getMisFichas: fichasQueries is not defined
+[2025-09-19 10:19:33] ERROR: ❌ Error en getMisFichas: fichasQueries is not defined

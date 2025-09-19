@@ -4,6 +4,7 @@ import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 import { findMatchesForFicha } from './matchingService.js';
 import { getFichaCompletaById, getAllPublicFichas, countActiveFichasByUserId } from '../../db/queries/fichasAndHallazgosQueries.js';
+import { getFichasCompletasByUserId } from '../../db/queries/fichasQueries.js';
 
 /**
  * @fileoverview Controlador para la gestión de Fichas de Desaparición.
@@ -522,5 +523,15 @@ export const getUserFichaStats = async (req, res) => {
         res.json({ success: true, data: { activeFichasCount } });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Error al obtener estadísticas de fichas.' });
+    }
+};
+
+export const getMisFichas = async (req, res) => {
+    try {
+        const fichas = await getFichasCompletasByUserId(req.user.id);
+        res.json({ success: true, data: fichas });
+    } catch (error) {
+        logger.error(`❌ Error en getMisFichas: ${error.message}`);
+        res.status(500).json({ success: false, message: 'Error al obtener tus fichas.' });
     }
 };
