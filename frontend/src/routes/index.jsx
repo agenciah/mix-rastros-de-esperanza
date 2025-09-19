@@ -26,7 +26,6 @@ import DashboardLayout from '../layouts/DashboardLayout';
 import Dashboard from '../pages/Dashboard';
 import FichaFormLayout from '@/pages/dashboard/fichas/FichaFormLayout';
 import Configuracion from '../pages/dashboard/Configuracion';
-import Contacto from '@/pages/public/Contacto';
 import FichasList from '@/pages/dashboard/fichas/fichasEdit/FichasList';
 import FichaEditLayout from '@/pages/dashboard/fichas/fichasEdit/FichaEditLayout';
 import HallazgoCreateLayout from '@/pages/dashboard/hallazgos/hallazgosCreateLayout';
@@ -52,7 +51,6 @@ const RoutesApp = () => {
     { path: "/Footer", element: <Footer/>},
     { path: '/aviso-privacidad', element: <AvisoPrivacidad/> },
     { path: 'terminos-condiciones', element: <TerminosCondiciones/> },
-    { path: '/contacto', element: <Contacto/> },
     { path: "/correo-enviado", element: <CorreoEnviado /> },
     { path: '/error-token', element: <ErrorToken/>},
     { path: "/confirmar/:token", element: <ConfirmarToken /> },

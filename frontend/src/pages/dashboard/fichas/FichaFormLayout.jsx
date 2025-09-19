@@ -25,7 +25,7 @@ export default function FichaFormLayout() {
     // --- Lógica de Verificación de Límite de Fichas ---
     const [activeFichasCount, setActiveFichasCount] = useState(0);
     const [loadingCheck, setLoadingCheck] = useState(true);
-    const planLimit = 1; // Límite para el plan básico
+    const planLimit = 3; // Límite para el plan básico
 
     useEffect(() => {
         api.get('/api/fichas/user-stats')
@@ -79,18 +79,17 @@ export default function FichaFormLayout() {
                     <CardHeader>
                         <CardTitle className="flex justify-center items-center">
                             <AlertCircle className="mr-2 text-yellow-500" />
-                            Límite de Fichas Alcanzado
+                            Con la intención de evitar abusos, establecimos un limite de 3 fichas por usuario.
                         </CardTitle>
                         <CardDescription>
-                            Tu plan actual te permite mantener {planLimit} ficha activa.
+                            Por favor, considera que la plataforma se mantiene de las donaciones que los usuarios realizan. Esto nos permite ampliar el servicio que actualmente brindamos sin un costo fijo.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <p className="mb-4 text-sm text-gray-700">
-                            Para registrar una nueva ficha, puedes desactivar una existente o actualizar tu plan.
+                            So requieres apoyo, por favor manda un correo a contacto@hastaencontrarte.lat y con gusto discutiremos tu caso.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button asChild><Link to="/dashboard/configuracion">Ver Planes</Link></Button>
                             <Button asChild variant="outline"><Link to="/dashboard/fichas">Gestionar Fichas</Link></Button>
                         </div>
                     </CardContent>

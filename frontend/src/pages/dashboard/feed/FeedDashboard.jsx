@@ -4,6 +4,7 @@ import React from 'react';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useFichasRecientes } from '@/hooks/useFichasRecientes';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
 // --- Componentes UI ---
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -89,6 +90,7 @@ const CasoExitoCard = ({ caso }) => (
 
 // --- Componente Principal ---
 const FeedDashboard = () => {
+    const {user} = useAuth();
     const { data, loading, error } = useDashboardData();
     // 2. LLAMAMOS A AMBOS HOOKS DE FORMA INDEPENDIENTE
     const { data: dashboardData, loading: dashboardLoading, error: dashboardError } = useDashboardData();
@@ -155,7 +157,7 @@ const FeedDashboard = () => {
 
             <HallazgosRecientesDashboard />
 
-            {/* Sección de Últimos Casos de Éxito */}
+            {/* Sección de Últimos Casos de Éxito
             <section>
                 <h2 className="text-xl font-bold text-gray-800 mb-4">Últimos Casos de Éxito</h2>
                 {casosEncontrados.length > 0 ? (
@@ -173,7 +175,44 @@ const FeedDashboard = () => {
                 ) : (
                     <p className="text-gray-500">No hay casos de éxito recientes.</p>
                 )}
+            </section> */}
+            {/* --- INICIO: Sección de Donaciones --- */}
+            <section>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Apoya Nuestra Misión</h2>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Realiza una Donación</CardTitle>
+                        <CardDescription>
+                            La plataforma genera gastos mes a mes. Tu apoyo nos permite mantener la plataforma gratuita y operativa. Cada contribución ayuda a cubrir los costos del servidor y a seguir conectando familias.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {/* El número de referencia es crucial para identificar quién dona */}
+                        <div className="bg-blue-50 p-3 rounded-lg text-center border border-blue-200">
+                            <p className="text-sm text-blue-800">
+                                Importante: Usa tu Número de Referencia Único en el concepto del pago para identificar tu donación.
+                            </p>
+                            <p className="text-2xl font-bold text-blue-900 tracking-widest mt-1">
+                                {user?.numero_referencia_unico || 'Cargando...'}
+                            </p>
+                        </div>
+
+                        {/* Aquí pones tus datos bancarios */}
+                        <div className="space-y-1 text-sm text-gray-700 pt-2">
+                            <p><strong>Banco:</strong> Mercado Pago W</p>
+                            <p><strong>CLABE Interbancaria:</strong> 722969010691808473</p>
+                            
+                            <p><strong>A nombre de:</strong> Manuel Alejandro Jimenez Fuentes</p>
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <p className="text-xs text-gray-500">
+                            ¡Gracias por ser parte de esta red de esperanza!
+                        </p>
+                    </CardFooter>
+                </Card>
             </section>
+            {/* --- FIN: Sección de Donaciones --- */}
             
             {/* Sección de Mensajes del Administrador */}
             <section>
