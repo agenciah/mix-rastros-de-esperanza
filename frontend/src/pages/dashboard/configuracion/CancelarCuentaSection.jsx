@@ -11,7 +11,7 @@ const CancelarCuentaSection = () => {
     try {
       setEnviando(true)
 
-      await api.post('/cancelaciones', {
+      await api.post('/api/cancelaciones', {
         motivo: 'Usuario solicitó la cancelación desde el frontend',
       })
 
@@ -28,7 +28,7 @@ const CancelarCuentaSection = () => {
   const handleRevertirCancelacion = async () => {
     try {
       setEnviando(true)
-      await api.post('/cancelaciones/revertir')
+      await api.post('/api/cancelaciones/revertir')
 
       toast.success('Cancelación revertida. Tu cuenta permanecerá activa.')
       setRevertir(false)
@@ -44,7 +44,7 @@ const CancelarCuentaSection = () => {
     <div className="border p-4 rounded-xl shadow bg-white space-y-4">
       <h2 className="text-xl font-bold">Cancelar cuenta</h2>
       <p>
-        Si deseas cancelar tu cuenta, puedes hacerlo aquí. Tu cuenta seguirá activa hasta que finalice el periodo contratado.
+        Si deseas cancelar tu cuenta, puedes hacerlo aquí.
       </p>
 
       {revertir ? (

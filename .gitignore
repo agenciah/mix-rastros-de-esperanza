@@ -62,8 +62,9 @@ node_modules/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env
+# Ignorar archivos de entorno locales
+backend/.env
+frontend/.env
 
 # dataconnect generated files
 .dataconnect
