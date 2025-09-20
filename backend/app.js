@@ -14,8 +14,17 @@ import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
 
+
+// ✅ CORRECCIÓN: Configuración de CORS para producción y desarrollo
+const corsOptions = {
+    origin: [
+        'http://localhost:5173', // Tu frontend en local
+        'https://hastaencontrarte.lat' // Tu dominio de producción
+    ],
+    credentials: true, // Permite que se envíen cookies o tokens de autorización
+};
+app.use(cors(corsOptions));
 // Middlewares
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
