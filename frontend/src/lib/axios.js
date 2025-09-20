@@ -1,21 +1,23 @@
-import axios from 'axios'
+// RUTA: frontend/src/lib/axios.js
+
+import axios from 'axios';
+
+// ✅ En Vite, se usa 'import.meta.env.MODE' para saber si estamos en producción.
+const baseURL = import.meta.env.MODE === 'production'
+    ? import.meta.env.VITE_API_BASE_URL  // URL de Render (definida en GitHub Secrets)
+    : 'http://localhost:3001';          // URL para desarrollo local
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
+    baseURL: baseURL,
+    withCredentials: true,
+});
 
-// Middleware que agrega el token a cada petición
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-}, (error) => {
-  return Promise.reject(error)
-})
+    const token = localStorage.getItem('AUTH_TOKEN');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
 
-export default api
+export default api;
