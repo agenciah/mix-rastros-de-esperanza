@@ -1,14 +1,9 @@
 // RUTA: frontend/src/lib/axios.js
-
 import axios from 'axios';
 
-// ✅ En Vite, se usa 'import.meta.env.MODE' para saber si estamos en producción.
-const baseURL = import.meta.env.MODE === 'production'
-    ? import.meta.env.VITE_API_BASE_URL  // URL de Render (definida en GitHub Secrets)
-    : 'http://localhost:3001';          // URL para desarrollo local
-
 const api = axios.create({
-    baseURL: baseURL,
+    // ✅ URL de producción directa, incluyendo /api
+    baseURL: 'https://mix-rastros-de-esperanza.onrender.com/api', 
     withCredentials: true,
 });
 
