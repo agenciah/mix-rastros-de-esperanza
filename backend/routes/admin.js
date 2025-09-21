@@ -63,6 +63,27 @@ router.get('/reportes', authenticateAdminToken, getReports);
 // ✅ CORRECCIÓN: La ruta para ver una conversación ahora usa '/conversations/' para evitar conflictos
 router.get('/conversations/:conversationId', authenticateAdminToken, getReportedConversation);
 
+// ✅ RUTA TEMPORAL DE LIMPIEZA
+// Esta ruta borrará todos los usuarios cuando se visite con la clave secreta.
+router.get('/limpieza-total-usuarios', async (req, res) => {
+    // Esta es nuestra clave secreta. Cámbiala si quieres.
+    const secretKey = req.query.secret;
+    if (secretKey !== 'MI_CLAVE_SUPER_SECRETA_123') {
+        return res.status(403).send('Acceso denegado. Clave secreta incorrecta.');
+    }
+
+    try {
+        const db = await openDb();
+        // Ejecutamos el comando para borrar TODOS los usuarios.
+        await db.run('DELETE FROM users');
+        res.status(200).send('✅ ¡Éxito! La tabla de usuarios ha sido limpiada.');
+        
+    } catch (error) {
+        console.error('Error durante la limpieza de usuarios:', error);
+        res.status(500).send(`Error al limpiar la base de datos: ${error.message}`);
+    }
+});
+
 // --- RUTAS PARA ACCIONES DE MODERACIÓN ---
 // ✅ CORRECCIÓN: El método HTTP para actualizar un estado debe ser PUT, no POST
 router.put('/reports/:reportId/resolve', authenticateAdminToken, resolveReport);
