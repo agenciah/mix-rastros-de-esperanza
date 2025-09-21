@@ -47,8 +47,11 @@ logger.info(`[REGISTER] emailNorm=${emailNormalized} telNorm=${telefonoNormalize
     const existingEmail = await findUserByEmail(emailNormalized);
     if (existingEmail) return res.status(409).json({ error: 'Este correo ya está registrado.' });
 
-    const existingPhone = await findUserByPhone(telefono);
-    if (existingPhone) return res.status(409).json({ error: 'Este teléfono ya está registrado.' });
+    const existingPhone = await findUserByPhone(telefonoNormalized);
+        // ✅ CORRECCIÓN: Ahora devuelve el mensaje correcto si el teléfono ya existe.
+        if (existingPhone) {
+            return res.status(409).json({ error: 'Este número de teléfono ya está registrado.' });
+        }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
