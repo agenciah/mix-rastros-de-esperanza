@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const apiAdmin = axios.create({
     // ✅ URL de producción directa y completa para admin
-    baseURL: 'https://mix-rastros-de-esperanza.onrender.com/api/admin',
+    baseURL: 'https://mix-rastros-de-esperanza.onrender.com/admin',
 });
 
 apiAdmin.interceptors.request.use((config) => {
