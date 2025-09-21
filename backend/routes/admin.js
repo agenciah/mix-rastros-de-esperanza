@@ -16,6 +16,7 @@ import { getPagosPendientes, obtenerPagosRecientes, marcarPago, revertirPago } f
 import { postAdminMessage,getMessagesForAdmin, editAdminMessage, setAdminMessageStatus } from '../controllers/admin/adminMessagesController.js';
 import { getReports, getReportedConversation } from '../controllers/admin/adminReportsController.js';
 import { resolveReport, moderateUser } from '../controllers/admin/adminActionsController.js';
+import { openDb } from '../db/users/initDb.js';
 
 const router = express.Router();
 
