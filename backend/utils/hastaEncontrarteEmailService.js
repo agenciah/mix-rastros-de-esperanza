@@ -47,8 +47,14 @@ async function sendEmail(to, subject, htmlBody, textBody = '') {
 
 /** 📧 1. Confirmación de Cuenta */
 export async function sendHEConfirmationEmail(to, token) {
+    // ✅ "INSPECTOR" PARA VER LA VARIABLE EN RENDER
+    console.log(`🕵️  [EMAIL SERVICE] Valor de FRONTEND_URL: ${process.env.FRONTEND_URL}`);
+
     const subject = 'Confirma tu cuenta en Hasta Encontrarte';
     const link = `${process.env.FRONTEND_URL}/confirmar-email?token=${token}`;
+    
+    console.log(`🔗  [EMAIL SERVICE] Link construido: ${link}`);
+
     const html = `<p>Hola,</p><p>Gracias por unirte a nuestra red de ayuda. Para activar tu cuenta, por favor haz clic en el siguiente enlace:</p><p style="text-align:center; margin: 20px 0;"><a href="${link}" style="background-color:#2563eb;color:white;padding:12px 20px;text-decoration:none;border-radius:5px;">Confirmar mi Cuenta</a></p><p>Si no te registraste, puedes ignorar este correo.</p>`;
     return sendEmail(to, subject, '', html);
 }
