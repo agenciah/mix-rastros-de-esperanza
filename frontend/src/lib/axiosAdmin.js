@@ -2,8 +2,8 @@
 import axios from 'axios';
 
 const apiAdmin = axios.create({
-    // ✅ URL de producción directa y completa para admin
-    baseURL: 'https://mix-rastros-de-esperanza.onrender.com/admin',
+    // ✅ CORRECCIÓN: Se añade '/api' para que la ruta base sea la correcta
+    baseURL: 'https://mix-rastros-de-esperanza.onrender.com/api/admin',
 });
 
 apiAdmin.interceptors.request.use((config) => {

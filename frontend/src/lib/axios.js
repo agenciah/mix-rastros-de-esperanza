@@ -2,8 +2,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    // ✅ URL de producción directa, incluyendo /api
-    baseURL: 'https://mix-rastros-de-esperanza.onrender.com', 
+    // ✅ CORRECCIÓN: Se añade '/api' al final
+    baseURL: 'https://mix-rastros-de-esperanza.onrender.com/api', 
     withCredentials: true,
 });
 
