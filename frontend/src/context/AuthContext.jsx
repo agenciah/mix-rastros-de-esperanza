@@ -23,10 +23,10 @@ export const AuthProvider = ({ children }) => {
         const token = localStorage.getItem('AUTH_TOKEN');
         if (token) {
             try {
-                const { data } = await api.get('/api/auth/profile');
+                const { data } = await api.get('auth/profile');
                 setUser(data.user);
                 
-                const firebaseTokenRes = await api.get('/api/auth/firebase-token');
+                const firebaseTokenRes = await api.get('auth/firebase-token');
                 if (firebaseTokenRes.data.success) {
                     await signInToFirebase(firebaseTokenRes.data.firebaseToken);
                 }

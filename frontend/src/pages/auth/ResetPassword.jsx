@@ -34,7 +34,7 @@ const ResetPassword = () => {
 
   const onSubmit = async ({ password }) => {
   try {
-    await api.post('/api/auth/reset-password', { token, newPassword: password })  // aquí cambio
+    await api.post('/auth/reset-password', { token, newPassword: password })  // aquí cambio
     toast.success('Contraseña actualizada. Inicia sesión.')
     navigate('/login')
   } catch (err) {

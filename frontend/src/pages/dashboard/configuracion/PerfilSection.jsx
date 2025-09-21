@@ -34,7 +34,7 @@ const PerfilSection = () => {
     useEffect(() => {
         const fetchFichaStats = async () => {
             try {
-                const response = await api.get('/api/fichas/user-stats');
+                const response = await api.get('/fichas/user-stats');
                 setActiveFichasCount(response.data.data.activeFichasCount);
             } catch (error) {
                 console.error("Error al obtener estadísticas de fichas:", error);

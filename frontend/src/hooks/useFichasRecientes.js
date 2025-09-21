@@ -12,7 +12,7 @@ export const useFichasRecientes = () => {
         const fetchFichas = async () => {
             try {
                 // Usamos el endpoint público con un límite fijo para el dashboard
-                const response = await api.get('/api/fichas/publicas?limit=5&offset=0');
+                const response = await api.get('/fichas/publicas?limit=5&offset=0');
                 setFichasRecientes(response.data.data || []);
             } catch (err) {
                 console.error("Error al cargar las fichas recientes:", err);

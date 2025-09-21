@@ -12,7 +12,7 @@ export const useNotifications = () => {
     const fetchNotifications = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await api.get('/api/notifications');
+            const response = await api.get('/notifications');
             const data = response.data.data || [];
             setNotifications(data);
             // Calculamos cuántas no están leídas
@@ -31,7 +31,7 @@ export const useNotifications = () => {
         setUnreadCount(0);
 
         try {
-            await api.put('/api/notifications/read');
+            await api.put('/notifications/read');
         } catch (error) {
             console.error("Error al marcar notificaciones como leídas:", error);
             toast.error("Error al actualizar las notificaciones.");

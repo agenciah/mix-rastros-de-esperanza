@@ -62,7 +62,7 @@ const FeedFichasList = () => {
         try {
             // Usamos el nuevo endpoint público
             const offset = (pageToFetch - 1) * limit;
-            const url = `/api/fichas/publicas?limit=${limit}&offset=${offset}`; // Búsqueda se hará en el frontend por ahora
+            const url = `/fichas/publicas?limit=${limit}&offset=${offset}`; // Búsqueda se hará en el frontend por ahora
             
             const response = await api.get(url);
             const newFichas = response.data.data;

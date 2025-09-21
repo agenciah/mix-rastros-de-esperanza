@@ -15,7 +15,7 @@ export const useReports = () => {
 
         setIsReporting(true);
         try {
-            await api.post('/api/messaging/report', {
+            await api.post('/messaging/report', {
                 conversationId,
                 reportedUserId,
                 reason

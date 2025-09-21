@@ -30,11 +30,11 @@ export const useFichas = () => {
     const getFichaById = useCallback((id) => _handleGetRequest(() => api.get(`/api/fichas/${id}`)), []);
     const getFichasFeed = useCallback((page = 1, limit = 10) => {
         const offset = (page - 1) * limit;
-        return _handleGetRequest(() => api.get(`/api/fichas/publicas/feed?limit=${limit}&offset=${offset}`));
+        return _handleGetRequest(() => api.get(`/fichas/publicas/feed?limit=${limit}&offset=${offset}`));
     }, []);
     const searchFichas = useCallback((searchTerm, page = 1, limit = 10) => {
         const offset = (page - 1) * limit;
-        return _handleGetRequest(() => api.get(`/api/fichas/publicas/search?searchTerm=${searchTerm}&limit=${limit}&offset=${offset}`));
+        return _handleGetRequest(() => api.get(`/fichas/publicas/search?searchTerm=${searchTerm}&limit=${limit}&offset=${offset}`));
     }, []);
 
 
@@ -46,7 +46,7 @@ export const useFichas = () => {
         setError(null);
         try {
             // No devuelve datos, solo la respuesta completa de Axios
-            return await api.post('/api/fichas', fichaData);
+            return await api.post('/fichas', fichaData);
         } catch (err) {
             setError(err.response?.data?.message || 'Error al crear la ficha.');
             throw err; // Lanza el error para que handleSubmit lo atrape
@@ -60,7 +60,7 @@ export const useFichas = () => {
         setIsLoading(true);
         setError(null);
         try {
-            return await api.put(`/api/fichas/${id}`, fichaData);
+            return await api.put(`/fichas/${id}`, fichaData);
         } catch (err) {
             setError(err.response?.data?.message || 'Error al actualizar la ficha.');
             throw err;
@@ -73,7 +73,7 @@ export const useFichas = () => {
         setIsLoading(true);
         setError(null);
         try {
-            await api.delete(`/api/fichas/${id}`);
+            await api.delete(`/fichas/${id}`);
             toast.success("Ficha eliminada correctamente.");
             return true;
         } catch (err) {

@@ -27,7 +27,7 @@ export default function useEditFicha() {
 
     try {
       // Usamos el método PUT y enviamos el ID de la ficha en la URL
-      const res = await api.put(`/api/fichas/${id}`, data);
+      const res = await api.put(`/fichas/${id}`, data);
       
       console.log('Ficha editada con éxito:', res.data); // Log de éxito
       

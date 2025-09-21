@@ -71,7 +71,7 @@ const Register = () => {
         acepto_terminos: data.acepto_terminos,
       };
       console.log("Payload enviado al backend:", payload);
-      await api.post("/api/auth/register", payload);
+      await api.post("/auth/register", payload);
 
       toast.success(
         "Registro exitoso. Revisa tu correo para confirmar tu cuenta. Luego completa tus datos fiscales para facturar tus tickets desde Configuración."

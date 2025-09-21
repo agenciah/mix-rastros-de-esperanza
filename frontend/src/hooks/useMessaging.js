@@ -16,7 +16,7 @@ export const useMessaging = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.get('/api/messaging/conversations');
+            const response = await api.get('/messaging/conversations');
             setConversations(response.data);
         } catch (err) {
             setError('Error al cargar las conversaciones.');
@@ -31,7 +31,7 @@ export const useMessaging = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.get(`/api/messaging/conversations/${conversationId}/messages`);
+            const response = await api.get(`/messaging/conversations/${conversationId}/messages`);
             setMessages(response.data);
         } catch (err) {
             setError('Error al cargar los mensajes.');
@@ -45,7 +45,7 @@ export const useMessaging = () => {
     const sendMessage = useCallback(async (receiverId, content) => {
         setError(null);
         try {
-            const response = await api.post('/api/messaging/messages', { receiverId, content });
+            const response = await api.post('/messaging/messages', { receiverId, content });
             return response.data;
         } catch (err) {
             setError('Error al enviar el mensaje.');
@@ -58,7 +58,7 @@ export const useMessaging = () => {
     const markMessagesAsRead = useCallback(async (conversationId) => {
         try {
             // Este endpoint aún no existe, pero es buena práctica tener el frontend preparado
-            await api.put(`/api/messaging/conversations/${conversationId}/read`);
+            await api.put(`/messaging/conversations/${conversationId}/read`);
         } catch (err) {
             console.error('Error marking messages as read:', err);
         }
@@ -69,7 +69,7 @@ export const useMessaging = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.post('/api/messaging/conversations', { otherUserId });
+            const response = await api.post('/messaging/conversations', { otherUserId });
             const conversationId = response.data.conversationId;
 
             // Navega directamente a la conversación

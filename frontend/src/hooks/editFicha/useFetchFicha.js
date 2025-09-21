@@ -28,7 +28,7 @@ export default function useFetchFicha(id) {
     setData(null);
 
     try {
-      const res = await api.get(`/api/fichas/${id}`);
+      const res = await api.get(`/fichas/${id}`);
       console.log('Datos de la ficha obtenidos con éxito:', res.data);
       setData(res.data);
     } catch (err) {

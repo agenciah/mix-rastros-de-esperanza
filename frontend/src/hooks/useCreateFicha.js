@@ -17,7 +17,7 @@ export default function useCreateFicha() {
     setMatches([]);
 
     try {
-      const res = await api.post("/api/fichas", data);
+      const res = await api.post("/fichas", data);
       
       // Actualiza el estado del hook
       setSuccess(res.data.success);

@@ -18,7 +18,7 @@ const ForgotPassword = () => {
 
   const onSubmit = async (data) => {
     try {
-      await api.post('/api/auth/forgot-password', data)
+      await api.post('/auth/forgot-password', data)
       toast.success('Si el correo existe, recibirás un enlace para restablecer tu contraseña.')
     } catch (err) {
       toast.error('Ocurrió un error. Intenta nuevamente.')

@@ -28,7 +28,7 @@ export default function FichaFormLayout() {
     const planLimit = 3; // Límite para el plan básico
 
     useEffect(() => {
-        api.get('/api/fichas/user-stats')
+        api.get('/fichas/user-stats')
            .then(res => setActiveFichasCount(res.data.data.activeFichasCount))
            .catch(err => console.error("Error al verificar límite de fichas:", err))
            .finally(() => setLoadingCheck(false));

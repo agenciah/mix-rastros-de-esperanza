@@ -29,7 +29,7 @@ export const useHallazgos = () => {
         console.log("🚀 Iniciando solicitud para obtener hallazgos del usuario...");
         try {
             // Cambiar la URL para llamar a la nueva ruta
-            const response = await api.get('/api/hallazgos/by-user');
+            const response = await api.get('/hallazgos/by-user');
             // *** console.log después de una solicitud exitosa ***
             console.log("✅ Solicitud exitosa. Datos recibidos:", response.data.data);
             setHallazgos(response.data.data);
@@ -74,7 +74,7 @@ export const useHallazgos = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.get(`/api/hallazgos/${id}`);
+            const response = await api.get(`/hallazgos/${id}`);
             return response.data.data;
         } catch (err) {
             console.error(`❌ Error al obtener hallazgo con ID ${id}:`, err.response?.data || err.message);
@@ -90,7 +90,7 @@ export const useHallazgos = () => {
         setError(null);
         try {
             const dataWithUser = { ...hallazgoData, id_usuario_buscador: user.id };
-            const response = await api.post('/api/hallazgos', dataWithUser);
+            const response = await api.post('/hallazgos', dataWithUser);
             console.log("✅ Hallazgo creado con éxito:", response.data);
             fetchHallazgos();
             return true;
@@ -106,7 +106,7 @@ export const useHallazgos = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.put(`/api/hallazgos/${id}`, updatedData);
+            const response = await api.put(`/hallazgos/${id}`, updatedData);
             fetchHallazgos();
             return response.data;
         } catch (err) {
@@ -122,7 +122,7 @@ export const useHallazgos = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.delete(`/api/hallazgos/${id}`);
+            const response = await api.delete(`/hallazgos/${id}`);
             fetchHallazgos();
             return response.data;
         } catch (err) {
@@ -138,7 +138,7 @@ export const useHallazgos = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.get(`/api/hallazgos/buscar?searchTerm=${encodeURIComponent(searchTerm)}&id_usuario_buscador=${user.id}`);
+            const response = await api.get(`/hallazgos/buscar?searchTerm=${encodeURIComponent(searchTerm)}&id_usuario_buscador=${user.id}`);
             setHallazgos(response.data.data);
         } catch (err) {
             console.error("❌ Error al buscar hallazgos:", err.response?.data || err.message);

@@ -11,7 +11,7 @@ const CancelarCuentaSection = () => {
     try {
       setEnviando(true)
 
-      await api.post('/api/cancelaciones', {
+      await api.post('/cancelaciones', {
         motivo: 'Usuario solicitó la cancelación desde el frontend',
       })
 
@@ -28,7 +28,7 @@ const CancelarCuentaSection = () => {
   const handleRevertirCancelacion = async () => {
     try {
       setEnviando(true)
-      await api.post('/api/cancelaciones/revertir')
+      await api.post('/cancelaciones/revertir')
 
       toast.success('Cancelación revertida. Tu cuenta permanecerá activa.')
       setRevertir(false)

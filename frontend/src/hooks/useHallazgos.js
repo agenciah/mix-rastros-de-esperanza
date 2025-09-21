@@ -23,7 +23,7 @@ export const useHallazgos = (options = { fetchOnMount: false }) => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.get('/api/hallazgos/by-user');
+            const response = await api.get('/hallazgos/by-user');
             setHallazgos(response.data.data || []);
         } catch (err) {
             setError(err.response?.data?.message || 'Error al cargar tus hallazgos.');

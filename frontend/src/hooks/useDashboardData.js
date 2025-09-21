@@ -17,7 +17,7 @@ export const useDashboardData = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await api.get('/api/feed/dashboard');
+                const response = await api.get('/feed/dashboard');
 
                 
                 setData({

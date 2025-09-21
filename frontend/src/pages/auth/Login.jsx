@@ -31,7 +31,7 @@ const Login = () => {
       ...data,
       email: data.email.trim().toLowerCase()
     }
-      const res = await api.post('api/auth/login', payload)
+      const res = await api.post('/auth/login', payload)
       const { user, token } = res.data
 
       

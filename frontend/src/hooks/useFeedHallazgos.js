@@ -20,7 +20,7 @@ export const useFeedHallazgos = (limit = 12) => { // Aumentamos el límite a 12 
             const offset = (pageToFetch - 1) * limit;
             const params = { limit, offset, searchTerm: currentSearchTerm };
             
-            const response = await api.get('/api/hallazgos/feed/search', { params });
+            const response = await api.get('/hallazgos/feed/search', { params });
             const newHallazgos = response.data.data || [];
 
             setHallazgos(prev => pageToFetch === 1 ? newHallazgos : [...prev, ...newHallazgos]);
