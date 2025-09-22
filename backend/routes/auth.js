@@ -67,41 +67,36 @@ router.get('/bienvenida', authenticateToken, (req, res) => {
   res.json({ mensaje });
 });
 
+// RUTA: backend/routes/auth.js
+
 router.get('/confirm', async (req, res) => {
-  const { token } = req.query;
-  const usingSecret = process.env.JWT_CONFIRM_SECRET ? 'ENV' : 'DEFAULT';
-  console.log(`[CONFIRM] token len=${token?.length} prefix=${token?.slice(0, 12)}… secret=${usingSecret}`);
+    const { token } = req.query;
 
-
-
-  console.log("🔑 Token recibido:", token);
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_CONFIRM_SECRET || 'confirm_secret');
-    console.log("📧 Email decodificado:", decoded.email);
-
-    const db = await openDb(); // 👈 evita rutas hardcodeadas
-
-    const result = await db.run(
-      `UPDATE users SET email_confirmed = 1, confirmation_token = NULL WHERE email = ?`,
-      [decoded.email]
-    );
-    console.log(`[CONFIRM] UPDATE changes=${result.changes}`);
-
-    const row = await db.get(
-      `SELECT email, email_confirmed, confirmation_token FROM users WHERE email = ?`,
-      [decoded.email]
-    );
-    console.log(`[CONFIRM] after SELECT:`, row);
-
-     if (result.changes === 0) {
-      return res.status(404).send('No se encontró el usuario para confirmar.');
+    if (!token) {
+        return res.status(400).send('Token no proporcionado.');
     }
 
-    res.send('✅ Correo confirmado correctamente. Ya puedes iniciar sesión.');
-  } catch (err) {
-    res.status(400).send('❌ Token inválido o expirado.');
-  }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_CONFIRM_SECRET || 'confirm_secret');
+        const db = await openDb();
+
+        const result = await db.run(
+            `UPDATE users SET email_confirmed = 1, confirmation_token = NULL WHERE email = ? AND email_confirmed = 0`,
+            [decoded.email]
+        );
+
+        if (result.changes === 0) {
+            // Esto puede pasar si el token ya se usó o el usuario no existe.
+            return res.status(404).send('Token ya utilizado o usuario no encontrado.');
+        }
+
+        // Redirige al usuario a una página de éxito en el frontend
+        res.redirect(`${process.env.FRONTEND_URL}/login?confirmed=true`);
+
+    } catch (err) {
+        // Redirige a una página de error si el token es inválido/expirado
+        res.redirect(`${process.env.FRONTEND_URL}/login?error=token_invalido`);
+    }
 });
 
 router.get('/ruta-protegida', authenticateToken, (req, res) => {
