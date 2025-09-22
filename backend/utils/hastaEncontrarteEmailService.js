@@ -47,23 +47,41 @@ async function sendEmail(to, subject, htmlBody, textBody = '') {
 
 /** 📧 1. Confirmación de Cuenta */
 export async function sendHEConfirmationEmail(to, token) {
-    // ✅ "INSPECTOR" PARA VER LA VARIABLE EN RENDER
-    console.log(`🕵️  [EMAIL SERVICE] Valor de FRONTEND_URL: ${process.env.FRONTEND_URL}`);
-
     const subject = 'Confirma tu cuenta en Hasta Encontrarte';
     const link = `${process.env.FRONTEND_URL}/confirmar-email?token=${token}`;
     
-    console.log(`🔗  [EMAIL SERVICE] Link construido: ${link}`);
+    // ✅ Texto del correo en formato plano (para clientes antiguos)
+    const text = `Hola,\n\nGracias por registrarte. Por favor, confirma tu cuenta haciendo clic en el siguiente enlace:\n${link}\n\nSi no te registraste, por favor ignora este correo.\n\nEl equipo de Hasta Encontrarte.`;
 
-    const html = `<p>Hola,</p><p>Gracias por unirte a nuestra red de ayuda. Para activar tu cuenta, por favor haz clic en el siguiente enlace:</p><p style="text-align:center; margin: 20px 0;"><a href="${link}" style="background-color:#2563eb;color:white;padding:12px 20px;text-decoration:none;border-radius:5px;">Confirmar mi Cuenta</a></p><p>Si no te registraste, puedes ignorar este correo.</p>`;
-    return sendEmail(to, subject, '', html);
+    // ✅ HTML con el botón Y el enlace como texto de respaldo
+    const html = `
+        <p>Hola,</p>
+        <p>Gracias por unirte a nuestra red de ayuda. Para activar tu cuenta, por favor haz clic en el siguiente enlace:</p>
+        <p style="text-align:center; margin: 20px 0;">
+            <a href="${link}" style="background-color:#2563eb;color:white;padding:12px 20px;text-decoration:none;border-radius:5px;">Confirmar mi Cuenta</a>
+        </p>
+        <p>Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:</p>
+        <p style="font-size:12px; word-break:break-all;">${link}</p>
+        <p>Si no te registraste, puedes ignorar este correo.</p>
+    `;
+
+    return sendEmail(to, subject, text, html);
 }
 
-/** 📧 2. Recuperación de Contraseña */
 export async function sendHEResetPasswordEmail(to, resetUrl) {
     const subject = 'Recuperación de tu contraseña';
-    const html = `<p>Hola,</p><p>Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón para crear una nueva:</p><p style="text-align:center; margin: 20px 0;"><a href="${resetUrl}" style="background-color:#2563eb;color:white;padding:12px 20px;text-decoration:none;border-radius:5px;">Restablecer Contraseña</a></p><p>El enlace es válido por 30 minutos.</p>`;
-    return sendEmail(to, subject, '', html);
+    const text = `Hola,\n\nRecibimos una solicitud para restablecer tu contraseña. Haz clic en el enlace para continuar:\n${resetUrl}\n\nEl equipo de Hasta Encontrarte.`;
+    const html = `
+        <p>Hola,</p>
+        <p>Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón para crear una nueva:</p>
+        <p style="text-align:center; margin: 20px 0;">
+            <a href="${resetUrl}" style="background-color:#2563eb;color:white;padding:12px 20px;text-decoration:none;border-radius:5px;">Restablecer Contraseña</a>
+        </p>
+        <p>Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:</p>
+        <p style="font-size:12px; word-break:break-all;">${resetUrl}</p>
+        <p>El enlace es válido por 30 minutos.</p>
+    `;
+    return sendEmail(to, subject, text, html);
 }
 
 /** 📧 3. Notificación de Cambio de Contraseña */

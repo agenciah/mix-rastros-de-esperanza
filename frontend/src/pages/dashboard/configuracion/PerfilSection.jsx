@@ -207,7 +207,7 @@ const PerfilSection = () => {
                 <CardHeader>
                     <CardTitle>Donaciones para Mantenimiento de la Plataforma "Rastros de Esperanza"</CardTitle>
                     <CardDescription>
-                        Para mantener tu ficha activa después del primer mes, te pedimos una donación mensual, durante el tiempo que utilices la plataforma..
+                        La plataforma genera gastos mes a mes, pedimos de su apoyo para que pueda realizar una donación que esté en sus posibilidades con la finalidad de cubrir los costos asociados a la misma.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -215,20 +215,12 @@ const PerfilSection = () => {
                         <p className="text-sm text-blue-800">Tu Número de Referencia (úsalo en el concepto del pago):</p>
                         <p className="text-2xl font-bold text-blue-900 tracking-widest">{user?.numero_referencia_unico}</p>
                     </div>
-
-                    {loadingFichas ? (
-                        <p>Calculando monto sugerido...</p>
-                    ) : (
-                        <>
-                            <p>Fichas activas actualmente: <strong>{activeFichasCount}</strong></p>
-                            <p>Monto de donación: <strong className="text-xl">${monto_sugerido.toFixed(2)} MXN mensuales.</strong></p>
-                        </>
-                    )}
                     
                     <div className="pt-2">
-                        <p><strong>Banco:</strong> [Nombre de tu Banco]</p>
+                        <p><strong>Nombre:</strong>Manuel Alejandro Jimenez Fuentes</p>
+                        <p><strong>Banco:</strong> Mercado Pago w</p>
                         <p><strong>CLABE Interbancaria:</strong> [Tu número de CLABE]</p>
-                        <p><strong>Número de Tarjeta:</strong> [Tu número de tarjeta para depósitos]</p>
+                        
                     </div>
                 </CardContent>
             </Card>
