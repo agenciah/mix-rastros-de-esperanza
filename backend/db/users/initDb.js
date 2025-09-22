@@ -36,7 +36,7 @@ const TIPOS_LUGAR = [
 
 const PARTES_CUERPO = [
     { nombre: "Frente", categoria: "Cabeza" },
-    { nombre: "Pelo", categoria: "Cabeza" },
+    { nombre: "Cabello", categoria: "Cabeza" },
     { nombre: "Cejas", categoria: "Cabeza" },
     { nombre: "Ojos", categoria: "Cabeza" },
     { nombre: "Párpados", categoria: "Cabeza" },

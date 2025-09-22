@@ -53,7 +53,7 @@ const RoutesApp = () => {
     { path: 'terminos-condiciones', element: <TerminosCondiciones/> },
     { path: "/correo-enviado", element: <CorreoEnviado /> },
     { path: '/error-token', element: <ErrorToken/>},
-    { path: "/confirmar/:token", element: <ConfirmarToken /> },
+    { path: "/confirmar-email", element: <ConfirmarToken /> },
     { path: '/seleccionar-plan', element: <PlanSelector/>},
     { path: "/forgot-password", element: <ForgotPassword /> },
     { path: "/recuperar/:token", element: <ResetPassword /> },

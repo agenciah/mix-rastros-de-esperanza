@@ -91,11 +91,11 @@ router.get('/confirm', async (req, res) => {
         }
 
         // Redirige al usuario a una página de éxito en el frontend
-        res.redirect(`${process.env.FRONTEND_URL}/login?confirmed=true`);
+        res.redirect(`https://hastaencontrarte.lat/login?confirmed=true`);
 
     } catch (err) {
         // Redirige a una página de error si el token es inválido/expirado
-        res.redirect(`${process.env.FRONTEND_URL}/login?error=token_invalido`);
+        res.redirect(`https://hastaencontrarte.lat/login?error=token_invalido`);
     }
 });
 
