@@ -219,7 +219,7 @@ const PerfilSection = () => {
                     <div className="pt-2">
                         <p><strong>Nombre:</strong>Manuel Alejandro Jimenez Fuentes</p>
                         <p><strong>Banco:</strong> Mercado Pago w</p>
-                        <p><strong>CLABE Interbancaria:</strong> [Tu número de CLABE]</p>
+                        <p><strong>CLABE Interbancaria:</strong> 722969010691809473</p>
                         
                     </div>
                 </CardContent>

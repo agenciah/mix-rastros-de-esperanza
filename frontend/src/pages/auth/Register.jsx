@@ -74,7 +74,7 @@ const Register = () => {
       await api.post("/auth/register", payload);
 
       toast.success(
-        "Registro exitoso. Revisa tu correo para confirmar tu cuenta. Luego completa tus datos fiscales para facturar tus tickets desde Configuración."
+        "Registro exitoso. Revisa tu correo para confirmar tu cuenta. Y regresa al inicio de sesión para entrar a la plataforma."
       );
       localStorage.removeItem("planSeleccionado");
       localStorage.setItem("correoRegistrado", data.email);
