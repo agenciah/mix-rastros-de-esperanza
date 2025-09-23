@@ -69,30 +69,29 @@ router.get('/bienvenida', authenticateToken, (req, res) => {
 
 // RUTA: backend/routes/auth.js
 
+// ✅ RUTA DE CONFIRMACIÓN MIGRAD A POSTGRESQL
 router.get('/confirm', async (req, res) => {
     const { token } = req.query;
     if (!token) {
-        return res.status(400).json({ message: 'Token no proporcionado.' });
+        return res.status(400).send('Token no proporcionado.');
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_CONFIRM_SECRET || 'confirm_secret');
-        const db = await openDb();
+        const db = openDb();
 
-        const result = await db.run(
-            `UPDATE users SET email_confirmed = 1, confirmation_token = NULL WHERE email = ? AND email_confirmed = 0`,
+        const result = await db.query(
+            `UPDATE users SET email_confirmed = 1, confirmation_token = NULL WHERE email = $1 AND email_confirmed = 0`,
             [decoded.email]
         );
 
-        if (result.changes === 0) {
-            return res.status(404).json({ message: 'Token ya utilizado o usuario no encontrado.' });
+        if (result.rowCount === 0) {
+            return res.redirect(`${process.env.FRONTEND_URL}/login?error=token_invalido`);
         }
 
-        // ✅ CORRECCIÓN: En lugar de redirigir, enviamos una respuesta JSON de éxito.
-        res.status(200).json({ success: true, message: 'Correo confirmado correctamente.' });
+        res.redirect(`${process.env.FRONTEND_URL}/login?confirmed=true`);
 
     } catch (err) {
-        // ✅ CORRECCIÓN: Enviamos un error JSON.
-        res.status(400).json({ success: false, message: 'Token inválido o expirado.' });
+        res.redirect(`${process.env.FRONTEND_URL}/login?error=token_invalido`);
     }
 });
 
