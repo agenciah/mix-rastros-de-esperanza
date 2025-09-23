@@ -26,8 +26,8 @@ export const useFichas = () => {
     };
     
     // --- FUNCIONES DE LECTURA (GET) ---
-    const getMisFichas = useCallback(() => _handleGetRequest(() => api.get('/api/fichas/mis-fichas')), []);
-    const getFichaById = useCallback((id) => _handleGetRequest(() => api.get(`/api/fichas/${id}`)), []);
+    const getMisFichas = useCallback(() => _handleGetRequest(() => api.get('/fichas/mis-fichas')), []);
+    const getFichaById = useCallback((id) => _handleGetRequest(() => api.get(`/fichas/${id}`)), []);
     const getFichasFeed = useCallback((page = 1, limit = 10) => {
         const offset = (page - 1) * limit;
         return _handleGetRequest(() => api.get(`/fichas/publicas/feed?limit=${limit}&offset=${offset}`));
