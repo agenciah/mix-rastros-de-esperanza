@@ -1,67 +1,71 @@
-import { openDb } from '../../db/users/initDb.js'
-import { getAllUsuariosAdmin } from '../../db/admin/usuarios.js'
+import { openDb } from '../../db/users/initDb.js';
+import { getAllUsuariosAdmin } from '../../db/admin/usuarios.js';
+import logger from '../../utils/logger.js';
 
+/**
+ * Obtiene la lista de todos los usuarios para el dashboard de administrador.
+ * No necesita cambios ya que delega la lógica a un archivo de queries ya migrado.
+ */
 export async function obtenerUsuariosParaAdmin(req, res) {
-  try {
-    const usuarios = await getAllUsuariosAdmin()
-    return res.json(usuarios)
-  } catch (error) {
-    console.error('Error al obtener usuarios:', error)
-    return res.status(500).json({ message: 'Error interno del servidor' })
-  }
+    try {
+        const usuarios = await getAllUsuariosAdmin();
+        return res.json(usuarios);
+    } catch (error) {
+        logger.error(`❌ Error al obtener usuarios para admin: ${error.message}`);
+        return res.status(500).json({ message: 'Error interno del servidor' });
+    }
 }
 
+/**
+ * Actualiza los datos de un usuario desde el panel de administrador (Versión PostgreSQL).
+ */
 export async function actualizarUsuario(req, res) {
-  const { id } = req.params;
-  const {
-    nombre,
-    email,
-    telefono,
-    estado_republica,
-    role,
-    estado_suscripcion,
-    cancelado
-  } = req.body;
-
-  try {
-    const db = await openDb();
-
-    // Validar que el usuario exista
-    const usuarioExistente = await db.get('SELECT * FROM users WHERE id = ?', [id]);
-    if (!usuarioExistente) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-
-    // Actualizar campos relevantes para el dashboard de admin
-    await db.run(
-      `UPDATE users SET
-        nombre = ?,
-        email = ?,
-        telefono = ?,
-        estado_republica = ?,
-        role = ?,
-        estado_suscripcion = ?,
-        cancelado = ?
-      WHERE id = ?`,
-      [
+    const { id } = req.params;
+    const {
         nombre,
         email,
         telefono,
         estado_republica,
         role,
         estado_suscripcion,
-        cancelado,
-        id
-      ]
-    );
+        cancelado
+    } = req.body;
 
-    res.json({ message: 'Usuario actualizado correctamente' });
-  } catch (error) {
-    console.error('Error al actualizar usuario:', error);
-    res.status(500).json({ message: 'Error al actualizar usuario' });
-  }
+    try {
+        const db = openDb(); // Obtiene el pool de PostgreSQL
+
+        // 1. Validar que el usuario exista
+        const userResult = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+        if (userResult.rowCount === 0) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        // 2. Actualizar campos usando placeholders de PostgreSQL ($1, $2, etc.)
+        await db.query(
+            `UPDATE users SET
+                nombre = $1,
+                email = $2,
+                telefono = $3,
+                estado_republica = $4,
+                role = $5,
+                estado_suscripcion = $6,
+                cancelado = $7
+            WHERE id = $8`,
+            [
+                nombre,
+                email,
+                telefono,
+                estado_republica,
+                role,
+                estado_suscripcion,
+                cancelado,
+                id
+            ]
+        );
+
+        res.json({ message: 'Usuario actualizado correctamente' });
+    } catch (error) {
+        logger.error(`❌ Error al actualizar usuario ${id}: ${error.message}`);
+        res.status(500).json({ message: 'Error al actualizar usuario' });
+    }
 }
-
-
-
-

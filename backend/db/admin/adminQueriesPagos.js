@@ -1,14 +1,15 @@
-import { openDb } from "../users/initDb.js";
+// RUTA: backend/db/admin/adminQueriesPagos.js
 
-// AÑADE ESTA NUEVA FUNCIÓN A TUS QUERIES
+import { openDb } from "../users/initDb.js";
+import logger from '../../utils/logger.js';
 
 /**
  * Encuentra usuarios cuyo servicio ha expirado.
  * @returns {Promise<Array<object>>} - Array de usuarios con servicio vencido.
  */
 export const findUsersWithExpiredService = async () => {
-    const db = await openDb();
-    // Usamos la función date('now') de SQLite para obtener la fecha actual.
+    const db = openDb();
+    // Usamos CURRENT_DATE para obtener la fecha actual en PostgreSQL.
     const sql = `
         SELECT
             u.id,
@@ -18,13 +19,13 @@ export const findUsersWithExpiredService = async () => {
             es.fecha_fin
         FROM users AS u
         JOIN estado_servicio AS es ON u.id = es.user_id
-        WHERE es.fecha_fin < date('now');
+        WHERE es.fecha_fin < CURRENT_DATE;
     `;
     try {
-        const users = await db.all(sql);
-        return users;
+        const result = await db.query(sql);
+        return result.rows;
     } catch (error) {
-        logger.error(`❌ Error al encontrar usuarios con servicio expirado: ${error.message}`);
+        logger.error(`❌ Error al encontrar usuarios con servicio expirado (PostgreSQL): ${error.message}`);
         throw error;
     }
 };
@@ -36,31 +37,34 @@ export const findUsersWithExpiredService = async () => {
  * @returns {Promise<object>} - El resultado de la inserción.
  */
 export const marcarPagoComoRecibido = async (userId, monto) => {
-    const db = await openDb();
-    await db.exec('BEGIN TRANSACTION');
+    const db = openDb();
+    const client = await db.connect();
     try {
-        // 1. Inserta el registro del pago para el historial
-        const pagoResult = await db.run(
+        await client.query('BEGIN');
+        
+        // 1. Inserta el registro del pago usando RETURNING para obtener el ID
+        const pagoResult = await client.query(
             `INSERT INTO pagos (id_ficha, monto, estado_pago, fecha_pago, metodo_pago) 
-             VALUES (?, ?, 'completado', date('now'), 'manual')`,
-            // NOTA: Asumimos un pago por usuario, por lo que id_ficha puede ser el id del usuario
-            // o necesitaríamos buscar la ficha activa del usuario. Por simplicidad, usamos userId.
+             VALUES ($1, $2, 'completado', CURRENT_DATE, 'manual')
+             RETURNING id_pago`,
             [userId, monto] 
         );
 
-        // 2. Actualiza la fecha de fin de servicio del usuario a un mes en el futuro
-        await db.run(
-            `UPDATE estado_servicio SET fecha_fin = date('now', '+1 month') WHERE user_id = ?`,
+        // 2. Actualiza la fecha de fin de servicio a un mes en el futuro
+        await client.query(
+            `UPDATE estado_servicio SET fecha_fin = NOW() + INTERVAL '1 month' WHERE user_id = $1`,
             [userId]
         );
 
-        await db.exec('COMMIT');
-        return { success: true, pagoId: pagoResult.lastID };
+        await client.query('COMMIT');
+        return { success: true, pagoId: pagoResult.rows[0].id_pago };
 
     } catch (error) {
-        await db.exec('ROLLBACK');
-        logger.error(`❌ Error al marcar pago para usuario ${userId}: ${error.message}`);
+        await client.query('ROLLBACK');
+        logger.error(`❌ Error al marcar pago para usuario ${userId} (PostgreSQL): ${error.message}`);
         throw error;
+    } finally {
+        client.release();
     }
 };
 
@@ -69,18 +73,19 @@ export const marcarPagoComoRecibido = async (userId, monto) => {
  * @returns {Promise<Array<object>>} - Lista de pagos recientes.
  */
 export const getPagosRecientes = async () => {
-    const db = await openDb();
+    const db = openDb();
     const sql = `
         SELECT p.id_pago, p.fecha_pago, p.monto, u.id as userId, u.nombre
         FROM pagos p
-        JOIN users u ON p.id_ficha = u.id -- Ajustar si la relación es diferente
-        WHERE p.metodo_pago = 'manual' AND p.fecha_pago >= date('now', '-1 day')
+        JOIN users u ON p.id_ficha = u.id -- Asume que id_ficha es userId
+        WHERE p.metodo_pago = 'manual' AND p.fecha_pago >= NOW() - INTERVAL '1 day'
         ORDER BY p.fecha_pago DESC;
     `;
     try {
-        return await db.all(sql);
+        const result = await db.query(sql);
+        return result.rows;
     } catch (error) {
-        logger.error(`❌ Error al obtener pagos recientes: ${error.message}`);
+        logger.error(`❌ Error al obtener pagos recientes (PostgreSQL): ${error.message}`);
         throw error;
     }
 };
@@ -91,29 +96,32 @@ export const getPagosRecientes = async () => {
  * @returns {Promise<object>} - El resultado de la operación.
  */
 export const revertirPagoValidado = async (pagoId) => {
-    const db = await openDb();
-    await db.exec('BEGIN TRANSACTION');
+    const db = openDb();
+    const client = await db.connect();
     try {
-        // Obtenemos el userId antes de borrar el pago
-        const pago = await db.get('SELECT id_ficha FROM pagos WHERE id_pago = ?', [pagoId]);
-        if (!pago) throw new Error('Pago no encontrado');
-        const userId = pago.id_ficha;
+        await client.query('BEGIN');
+        
+        const pagoResult = await client.query('SELECT id_ficha FROM pagos WHERE id_pago = $1', [pagoId]);
+        if (pagoResult.rowCount === 0) throw new Error('Pago no encontrado');
+        const userId = pagoResult.rows[0].id_ficha;
 
         // 1. Elimina el registro del pago
-        await db.run('DELETE FROM pagos WHERE id_pago = ?', [pagoId]);
+        await client.query('DELETE FROM pagos WHERE id_pago = $1', [pagoId]);
 
-        // 2. Retrocede la fecha de fin de servicio para que vuelva a aparecer como pendiente
-        await db.run(
-            `UPDATE estado_servicio SET fecha_fin = date('now', '-1 month') WHERE user_id = ?`,
+        // 2. Retrocede la fecha de fin de servicio
+        await client.query(
+            `UPDATE estado_servicio SET fecha_fin = NOW() - INTERVAL '1 month' WHERE user_id = $1`,
             [userId]
         );
         
-        await db.exec('COMMIT');
+        await client.query('COMMIT');
         return { success: true };
 
     } catch (error) {
-        await db.exec('ROLLBACK');
-        logger.error(`❌ Error al revertir el pago ${pagoId}: ${error.message}`);
+        await client.query('ROLLBACK');
+        logger.error(`❌ Error al revertir el pago ${pagoId} (PostgreSQL): ${error.message}`);
         throw error;
+    } finally {
+        client.release();
     }
 };

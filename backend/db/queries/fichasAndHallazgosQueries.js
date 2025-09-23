@@ -1,16 +1,16 @@
 import { openDb } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
-import { getHallazgoCompletoById } from '../queries/hallazgosQueries.js'
+// Asumimos que hallazgosQueries.js también será migrado
+import { getHallazgoCompletoById } from './hallazgosQueries.js';
 
 /**
- * Obtiene una ficha completa por su ID. VERSIÓN MEJORADA Y EXPLÍCITA.
+ * Obtiene una ficha completa por su ID (Versión PostgreSQL).
  * @param {number} id - El ID de la ficha a buscar.
  * @returns {Promise<object | null>} - La ficha completa o null si no se encuentra.
  */
 export const getFichaCompletaById = async (id) => {
-    const db = await openDb();
+    const db = openDb(); // Obtiene el pool de PostgreSQL
 
-    // 1. Consulta principal con TODOS los campos listados explícitamente
     const fichaPrincipalSql = `
         SELECT
             fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,
@@ -22,52 +22,50 @@ export const getFichaCompletaById = async (id) => {
         FROM fichas_desaparicion AS fd
         LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
         LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
-        WHERE fd.id_ficha = ?;
+        WHERE fd.id_ficha = $1;
     `;
-    const ficha = await db.get(fichaPrincipalSql, [id]);
+    const rasgosSql = `SELECT * FROM ficha_rasgos_fisicos WHERE id_ficha = $1;`;
+    const vestimentaSql = `SELECT * FROM ficha_vestimenta WHERE id_ficha = $1;`;
 
-    if (!ficha) return null;
+    try {
+        const [fichaResult, rasgosResult, vestimentaResult] = await Promise.all([
+            db.query(fichaPrincipalSql, [id]),
+            db.query(rasgosSql, [id]),
+            db.query(vestimentaSql, [id])
+        ]);
 
-    // 2. Obtener rasgos (sin cambios)
-    const rasgosSql = `SELECT * FROM ficha_rasgos_fisicos WHERE id_ficha = ?;`;
-    const rasgos_fisicos = await db.all(rasgosSql, [id]);
+        if (fichaResult.rowCount === 0) {
+            return null;
+        }
 
-    // 3. Obtener vestimenta (sin cambios)
-    const vestimentaSql = `SELECT * FROM ficha_vestimenta WHERE id_ficha = ?;`;
-    const vestimenta = await db.all(vestimentaSql, [id]);
+        const ficha = fichaResult.rows[0];
+        const rasgos_fisicos = rasgosResult.rows;
+        const vestimenta = vestimentaResult.rows;
 
-    // 4. Unir y formatear el resultado
-    const { estado, municipio, localidad, calle, referencias, codigo_postal, ...restOfFicha } = ficha;
-    return {
-        ...restOfFicha,
-        ubicacion_desaparicion: { estado, municipio, localidad, calle, referencias, codigo_postal },
-        rasgos_fisicos: rasgos_fisicos || [],
-        vestimenta: vestimenta || []
-    };
+        const { estado, municipio, localidad, calle, referencias, codigo_postal, ...restOfFicha } = ficha;
+        return {
+            ...restOfFicha,
+            ubicacion_desaparicion: { estado, municipio, localidad, calle, referencias, codigo_postal },
+            rasgos_fisicos: rasgos_fisicos || [],
+            vestimenta: vestimenta || []
+        };
+    } catch (error) {
+        logger.error(`❌ Error en getFichaCompletaById (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 };
 
 /**
- * Busca fichas de desaparición basándose en múltiples criterios.
+ * Busca fichas de desaparición basándose en múltiples criterios (Versión PostgreSQL).
  * @param {object} params - Objeto con los parámetros de búsqueda.
- * @param {string} [params.nombre] - Nombre de la persona.
- * @param {string} [params.apellido] - Apellido de la persona.
- * @param {string} [params.estado] - Estado de desaparición.
- * @param {string} [params.municipio] - Municipio de desaparición.
- * @param {string} [params.genero] - Género de la persona.
- * @param {string} [params.edad_estimada_min] - Edad mínima.
- * @param {string} [params.edad_estimada_max] - Edad máxima.
- * @param {string} [params.fecha_desaparicion_inicio] - Fecha de inicio del rango.
- * @param {string} [params.fecha_desaparicion_fin] - Fecha de fin del rango.
- * @returns {Promise<Array<object>>} - Array de fichas que coinciden con los criterios.
+ * @returns {Promise<Array<object>>} - Array de fichas que coinciden.
  */
 export const searchFichas = async (params) => {
-    const db = await openDb();
+    const db = openDb();
     let query = `
         SELECT
             fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.apellido_materno,
-            fd.fecha_desaparicion,
-            fd.foto_perfil, -- ✅ CAMBIO: Campo de foto añadido
-            fd.estado_ficha,
+            fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha,
             fd.edad_estimada, fd.genero, fd.estatura, fd.peso, fd.complexion,
             u.estado, u.municipio
         FROM fichas_desaparicion AS fd
@@ -76,54 +74,45 @@ export const searchFichas = async (params) => {
 
     const conditions = [];
     const queryParams = [];
+    let paramIndex = 1;
 
-    // Condiciones de nombre y apellido
     if (params.nombre) {
-        conditions.push(`fd.nombre LIKE ?`);
+        conditions.push(`fd.nombre ILIKE $${paramIndex++}`); // ILIKE es case-insensitive en PostgreSQL
         queryParams.push(`%${params.nombre}%`);
     }
     if (params.apellido) {
-        conditions.push(`fd.apellido_paterno LIKE ? OR fd.apellido_materno LIKE ?`);
+        conditions.push(`(fd.apellido_paterno ILIKE $${paramIndex++} OR fd.apellido_materno ILIKE $${paramIndex++})`);
         queryParams.push(`%${params.apellido}%`, `%${params.apellido}%`);
     }
-
-    // Condiciones de ubicación
     if (params.estado) {
-        conditions.push(`u.estado = ?`);
+        conditions.push(`u.estado = $${paramIndex++}`);
         queryParams.push(params.estado);
     }
     if (params.municipio) {
-        conditions.push(`u.municipio = ?`);
+        conditions.push(`u.municipio = $${paramIndex++}`);
         queryParams.push(params.municipio);
     }
-
-    // Condiciones de género
     if (params.genero) {
-        conditions.push(`fd.genero = ?`);
+        conditions.push(`fd.genero = $${paramIndex++}`);
         queryParams.push(params.genero);
     }
-
-    // Condiciones de edad
     if (params.edad_estimada_min) {
-        conditions.push(`fd.edad_estimada >= ?`);
+        conditions.push(`fd.edad_estimada >= $${paramIndex++}`);
         queryParams.push(params.edad_estimada_min);
     }
     if (params.edad_estimada_max) {
-        conditions.push(`fd.edad_estimada <= ?`);
+        conditions.push(`fd.edad_estimada <= $${paramIndex++}`);
         queryParams.push(params.edad_estimada_max);
     }
-
-    // Condiciones de fecha
     if (params.fecha_desaparicion_inicio) {
-        conditions.push(`fd.fecha_desaparicion >= ?`);
+        conditions.push(`fd.fecha_desaparicion >= $${paramIndex++}`);
         queryParams.push(params.fecha_desaparicion_inicio);
     }
     if (params.fecha_desaparicion_fin) {
-        conditions.push(`fd.fecha_desaparicion <= ?`);
+        conditions.push(`fd.fecha_desaparicion <= $${paramIndex++}`);
         queryParams.push(params.fecha_desaparicion_fin);
     }
     
-    // Solo mostrar fichas activas por defecto
     conditions.push(`fd.estado_ficha = 'activa'`);
 
     if (conditions.length > 0) {
@@ -133,45 +122,40 @@ export const searchFichas = async (params) => {
     query += ` ORDER BY fd.fecha_desaparicion DESC`;
 
     try {
-        const result = await db.all(query, queryParams);
-        return result;
+        const result = await db.query(query, queryParams);
+        return result.rows;
     } catch (error) {
-        logger.error(`❌ Error en la búsqueda de fichas: ${error.message}`);
+        logger.error(`❌ Error en la búsqueda de fichas (PostgreSQL): ${error.message}`);
         throw error;
     }
 };
 
 /**
- * Obtiene todos los hallazgos completos. VERSIÓN MEJORADA.
+ * Obtiene todos los hallazgos completos (Versión PostgreSQL).
  * @returns {Promise<Array<object>>} - Lista de hallazgos completos.
  */
 export const getAllHallazgosCompletos = async () => {
     const db = await openDb();
     
-    // 1. Obtenemos solo los IDs de los hallazgos activos.
-    const hallazgosIds = await db.all(`
-        SELECT id_hallazgo FROM hallazgos WHERE estado_hallazgo = 'activo'
-    `);
+    const hallazgosIdsResult = await db.query(`SELECT id_hallazgo FROM hallazgos WHERE estado_hallazgo = 'encontrado'`);
+    const hallazgosIds = hallazgosIdsResult.rows;
 
     if (!hallazgosIds || hallazgosIds.length === 0) {
         return [];
     }
-
-    // 2. Para cada ID, usamos la función maestra 'getHallazgoCompletoById'
-    // (Asegúrate de que esta función exista en tu archivo de queries de hallazgos).
+    
     const hallazgosPromises = hallazgosIds.map(h => getHallazgoCompletoById(h.id_hallazgo));
     const hallazgosCompletos = await Promise.all(hallazgosPromises);
 
-    return hallazgosCompletos.filter(Boolean); // Filtramos por si alguno fue nulo
+    return hallazgosCompletos.filter(Boolean);
 };
 
 /**
- * Obtiene una ficha de desaparición con todos sus detalles para el admin. VERSIÓN MEJORADA.
+ * Obtiene una ficha de desaparición con detalles para el admin (Versión PostgreSQL).
  */
 export const getFichaCompletaByIdAdmin = async (id_ficha) => {
-    const db = await openDb();
+    const db = openDb();
     
-    // La consulta principal se queda igual, ya es bastante completa.
     const fichaSql = `
         SELECT
             fd.*,
@@ -181,52 +165,46 @@ export const getFichaCompletaByIdAdmin = async (id_ficha) => {
         FROM fichas_desaparicion AS fd
         LEFT JOIN users AS u ON fd.id_usuario_creador = u.id
         LEFT JOIN ubicaciones AS ubicacion ON fd.id_ubicacion_desaparicion = ubicacion.id_ubicacion
-        WHERE fd.id_ficha = ?;
+        WHERE fd.id_ficha = $1;
     `;
-    const ficha = await db.get(fichaSql, [id_ficha]);
-    if (!ficha) return null;
-
-    // Las consultas de rasgos y vestimenta se quedan igual.
-    const rasgosSql = `SELECT * FROM ficha_rasgos_fisicos WHERE id_ficha = ?;`;
-    const vestimentaSql = `SELECT * FROM ficha_vestimenta WHERE id_ficha = ?;`;
+    const rasgosSql = `SELECT * FROM ficha_rasgos_fisicos WHERE id_ficha = $1;`;
+    const vestimentaSql = `SELECT * FROM ficha_vestimenta WHERE id_ficha = $1;`;
     
-    const [rasgos, vestimenta] = await Promise.all([
-        db.all(rasgosSql, [id_ficha]),
-        db.all(vestimentaSql, [id_ficha])
-    ]);
+    try {
+        const [fichaResult, rasgosResult, vestimentaResult] = await Promise.all([
+            db.query(fichaSql, [id_ficha]),
+            db.query(rasgosSql, [id_ficha]),
+            db.query(vestimentaSql, [id_ficha])
+        ]);
 
-    // ✅ CAMBIO: Formateamos el objeto final para anidar la ubicación.
-    const { estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal, ...restOfFicha } = ficha;
-    
-    return {
-        ...restOfFicha,
-        ubicacion_desaparicion: { estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal },
-        rasgos_fisicos: rasgos,
-        vestimenta: vestimenta,
-    };
+        if (fichaResult.rowCount === 0) return null;
+
+        const ficha = fichaResult.rows[0];
+        const { estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal, ...restOfFicha } = ficha;
+        
+        return {
+            ...restOfFicha,
+            ubicacion_desaparicion: { estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal },
+            rasgos_fisicos: rasgosResult.rows,
+            vestimenta: vestimentaResult.rows,
+        };
+    } catch (error) {
+        logger.error(`❌ Error en getFichaCompletaByIdAdmin (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 };
 
 /**
- * Busca hallazgos basándose en múltiples criterios.
+ * Busca hallazgos basándose en múltiples criterios (Versión PostgreSQL).
  * @param {object} params - Objeto con los parámetros de búsqueda.
- * @param {string} [params.nombre] - Nombre de la persona encontrada.
- * @param {string} [params.apellido] - Apellido de la persona encontrada.
- * @param {string} [params.estado] - Estado del hallazgo.
- * @param {string} [params.municipio] - Municipio del hallazgo.
- * @param {string} [params.genero] - Género de la persona.
- * @param {string} [params.edad_estimada_min] - Edad mínima.
- * @param {string} [params.edad_estimada_max] - Edad máxima.
- * @param {string} [params.fecha_hallazgo_inicio] - Fecha de inicio del rango.
- * @param {string} [params.fecha_hallazgo_fin] - Fecha de fin del rango.
- * @returns {Promise<Array<object>>} - Array de hallazgos que coinciden con los criterios.
+ * @returns {Promise<Array<object>>} - Array de hallazgos que coinciden.
  */
 export const searchHallazgos = async (params) => {
-    const db = await openDb();
+    const db = openDb();
     let query = `
         SELECT
             h.id_hallazgo, h.nombre, h.apellido_paterno, h.apellido_materno,
             h.fecha_hallazgo, h.foto_hallazgo, h.descripcion_general_hallazgo, h.estado_hallazgo,
-            -- Campos nuevos para el resultado de la búsqueda
             h.edad_estimada, h.genero, h.estatura, h.peso, h.complexion,
             u.estado, u.municipio
         FROM hallazgos AS h
@@ -235,55 +213,46 @@ export const searchHallazgos = async (params) => {
 
     const conditions = [];
     const queryParams = [];
+    let paramIndex = 1;
 
-    // Condiciones de nombre y apellido
     if (params.nombre) {
-        conditions.push(`h.nombre LIKE ?`);
+        conditions.push(`h.nombre ILIKE $${paramIndex++}`);
         queryParams.push(`%${params.nombre}%`);
     }
     if (params.apellido) {
-        conditions.push(`h.apellido_paterno LIKE ? OR h.apellido_materno LIKE ?`);
+        conditions.push(`(h.apellido_paterno ILIKE $${paramIndex++} OR h.apellido_materno ILIKE $${paramIndex++})`);
         queryParams.push(`%${params.apellido}%`, `%${params.apellido}%`);
     }
-
-    // Condiciones de ubicación
     if (params.estado) {
-        conditions.push(`u.estado = ?`);
+        conditions.push(`u.estado = $${paramIndex++}`);
         queryParams.push(params.estado);
     }
     if (params.municipio) {
-        conditions.push(`u.municipio = ?`);
+        conditions.push(`u.municipio = $${paramIndex++}`);
         queryParams.push(params.municipio);
     }
-
-    // Condiciones de género
     if (params.genero) {
-        conditions.push(`h.genero = ?`);
+        conditions.push(`h.genero = $${paramIndex++}`);
         queryParams.push(params.genero);
     }
-
-    // Condiciones de edad
     if (params.edad_estimada_min) {
-        conditions.push(`h.edad_estimada >= ?`);
+        conditions.push(`h.edad_estimada >= $${paramIndex++}`);
         queryParams.push(params.edad_estimada_min);
     }
     if (params.edad_estimada_max) {
-        conditions.push(`h.edad_estimada <= ?`);
+        conditions.push(`h.edad_estimada <= $${paramIndex++}`);
         queryParams.push(params.edad_estimada_max);
     }
-
-    // Condiciones de fecha
     if (params.fecha_hallazgo_inicio) {
-        conditions.push(`h.fecha_hallazgo >= ?`);
+        conditions.push(`h.fecha_hallazgo >= $${paramIndex++}`);
         queryParams.push(params.fecha_hallazgo_inicio);
     }
     if (params.fecha_hallazgo_fin) {
-        conditions.push(`h.fecha_hallazgo <= ?`);
+        conditions.push(`h.fecha_hallazgo <= $${paramIndex++}`);
         queryParams.push(params.fecha_hallazgo_fin);
     }
     
-    // Solo mostrar hallazgos activos por defecto
-    conditions.push(`h.estado_hallazgo = 'activo'`);
+    conditions.push(`h.estado_hallazgo = 'encontrado'`);
 
     if (conditions.length > 0) {
         query += ` WHERE ` + conditions.join(' AND ');
@@ -292,183 +261,139 @@ export const searchHallazgos = async (params) => {
     query += ` ORDER BY h.fecha_hallazgo DESC`;
 
     try {
-        const result = await db.all(query, queryParams);
-        return result;
+        const result = await db.query(query, queryParams);
+        return result.rows;
     } catch (error) {
-        logger.error(`❌ Error en la búsqueda de hallazgos: ${error.message}`);
+        logger.error(`❌ Error en la búsqueda de hallazgos (PostgreSQL): ${error.message}`);
         throw error;
     }
 };
 
 /**
- * Obtiene todos los catálogos necesarios para los formularios de hallazgos.
+ * Obtiene todos los catálogos (Versión PostgreSQL).
  * @returns {Promise<object>} - Un objeto con arrays de los catálogos.
  */
 export const getAllHallazgosCatalogos = async () => {
-    const db = await openDb();
-
+    const db = openDb();
     try {
-        const tiposLugar = await db.all(`SELECT id_tipo_lugar, nombre_tipo FROM catalogo_tipo_lugar ORDER BY nombre_tipo`);
-        const partesCuerpo = await db.all(`SELECT id_parte_cuerpo, nombre_parte, categoria_principal FROM catalogo_partes_cuerpo ORDER BY nombre_parte`);
-        const prendas = await db.all(`SELECT id_prenda, tipo_prenda, categoria_general FROM catalogo_prendas ORDER BY tipo_prenda`);
+        const [tiposLugarResult, partesCuerpoResult, prendasResult] = await Promise.all([
+            db.query(`SELECT id_tipo_lugar, nombre_tipo FROM catalogo_tipo_lugar ORDER BY nombre_tipo`),
+            db.query(`SELECT id_parte_cuerpo, nombre_parte, categoria_principal FROM catalogo_partes_cuerpo ORDER BY nombre_parte`),
+            db.query(`SELECT id_prenda, tipo_prenda, categoria_general FROM catalogo_prendas ORDER BY tipo_prenda`)
+        ]);
         
         return {
-            tiposLugar,
-            partesCuerpo,
-            prendas
+            tiposLugar: tiposLugarResult.rows,
+            partesCuerpo: partesCuerpoResult.rows,
+            prendas: prendasResult.rows
         };
     } catch (error) {
-        logger.error(`❌ Error al obtener catálogos para hallazgos: ${error.message}`);
+        logger.error(`❌ Error al obtener catálogos (PostgreSQL): ${error.message}`);
         throw error;
     }
 };
 
 /**
- * Busca hallazgos por un término de búsqueda general, incluyendo nombres, descripciones, rasgos y vestimenta.
- * @param {string} searchTerm - El término de búsqueda.
- * @param {number} [limit=20] - Límite de resultados.
- * @param {number} [offset=0] - Offset de resultados.
- * @returns {Promise<Array<object>>} - Array de hallazgos que coinciden con la búsqueda.
+ * Busca hallazgos por un término de búsqueda general (Versión PostgreSQL).
+ * @returns {Promise<Array<object>>} - Array de hallazgos que coinciden.
  */
-// Reemplaza la función completa con esta versión definitiva
 export const searchHallazgosByKeyword = async (searchTerm = '', limit = 20, offset = 0) => {
-    const db = await openDb();
-    
+    const db = openDb();
     const sqlTerm = `%${searchTerm.toLowerCase()}%`;
 
+    // ✅ CORRECCIÓN: La consulta ahora usa placeholders posicionales ($1, $2, etc.)
     const hallazgosSql = `
-        SELECT 
+        SELECT DISTINCT
             h.id_hallazgo, h.nombre, h.segundo_nombre, h.apellido_paterno, 
             h.apellido_materno, h.fecha_hallazgo, h.descripcion_general_hallazgo,
             h.edad_estimada, h.genero, h.estatura, h.complexion, h.peso,
-            u.estado, u.municipio, u.localidad
+            u.estado, u.municipio, u.localidad, h.foto_hallazgo
         FROM hallazgos AS h
-        -- Joins que ya teníamos
         LEFT JOIN ubicaciones AS u ON h.id_ubicacion_hallazgo = u.id_ubicacion
         LEFT JOIN hallazgo_vestimenta AS hv ON h.id_hallazgo = hv.id_hallazgo
         LEFT JOIN catalogo_prendas AS cp ON hv.id_prenda = cp.id_prenda
-        -- ===================================================================
-        -- NUEVOS JOINS PARA BÚSQUEDA EXHAUSTIVA
-        -- ===================================================================
         LEFT JOIN catalogo_tipo_lugar AS ctl ON h.id_tipo_lugar_hallazgo = ctl.id_tipo_lugar
         LEFT JOIN hallazgo_caracteristicas AS hc ON h.id_hallazgo = hc.id_hallazgo
         LEFT JOIN catalogo_partes_cuerpo AS cpc ON hc.id_parte_cuerpo = cpc.id_parte_cuerpo
-        -- ===================================================================
-        WHERE ( 
-            -- === Parte 1: Datos Generales del Hallazgo ===
-            LOWER(h.nombre) LIKE ? OR
-            LOWER(h.segundo_nombre) LIKE ? OR
-            LOWER(h.apellido_paterno) LIKE ? OR
-            LOWER(h.apellido_materno) LIKE ? OR
-            LOWER(h.descripcion_general_hallazgo) LIKE ? OR
-            LOWER(h.genero) LIKE ? OR
-            LOWER(h.complexion) LIKE ? OR
-            CAST(h.edad_estimada AS TEXT) LIKE ? OR
-            CAST(h.estatura AS TEXT) LIKE ? OR
-            CAST(h.peso AS TEXT) LIKE ? OR
-            LOWER(u.estado) LIKE ? OR
-            LOWER(u.municipio) LIKE ? OR
-            LOWER(ctl.nombre_tipo) LIKE ? OR -- <-- Búsqueda en Tipo de Lugar del Catálogo
-
-            -- === Parte 2: Rasgos Físicos ===
-            LOWER(cpc.nombre_parte) LIKE ? OR -- <-- Búsqueda en Parte del Cuerpo del Catálogo
-            LOWER(hc.tipo_caracteristica) LIKE ? OR
-            LOWER(hc.descripcion) LIKE ? OR
-
-            -- === Parte 3: Vestimenta ===
-            LOWER(cp.tipo_prenda) LIKE ? OR -- <-- Búsqueda en Tipo de Prenda del Catálogo
-            LOWER(hv.color) LIKE ? OR
-            LOWER(hv.marca) LIKE ? OR -- <-- Campo que faltaba
-            LOWER(hv.caracteristica_especial) LIKE ? -- <-- Campo que faltaba
-        )
-        GROUP BY h.id_hallazgo
+        WHERE 
+            h.nombre ILIKE $1 OR
+            h.segundo_nombre ILIKE $2 OR
+            h.apellido_paterno ILIKE $3 OR
+            h.apellido_materno ILIKE $4 OR
+            h.descripcion_general_hallazgo ILIKE $5 OR
+            h.genero ILIKE $6 OR
+            h.complexion ILIKE $7 OR
+            CAST(h.edad_estimada AS TEXT) ILIKE $8 OR
+            CAST(h.estatura AS TEXT) ILIKE $9 OR
+            CAST(h.peso AS TEXT) ILIKE $10 OR
+            u.estado ILIKE $11 OR
+            u.municipio ILIKE $12 OR
+            ctl.nombre_tipo ILIKE $13 OR
+            cpc.nombre_parte ILIKE $14 OR
+            hc.tipo_caracteristica ILIKE $15 OR
+            hc.descripcion ILIKE $16 OR
+            cp.tipo_prenda ILIKE $17 OR
+            hv.color ILIKE $18 OR
+            hv.marca ILIKE $19 OR
+            hv.caracteristica_especial ILIKE $20
+        GROUP BY h.id_hallazgo, u.estado, u.municipio, u.localidad
         ORDER BY h.fecha_hallazgo DESC
-        LIMIT ? OFFSET ?;
+        LIMIT $21 OFFSET $22;
     `;
     
-    // Lista de parámetros actualizada para coincidir con cada '?' en la consulta
-    const params = [
-        // Parte 1 (13 params)
-        sqlTerm, sqlTerm, sqlTerm, sqlTerm, sqlTerm, sqlTerm, sqlTerm, sqlTerm, 
-        sqlTerm, sqlTerm, sqlTerm, sqlTerm, sqlTerm,
-        // Parte 2 (3 params)
-        sqlTerm, sqlTerm, sqlTerm,
-        // Parte 3 (4 params)
-        sqlTerm, sqlTerm, sqlTerm, sqlTerm,
-        // Paginación (2 params)
-        limit, offset
-    ];
-
-    console.log(`[Query] SQL a ejecutar (Exhaustivo): \n`, hallazgosSql);
-    console.log(`[Query] Parámetros (${params.length}):`, params);
+    // ✅ CORRECCIÓN: El array de parámetros ahora tiene un valor para cada placeholder
+    const params = Array(20).fill(sqlTerm).concat([limit, offset]);
 
     try {
-        const hallazgosResult = await db.all(hallazgosSql, params);
-        console.log(`[Query] Resultados de la consulta SQL:`, hallazgosResult);
-        return hallazgosResult;
+        const hallazgosResult = await db.query(hallazgosSql, params);
+        return hallazgosResult.rows;
     } catch (error) {
-        console.error(`❌ Error en la consulta SQL: ${error.message}`);
+        logger.error(`❌ Error en la consulta SQL exhaustiva (PostgreSQL): ${error.message}`);
         throw error;
     }
 };
 
 /**
- * Obtiene una lista paginada de fichas públicas para el feed. VERSIÓN MEJORADA.
- * @param {number} limit - El número de fichas a devolver.
- * @param {number} offset - El punto de inicio para la paginación.
+ * Obtiene una lista paginada de fichas públicas para el feed (Versión PostgreSQL).
  * @returns {Promise<Array<object>>} - Un array de fichas para el feed.
  */
 export const getAllPublicFichas = async (limit = 10, offset = 0) => {
-    const db = await openDb();
-    // Esta consulta es un balance: trae los campos más importantes para una tarjeta
-    // sin ser tan pesada como una consulta de detalles completos.
+    const db = openDb();
     const sql = `
         SELECT
-            fd.id_ficha,
-            fd.nombre,
-            fd.segundo_nombre,
-            fd.apellido_paterno,
-            fd.apellido_materno,
-            fd.fecha_desaparicion,
-            fd.foto_perfil,
-            fd.genero,
-            fd.edad_estimada,
-            u.estado,
-            u.municipio
+            fd.id_ficha, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,
+            fd.apellido_materno, fd.fecha_desaparicion, fd.foto_perfil,
+            fd.genero, fd.edad_estimada, u.estado, u.municipio
         FROM fichas_desaparicion AS fd
         LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
-        WHERE
-            fd.estado_ficha = 'activa' 
+        WHERE fd.estado_ficha = 'activa' 
         ORDER BY fd.fecha_desaparicion DESC
-        LIMIT ? OFFSET ?;
+        LIMIT $1 OFFSET $2;
     `;
     
     try {
-        const fichas = await db.all(sql, [limit, offset]);
-        return fichas;
+        const result = await db.query(sql, [limit, offset]);
+        return result.rows;
     } catch (error) {
-        logger.error(`❌ Error al obtener las fichas públicas del feed: ${error.message}`);
+        logger.error(`❌ Error al obtener las fichas públicas del feed (PostgreSQL): ${error.message}`);
         throw error;
     }
 };
 
 /**
- * Cuenta el número de fichas activas para un usuario específico.
+ * Cuenta el número de fichas activas para un usuario específico (Versión PostgreSQL).
  * @param {number} userId - El ID del usuario.
  * @returns {Promise<number>} - El número de fichas activas.
  */
 export const countActiveFichasByUserId = async (userId) => {
-    const db = await openDb();
-    const sql = `
-        SELECT COUNT(*) AS count 
-        FROM fichas_desaparicion 
-        WHERE id_usuario_creador = ? AND estado_ficha = 'activa';
-    `;
+    const db = openDb();
+    const sql = `SELECT COUNT(*) AS count FROM fichas_desaparicion WHERE id_usuario_creador = $1 AND estado_ficha = 'activa';`;
     try {
-        const result = await db.get(sql, [userId]);
-        return result.count || 0;
+        const result = await db.query(sql, [userId]);
+        return parseInt(result.rows[0].count, 10) || 0;
     } catch (error) {
-        logger.error(`❌ Error al contar las fichas activas del usuario ${userId}: ${error.message}`);
+        logger.error(`❌ Error al contar las fichas activas del usuario (PostgreSQL): ${error.message}`);
         throw error;
     }
 };
+

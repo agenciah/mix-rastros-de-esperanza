@@ -1,61 +1,59 @@
-// backend/controllers/feed/feedStatsController.js
+// RUTA: backend/controllers/feed/feedStatsController.js
 
 import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 
-export const getStatsData = async () => {
-    let db;
+export const getStatsData = async (req, res) => {
     try {
-        db = await openDb();
+        const db = openDb(); // Obtiene el pool de PostgreSQL
 
-        // 1. Estadísticas globales (sin cambios, esto ya funciona)
-        const totalFichas = await db.get(`SELECT COUNT(*) as count FROM fichas_desaparicion`);
-        const totalHallazgos = await db.get(`SELECT COUNT(*) as count FROM hallazgos`);
-        const totalCoincidencias = await db.get(`SELECT COUNT(*) as count FROM coincidencias_confirmadas`);
-        
-        // 2. Últimos casos de éxito (sin cambios, esto ya funciona)
-        const casosEncontrados = await db.all(`
-            SELECT 
-                id_ficha,
-                nombre,
-                apellido_paterno
-            FROM fichas_desaparicion
-            WHERE estado_ficha = 'encontrado'
-            ORDER BY fecha_registro_encontrado DESC
-            LIMIT 5;
-        `);
+        // Ejecutamos todas las consultas en paralelo para mayor eficiencia
+        const [
+            totalFichasResult,
+            totalHallazgosResult,
+            totalCoincidenciasResult,
+            casosEncontradosResult,
+            actividadRecienteResult
+        ] = await Promise.all([
+            db.query(`SELECT COUNT(*) as count FROM fichas_desaparicion`),
+            db.query(`SELECT COUNT(*) as count FROM hallazgos`),
+            db.query(`SELECT COUNT(*) as count FROM coincidencias_confirmadas`),
+            db.query(`
+                SELECT id_ficha, nombre, apellido_paterno
+                FROM fichas_desaparicion
+                WHERE estado_ficha = 'encontrado'
+                ORDER BY fecha_registro_encontrado DESC
+                LIMIT 5;
+            `),
+            db.query(`
+                SELECT
+                    'hallazgo' AS tipo,
+                    id_hallazgo AS id,
+                    nombre,
+                    apellido_paterno,
+                    fecha_hallazgo AS fecha
+                FROM hallazgos
+                ORDER BY fecha_hallazgo DESC
+                LIMIT 3;
+            `)
+        ]);
 
-        // ✅ CORRECCIÓN AQUÍ: Obtener los últimos 3 hallazgos
-        const actividadReciente = await db.all(`
-            SELECT
-                'hallazgo' AS tipo,
-                id_hallazgo AS id,
-                nombre,
-                apellido_paterno,
-                fecha_hallazgo AS fecha
-            FROM hallazgos
-            ORDER BY fecha_hallazgo DESC
-            LIMIT 3;
-        `);
-
+        // Procesamos los resultados de las consultas
         const statsData = {
             globalStats: {
-                totalFichas: totalFichas.count,
-                totalHallazgos: totalHallazgos.count,
-                casosResueltos: totalCoincidencias.count
+                totalFichas: parseInt(totalFichasResult.rows[0].count, 10),
+                totalHallazgos: parseInt(totalHallazgosResult.rows[0].count, 10),
+                casosResueltos: parseInt(totalCoincidenciasResult.rows[0].count, 10)
             },
-            casosEncontrados,
-            actividadReciente
+            casosEncontrados: casosEncontradosResult.rows,
+            actividadReciente: actividadRecienteResult.rows
         };
 
-        return statsData;
+        // Envolvemos la respuesta en un objeto `data` para consistencia
+        res.json({ success: true, data: statsData });
 
     } catch (error) {
-        logger.error(`❌ Error al obtener estadísticas del feed: ${error.message}`);
-        return {
-            globalStats: {},
-            casosEncontrados: [],
-            actividadReciente: []
-        };
+        logger.error(`❌ Error al obtener estadísticas del feed (PostgreSQL): ${error.message}`);
+        res.status(500).json({ success: false, message: 'Error al obtener las estadísticas.' });
     }
 };

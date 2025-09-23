@@ -1,14 +1,22 @@
+// RUTA: backend/db/admin/estadisticas.js
+
 import { openDb } from '../users/initDb.js';
-import { plans } from '../../shared/planes.js'; // Importamos el listado de planes con precios
+import logger from '../../utils/logger.js';
+import { plans } from '../../shared/planes.js'; // Asumimos que este archivo sigue siendo relevante
 
 /**
  * Obtiene el total de usuarios registrados.
  * @returns {Promise<number>} El total de usuarios.
  */
 export async function getTotalUsuarios() {
-  const db = await openDb();
-  const { total } = await db.get(`SELECT COUNT(*) as total FROM users`);
-  return total || 0;
+    const db = openDb();
+    try {
+        const result = await db.query(`SELECT COUNT(*) as total FROM users`);
+        return parseInt(result.rows[0].total, 10) || 0;
+    } catch (error) {
+        logger.error(`❌ Error en getTotalUsuarios (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }
 
 /**
@@ -16,9 +24,14 @@ export async function getTotalUsuarios() {
  * @returns {Promise<number>} El total de fichas.
  */
 export async function getTotalFichas() {
-  const db = await openDb();
-  const { total } = await db.get(`SELECT COUNT(*) as total FROM fichas_desaparicion`);
-  return total || 0;
+    const db = await openDb();
+    try {
+        const result = await db.query(`SELECT COUNT(*) as total FROM fichas_desaparicion`);
+        return parseInt(result.rows[0].total, 10) || 0;
+    } catch (error) {
+        logger.error(`❌ Error en getTotalFichas (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }
 
 /**
@@ -26,9 +39,14 @@ export async function getTotalFichas() {
  * @returns {Promise<number>} El total de hallazgos.
  */
 export async function getTotalHallazgos() {
-  const db = await openDb();
-  const { total } = await db.get(`SELECT COUNT(*) as total FROM hallazgos`);
-  return total || 0;
+    const db = await openDb();
+    try {
+        const result = await db.query(`SELECT COUNT(*) as total FROM hallazgos`);
+        return parseInt(result.rows[0].total, 10) || 0;
+    } catch (error) {
+        logger.error(`❌ Error en getTotalHallazgos (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }
 
 /**
@@ -36,9 +54,14 @@ export async function getTotalHallazgos() {
  * @returns {Promise<number>} El total de ingresos.
  */
 export async function getTotalIngresosConfirmados() {
-  const db = await openDb();
-  const { total } = await db.get(`SELECT SUM(monto) as total FROM pagos WHERE estado_pago = 'confirmado'`);
-  return total || 0;
+    const db = await openDb();
+    try {
+        const result = await db.query(`SELECT SUM(monto) as total FROM pagos WHERE estado_pago = 'confirmado'`);
+        return parseFloat(result.rows[0].total) || 0;
+    } catch (error) {
+        logger.error(`❌ Error en getTotalIngresosConfirmados (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }
 
 /**
@@ -46,9 +69,14 @@ export async function getTotalIngresosConfirmados() {
  * @returns {Promise<number>} El total de ingresos pendientes.
  */
 export async function getTotalIngresosPendientes() {
-  const db = await openDb();
-  const { total } = await db.get(`SELECT SUM(monto) as total FROM pagos WHERE estado_pago = 'pendiente'`);
-  return total || 0;
+    const db = await openDb();
+    try {
+        const result = await db.query(`SELECT SUM(monto) as total FROM pagos WHERE estado_pago = 'pendiente'`);
+        return parseFloat(result.rows[0].total) || 0;
+    } catch (error) {
+        logger.error(`❌ Error en getTotalIngresosPendientes (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }
 
 /**
@@ -56,16 +84,26 @@ export async function getTotalIngresosPendientes() {
  * @returns {Promise<Array<Object>>} Un array con el ingreso total por mes y año.
  */
 export async function getIngresosConfirmadosPorMes() {
-  const db = await openDb();
-  return db.all(`
-    SELECT
-      strftime('%Y-%m', fecha_pago) as mes,
-      SUM(monto) as total
-    FROM pagos
-    WHERE estado_pago = 'confirmado'
-    GROUP BY mes
-    ORDER BY mes ASC
-  `);
+    const db = await openDb();
+    const sql = `
+        SELECT
+            TO_CHAR(fecha_pago, 'YYYY-MM') as mes,
+            SUM(monto) as total
+        FROM pagos
+        WHERE estado_pago = 'confirmado'
+        GROUP BY mes
+        ORDER BY mes ASC;
+    `;
+    try {
+        const result = await db.query(sql);
+        return result.rows.map(row => ({
+            ...row,
+            total: parseFloat(row.total)
+        }));
+    } catch (error) {
+        logger.error(`❌ Error en getIngresosConfirmadosPorMes (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }
 
 /**
@@ -73,16 +111,26 @@ export async function getIngresosConfirmadosPorMes() {
  * @returns {Promise<Array<Object>>} Un array con los ingresos totales pendientes por mes.
  */
 export async function getIngresosPendientesPorMes() {
-  const db = await openDb();
-  return db.all(`
-    SELECT
-      strftime('%Y-%m', fecha_pago) as mes,
-      SUM(monto) as total
-    FROM pagos
-    WHERE estado_pago = 'pendiente'
-    GROUP BY mes
-    ORDER BY mes ASC
-  `);
+    const db = await openDb();
+    const sql = `
+        SELECT
+            TO_CHAR(fecha_pago, 'YYYY-MM') as mes,
+            SUM(monto) as total
+        FROM pagos
+        WHERE estado_pago = 'pendiente'
+        GROUP BY mes
+        ORDER BY mes ASC;
+    `;
+    try {
+        const result = await db.query(sql);
+        return result.rows.map(row => ({
+            ...row,
+            total: parseFloat(row.total)
+        }));
+    } catch (error) {
+        logger.error(`❌ Error en getIngresosPendientesPorMes (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }
 
 /**
@@ -90,40 +138,42 @@ export async function getIngresosPendientesPorMes() {
  * @returns {Promise<Array<Object>>} Un array con los planes y el número de usuarios.
  */
 export async function getUsuariosPorPlan() {
-  const db = await openDb();
-  const filas = await db.all(`
-    SELECT
-      JSON_EXTRACT(plan, '$[0]') as plan_id,
-      COUNT(*) as total
-    FROM users
-    GROUP BY plan_id
-  `);
-
-  const resultado = filas.map(fila => ({
-    plan: fila.plan_id,
-    total: fila.total
-  }));
-
-  return resultado;
+    const db = await openDb();
+    // Usamos ->> 0 para extraer el primer elemento del array JSON como texto.
+    const sql = `
+        SELECT
+            plan ->> 0 as plan_id,
+            COUNT(*) as total
+        FROM users
+        WHERE plan IS NOT NULL AND jsonb_array_length(plan::jsonb) > 0
+        GROUP BY plan_id;
+    `;
+    try {
+        const result = await db.query(sql);
+        return result.rows.map(row => ({
+            plan: row.plan_id,
+            total: parseInt(row.total, 10)
+        }));
+    } catch (error) {
+        logger.error(`❌ Error en getUsuariosPorPlan (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }
 
 /**
  * Obtiene el total de ingresos recurrentes de suscripciones activas.
- * @returns {Promise<number>} El total de ingresos por suscripciones.
  */
 export async function getTotalIngresosSuscripciones() {
-  const usuariosPorPlan = await getUsuariosPorPlan();
-  let totalIngresos = 0;
-
-  // Calculamos el ingreso total multiplicando el número de usuarios por el precio del plan
-  usuariosPorPlan.forEach(usuarioPlan => {
-    const planInfo = plans.find(p => p.id === usuarioPlan.plan);
-    if (planInfo) {
-      totalIngresos += planInfo.precio * usuarioPlan.total;
-    }
-  });
-
-  return totalIngresos;
+    // Esta función no tiene llamadas directas a la DB, por lo que su lógica no cambia.
+    const usuariosPorPlan = await getUsuariosPorPlan();
+    let totalIngresos = 0;
+    usuariosPorPlan.forEach(usuarioPlan => {
+        const planInfo = plans.find(p => p.id === usuarioPlan.plan);
+        if (planInfo) {
+            totalIngresos += planInfo.precio * usuarioPlan.total;
+        }
+    });
+    return totalIngresos;
 }
 
 /**
@@ -131,9 +181,14 @@ export async function getTotalIngresosSuscripciones() {
  * @returns {Promise<number>} El total de coincidencias.
  */
 export async function getTotalCoincidencias() {
-  const db = await openDb();
-  const { total } = await db.get(`SELECT COUNT(*) as total FROM coincidencias_confirmadas`);
-  return total || 0;
+    const db = await openDb();
+    try {
+        const result = await db.query(`SELECT COUNT(*) as total FROM coincidencias_confirmadas`);
+        return parseInt(result.rows[0].total, 10) || 0;
+    } catch (error) {
+        logger.error(`❌ Error en getTotalCoincidencias (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }
 
 /**
@@ -141,7 +196,12 @@ export async function getTotalCoincidencias() {
  * @returns {Promise<number>} El total de cancelaciones.
  */
 export async function getTotalCancelaciones() {
-  const db = await openDb();
-  const { total } = await db.get(`SELECT COUNT(*) as total FROM users WHERE cancelado = 1`);
-  return total || 0;
+    const db = await openDb();
+    try {
+        const result = await db.query(`SELECT COUNT(*) as total FROM users WHERE cancelado = 1`);
+        return parseInt(result.rows[0].total, 10) || 0;
+    } catch (error) {
+        logger.error(`❌ Error en getTotalCancelaciones (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }

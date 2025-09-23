@@ -1,5 +1,5 @@
 // RUTA: backend/db/queries/fichasQueries.js
-// Contiene EXCLUSIVAMENTE operaciones de lectura (GET).
+// Contiene EXCLUSIVAMENTE operaciones de lectura (GET) para fichas.
 
 import { openDb } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
@@ -8,7 +8,7 @@ import logger from '../../utils/logger.js';
  * FUNCIÓN MAESTRA: Obtiene UNA ficha completa por su ID.
  */
 export const getFichaCompletaById = async (id) => {
-    const db = await openDb();
+    const db = openDb();
     const fichaSql = `
         SELECT
             fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,
@@ -23,27 +23,33 @@ export const getFichaCompletaById = async (id) => {
         LEFT JOIN users AS creator ON fd.id_usuario_creador = creator.id
         LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
         LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
-        WHERE fd.id_ficha = ?;
+        WHERE fd.id_ficha = $1;
     `;
-    const ficha = await db.get(fichaSql, [id]);
-    if (!ficha) return null;
+    const rasgosSql = `SELECT * FROM ficha_rasgos_fisicos WHERE id_ficha = $1;`;
+    const vestimentaSql = `SELECT * FROM ficha_vestimenta WHERE id_ficha = $1;`;
 
-    const rasgosSql = `SELECT * FROM ficha_rasgos_fisicos WHERE id_ficha = ?;`;
-    const vestimentaSql = `SELECT * FROM ficha_vestimenta WHERE id_ficha = ?;`;
+    try {
+        const [fichaResult, rasgosResult, vestimentaResult] = await Promise.all([
+            db.query(fichaSql, [id]),
+            db.query(rasgosSql, [id]),
+            db.query(vestimentaSql, [id])
+        ]);
 
-    const [rasgos_fisicos, vestimenta] = await Promise.all([
-        db.all(rasgosSql, [id]),
-        db.all(vestimentaSql, [id])
-    ]);
-    
-    const { estado, municipio, localidad, calle, referencias, codigo_postal, ...restOfFicha } = ficha;
+        if (fichaResult.rowCount === 0) return null;
 
-    return {
-        ...restOfFicha,
-        ubicacion_desaparicion: { estado, municipio, localidad, calle, referencias, codigo_postal },
-        rasgos_fisicos: rasgos_fisicos || [],
-        vestimenta: vestimenta || []
-    };
+        const ficha = fichaResult.rows[0];
+        const { estado, municipio, localidad, calle, referencias, codigo_postal, ...restOfFicha } = ficha;
+
+        return {
+            ...restOfFicha,
+            ubicacion_desaparicion: { estado, municipio, localidad, calle, referencias, codigo_postal },
+            rasgos_fisicos: rasgosResult.rows || [],
+            vestimenta: vestimentaResult.rows || []
+        };
+    } catch (error) {
+        logger.error(`❌ Error en getFichaCompletaById (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 };
 
 /**
@@ -51,13 +57,20 @@ export const getFichaCompletaById = async (id) => {
  */
 export const getFichasCompletasByUserId = async (userId) => {
     const db = await openDb();
-    const idsSql = `SELECT id_ficha FROM fichas_desaparicion WHERE id_usuario_creador = ? ORDER BY fecha_desaparicion DESC`;
-    const fichaIds = await db.all(idsSql, [userId]);
+    const idsSql = `SELECT id_ficha FROM fichas_desaparicion WHERE id_usuario_creador = $1 ORDER BY fecha_desaparicion DESC`;
     
-    if (!fichaIds || fichaIds.length === 0) return [];
-    
-    const fichasPromises = fichaIds.map(item => getFichaCompletaById(item.id_ficha));
-    return Promise.all(fichasPromises);
+    try {
+        const fichaIdsResult = await db.query(idsSql, [userId]);
+        const fichaIds = fichaIdsResult.rows;
+        
+        if (!fichaIds || fichaIds.length === 0) return [];
+        
+        const fichasPromises = fichaIds.map(item => getFichaCompletaById(item.id_ficha));
+        return Promise.all(fichasPromises);
+    } catch (error) {
+        logger.error(`❌ Error en getFichasCompletasByUserId (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 };
 
 /**
@@ -73,9 +86,15 @@ export const getFichasFeed = async (limit = 10, offset = 0) => {
         LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
         WHERE fd.estado_ficha = 'activa' 
         ORDER BY fd.fecha_desaparicion DESC
-        LIMIT ? OFFSET ?;
+        LIMIT $1 OFFSET $2;
     `;
-    return db.all(sql, [limit, offset]);
+    try {
+        const result = await db.query(sql, [limit, offset]);
+        return result.rows;
+    } catch (error) {
+        logger.error(`❌ Error en getFichasFeed (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 };
 
 /**
@@ -94,26 +113,29 @@ export const searchFichasByKeyword = async (searchTerm = '', limit = 10, offset 
         LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
         LEFT JOIN ficha_vestimenta AS fv ON fd.id_ficha = fv.id_ficha
         LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
-        -- ✅ AÑADIDO: Join con el catálogo de lugares
         LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
         WHERE fd.estado_ficha = 'activa' AND (
-            LOWER(fd.nombre) LIKE ? OR
-            LOWER(fd.apellido_paterno) LIKE ? OR
-            LOWER(fd.genero) LIKE ? OR
-            LOWER(u.estado) LIKE ? OR
-            LOWER(u.municipio) LIKE ? OR
-            LOWER(frf.descripcion_detalle) LIKE ? OR
-            LOWER(cpc.nombre_parte) LIKE ? OR
-            LOWER(fv.color) LIKE ? OR
-            LOWER(fv.marca) LIKE ? OR
-            LOWER(cp.tipo_prenda) LIKE ? OR
-            -- ✅ AÑADIDO: Condición para buscar en el tipo de lugar
-            LOWER(ctl.nombre_tipo) LIKE ?
+            fd.nombre ILIKE $1 OR
+            fd.apellido_paterno ILIKE $2 OR
+            fd.genero ILIKE $3 OR
+            u.estado ILIKE $4 OR
+            u.municipio ILIKE $5 OR
+            frf.descripcion_detalle ILIKE $6 OR
+            cpc.nombre_parte ILIKE $7 OR
+            fv.color ILIKE $8 OR
+            fv.marca ILIKE $9 OR
+            cp.tipo_prenda ILIKE $10 OR
+            ctl.nombre_tipo ILIKE $11
         )
         ORDER BY fd.fecha_desaparicion DESC
-        LIMIT ? OFFSET ?;
+        LIMIT $12 OFFSET $13;
     `;
-    // ✅ AÑADIDO: Un parámetro más para la nueva condición
     const params = Array(11).fill(sqlTerm).concat([limit, offset]);
-    return db.all(sql, params);
+    try {
+        const result = await db.query(sql, params);
+        return result.rows;
+    } catch (error) {
+        logger.error(`❌ Error en searchFichasByKeyword (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 };

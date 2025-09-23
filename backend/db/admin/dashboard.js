@@ -1,63 +1,91 @@
-import { openDb } from '../../db/users/initDb.js';
-import { plans } from '../../shared/planes.js';
+// RUTA: backend/db/admin/dashboard.js
+
+import { openDb } from '../users/initDb.js';
+import logger from '../../utils/logger.js';
 
 /**
  * Obtiene el total de usuarios por cada plan activo.
  * @returns {Promise<Array<Object>>} Un array con los planes y el número de usuarios.
  */
 export async function obtenerUsuariosPorPlan() {
-  const db = await openDb();
-  const filas = await db.all(`
-    SELECT
-      JSON_EXTRACT(plan, '$[0]') as plan_id,
-      COUNT(*) as total
-    FROM users
-    GROUP BY plan_id
-  `);
-
-  // Transformamos el resultado para que el frontend lo pueda usar fácilmente.
-  const resultado = filas.map(fila => ({
-    plan: fila.plan_id,
-    total: fila.total
-  }));
-
-  return resultado;
+    const db = openDb();
+    // Nota: PostgreSQL usa ->> 0 para extraer el primer elemento de un array JSON como texto.
+    const sql = `
+        SELECT
+            plan ->> 0 as plan_id,
+            COUNT(*) as total
+        FROM users
+        WHERE plan IS NOT NULL
+        GROUP BY plan_id;
+    `;
+    try {
+        const result = await db.query(sql);
+        // El mapeo se mantiene igual, ya que la consulta devuelve los mismos alias.
+        return result.rows.map(row => ({
+            plan: row.plan_id,
+            total: parseInt(row.total, 10)
+        }));
+    } catch (error) {
+        logger.error(`❌ Error al obtener usuarios por plan (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }
 
 /**
  * Obtiene el conteo de tickets de facturación facturados vs. pendientes.
+ * NOTA: Esta función parece ser del proyecto "Simplika" y puede que no aplique.
  * @returns {Promise<Object>} Un objeto con las cuentas de facturados y pendientes.
  */
 export async function obtenerTicketsFacturadosVsPendientes() {
-  const db = await openDb();
-  const { facturados, pendientes } = await db.get(`
-    SELECT
-      SUM(CASE WHEN ya_facturado = 1 THEN 1 ELSE 0 END) AS facturados,
-      SUM(CASE WHEN ya_facturado = 0 THEN 1 ELSE 0 END) AS pendientes
-    FROM gastos
-    WHERE es_facturable = 1
-  `);
-  return { facturados: facturados || 0, pendientes: pendientes || 0 };
+    const db = openDb();
+    // Usamos la sintaxis FILTER de PostgreSQL, que es más eficiente.
+    const sql = `
+        SELECT
+            COUNT(*) FILTER (WHERE ya_facturado = true) AS facturados,
+            COUNT(*) FILTER (WHERE ya_facturado = false) AS pendientes
+        FROM gastos
+        WHERE es_facturable = true;
+    `;
+    try {
+        const result = await db.query(sql);
+        const data = result.rows[0];
+        return {
+            facturados: parseInt(data.facturados, 10) || 0,
+            pendientes: parseInt(data.pendientes, 10) || 0
+        };
+    } catch (error) {
+        logger.error(`❌ Error al obtener tickets facturados vs pendientes (PostgreSQL): ${error.message}`);
+        // Devuelve 0 si la tabla 'gastos' no existe en la nueva DB.
+        return { facturados: 0, pendientes: 0 };
+    }
 }
 
 /**
  * Obtiene una lista de facturas de servicio pendientes.
+ * NOTA: Esta función parece ser del proyecto "Simplika" y puede que no aplique.
  * @returns {Promise<Array<Object>>} Un array de facturas pendientes.
  */
 export async function obtenerFacturasServicioPendientes() {
-  const db = await openDb();
-  return db.all(`
-    SELECT
-      facturas_servicio.id,
-      facturas_servicio.monto,
-      facturas_servicio.fecha_emision,
-      users.nombre AS nombre_usuario
-    FROM facturas_servicio
-    JOIN users ON facturas_servicio.user_id = users.id
-    WHERE facturas_servicio.estatus = 'Pendiente'
-    ORDER BY facturas_servicio.fecha_emision ASC
-    LIMIT 5
-  `);
+    const db = openDb();
+    const sql = `
+        SELECT
+            fs.id,
+            fs.monto,
+            fs.fecha_emision,
+            u.nombre AS nombre_usuario
+        FROM facturas_servicio fs
+        JOIN users u ON fs.user_id = u.id
+        WHERE fs.estatus = 'Pendiente'
+        ORDER BY fs.fecha_emision ASC
+        LIMIT 5;
+    `;
+    try {
+        const result = await db.query(sql);
+        return result.rows;
+    } catch (error) {
+        logger.error(`❌ Error al obtener facturas pendientes (PostgreSQL): ${error.message}`);
+        return [];
+    }
 }
 
 /**
@@ -66,11 +94,15 @@ export async function obtenerFacturasServicioPendientes() {
  * @returns {Promise<number>} El número total de nuevos usuarios.
  */
 export async function obtenerNuevosUsuariosDesde(fecha) {
-  const db = await openDb();
-  const { total } = await db.get(`
-    SELECT COUNT(*) as total FROM users WHERE trial_start_date >= ?
-  `, [fecha]);
-  return total || 0;
+    const db = openDb();
+    const sql = `SELECT COUNT(*) as total FROM users WHERE trial_start_date >= $1;`;
+    try {
+        const result = await db.query(sql, [fecha]);
+        return parseInt(result.rows[0].total, 10) || 0;
+    } catch (error) {
+        logger.error(`❌ Error al obtener nuevos usuarios (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }
 
 /**
@@ -79,9 +111,13 @@ export async function obtenerNuevosUsuariosDesde(fecha) {
  * @returns {Promise<number>} El número total de cancelaciones.
  */
 export async function obtenerCancelacionesDesde(fecha) {
-  const db = await openDb();
-  const { total } = await db.get(`
-    SELECT COUNT(*) as total FROM users WHERE cancelado = 1 AND cancelacion_efectiva >= ?
-  `, [fecha]);
-  return total || 0;
+    const db = openDb();
+    const sql = `SELECT COUNT(*) as total FROM users WHERE cancelado = 1 AND cancelacion_efectiva >= $1;`;
+    try {
+        const result = await db.query(sql, [fecha]);
+        return parseInt(result.rows[0].total, 10) || 0;
+    } catch (error) {
+        logger.error(`❌ Error al obtener cancelaciones (PostgreSQL): ${error.message}`);
+        throw error;
+    }
 }

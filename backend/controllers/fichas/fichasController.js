@@ -15,86 +15,55 @@ import { getFichasCompletasByUserId } from '../../db/queries/fichasQueries.js';
 
 /**
  * Crea una nueva ficha de desaparición, incluyendo sus rasgos y vestimenta,
- * y busca automáticamente coincidencias con hallazgos.
+ * y busca automáticamente coincidencias con hallazgos (Versión PostgreSQL).
  */
 export const createFichaDesaparicion = async (req, res) => {
-    const db = await openDb();
-    await db.exec('BEGIN TRANSACTION');
-
+    // Obtenemos un cliente del pool de conexiones para manejar la transacción
+    const client = await openDb().connect();
     try {
+        // Iniciamos la transacción
+        await client.query('BEGIN');
+
         const {
-            nombre,
-            segundo_nombre,
-            apellido_paterno,
-            apellido_materno,
-            fecha_desaparicion,
-            ubicacion_desaparicion,
-            id_tipo_lugar_desaparicion,
-            foto_perfil,
-            // Nuevos campos
-            edad_estimada,
-            genero,
-            estatura,
-            complexion,
-            peso,
-            // Fin de nuevos campos
-            rasgos_fisicos,
-            vestimenta,
+            nombre, segundo_nombre, apellido_paterno, apellido_materno,
+            fecha_desaparicion, ubicacion_desaparicion, id_tipo_lugar_desaparicion,
+            foto_perfil, edad_estimada, genero, estatura, complexion, peso,
+            rasgos_fisicos, vestimenta,
         } = req.body;
 
         const id_usuario_creador = req.user.id;
 
-        // 1. Insertar la ubicación
-        const ubicacionResult = await db.run(
+        // 1. Insertar la ubicación y obtener el ID devuelto
+        const u = ubicacion_desaparicion;
+        const ubicacionResult = await client.query(
             `INSERT INTO ubicaciones (estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-                ubicacion_desaparicion.estado,
-                ubicacion_desaparicion.municipio,
-                ubicacion_desaparicion.localidad,
-                ubicacion_desaparicion.calle,
-                ubicacion_desaparicion.referencias,
-                ubicacion_desaparicion.latitud,
-                ubicacion_desaparicion.longitud,
-                ubicacion_desaparicion.codigo_postal,
-            ]
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id_ubicacion`,
+            [u.estado, u.municipio, u.localidad, u.calle, u.referencias, u.latitud, u.longitud, u.codigo_postal]
         );
+        const id_ubicacion_desaparicion = ubicacionResult.rows[0].id_ubicacion;
 
-        const id_ubicacion_desaparicion = ubicacionResult.lastID;
-
-        // 2. Insertar la ficha principal con los nuevos campos
-        const fichaResult = await db.run(
+        // 2. Insertar la ficha principal y obtener el ID devuelto
+        const fichaResult = await client.query(
             `INSERT INTO fichas_desaparicion (
                 id_usuario_creador, nombre, segundo_nombre, apellido_paterno, apellido_materno,
                 fecha_desaparicion, id_ubicacion_desaparicion, id_tipo_lugar_desaparicion,
                 foto_perfil, edad_estimada, genero, estatura, complexion, peso
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+            RETURNING id_ficha`,
             [
-                id_usuario_creador,
-                nombre,
-                segundo_nombre,
-                apellido_paterno,
-                apellido_materno,
-                fecha_desaparicion,
-                id_ubicacion_desaparicion,
-                id_tipo_lugar_desaparicion,
-                foto_perfil,
-                edad_estimada,
-                genero,
-                estatura,
-                complexion,
-                peso,
+                id_usuario_creador, nombre, segundo_nombre, apellido_paterno, apellido_materno,
+                fecha_desaparicion, id_ubicacion_desaparicion, id_tipo_lugar_desaparicion,
+                foto_perfil, edad_estimada, genero, estatura, complexion, peso
             ]
         );
-
-        const idFicha = fichaResult.lastID;
+        const idFicha = fichaResult.rows[0].id_ficha;
 
         // 3. Insertar rasgos físicos
         if (rasgos_fisicos && rasgos_fisicos.length > 0) {
             const rasgosPromises = rasgos_fisicos.map(rasgo =>
-                db.run(
+                client.query(
                     `INSERT INTO ficha_rasgos_fisicos (id_ficha, id_parte_cuerpo, tipo_rasgo, descripcion_detalle)
-                     VALUES (?, ?, ?, ?)`,
+                     VALUES ($1, $2, $3, $4)`,
                     [idFicha, rasgo.id_parte_cuerpo, rasgo.tipo_rasgo, rasgo.descripcion_detalle]
                 )
             );
@@ -104,177 +73,172 @@ export const createFichaDesaparicion = async (req, res) => {
         // 4. Insertar vestimenta
         if (vestimenta && vestimenta.length > 0) {
             const vestimentaPromises = vestimenta.map(prenda =>
-                db.run(
+                client.query(
                     `INSERT INTO ficha_vestimenta (id_ficha, id_prenda, color, marca, caracteristica_especial)
-                     VALUES (?, ?, ?, ?, ?)`,
+                     VALUES ($1, $2, $3, $4, $5)`,
                     [idFicha, prenda.id_prenda, prenda.color, prenda.marca, prenda.caracteristica_especial]
                 )
             );
             await Promise.all(vestimentaPromises);
         }
 
-        await db.exec('COMMIT');
-
-        // 5. Búsqueda de coincidencias
+        // 5. Búsqueda de coincidencias (esta llamada se mantiene igual)
         const matches = await findMatchesForFicha(req, {
             id_ficha: idFicha,
-            edad_estimada,
-            genero,
-            estatura,
-            complexion,
-            peso,
-            ubicacion_desaparicion,
-            rasgos_fisicos,
-            vestimenta,
+            ...req.body // Pasamos el body completo como en la versión original
         });
 
-        // 6. Responder al cliente
-        if (matches && matches.length > 0) {
-            res.status(201).json({
-                success: true,
-                message: 'Ficha creada con éxito. Se encontraron posibles coincidencias.',
-                id_ficha: idFicha,
-                matches,
-            });
-        } else {
-            res.status(201).json({
-                success: true,
-                message: 'Ficha creada con éxito. No se encontraron coincidencias inmediatas.',
-                id_ficha: idFicha,
-            });
-        }
+        // 6. Si todo fue exitoso, guardamos los cambios
+        await client.query('COMMIT');
+
+        // 7. Responder al cliente
+        res.status(201).json({
+            success: true,
+            message: `Ficha creada con éxito. ${matches.length > 0 ? `Se encontraron ${matches.length} posibles coincidencias.` : 'No se encontraron coincidencias inmediatas.'}`,
+            id_ficha: idFicha,
+            matches,
+        });
+
     } catch (error) {
-        await db.exec('ROLLBACK');
-        logger.error(`❌ Error al crear ficha: ${error.message}`);
+        // Si algo falla en cualquier punto, revertimos la transacción
+        await client.query('ROLLBACK');
+        logger.error(`❌ Error al crear ficha (PostgreSQL): ${error.message}`);
         res.status(500).json({ success: false, message: 'Error interno del servidor al crear ficha' });
+    } finally {
+        // Liberamos el cliente de vuelta al pool, es muy importante
+        client.release();
     }
 };
 
 /**
- * Actualiza una ficha existente, verificando la propiedad del usuario. VERSIÓN FINAL.
+ * Actualiza una ficha existente, verificando la propiedad del usuario (Versión PostgreSQL).
  */
 export const actualizarFicha = async (req, res) => {
-    const db = await openDb();
-    await db.exec('BEGIN TRANSACTION');
-
+    const client = await openDb().connect();
     try {
+        await client.query('BEGIN');
+
         const { id } = req.params;
         const id_usuario_creador = req.user.id;
 
-        // ✅ LA SOLUCIÓN: Desestructuramos para separar y limpiar los datos del body.
         const {
             ubicacion_desaparicion,
             rasgos_fisicos,
             vestimenta,
-            // Ignoramos explícitamente los campos de solo lectura o IDs que no deben actualizarse aquí
             id_ficha,
             tipo_lugar,
             nombre_usuario,
             email_usuario,
-            ...fichaPrincipal // El resto (nombre, foto_perfil, etc.) queda en este objeto
+            ...fichaPrincipal
         } = req.body;
 
         // 1. Verifica la propiedad de la ficha
-        const ficha = await db.get(
-            `SELECT id_ubicacion_desaparicion FROM fichas_desaparicion WHERE id_ficha = ? AND id_usuario_creador = ?`,
+        const fichaResult = await client.query(
+            `SELECT id_ubicacion_desaparicion FROM fichas_desaparicion WHERE id_ficha = $1 AND id_usuario_creador = $2`,
             [id, id_usuario_creador]
         );
 
-        if (!ficha) {
-            await db.exec('ROLLBACK');
+        if (fichaResult.rowCount === 0) {
+            await client.query('ROLLBACK');
             return res.status(404).json({ success: false, message: 'Ficha no encontrada o no autorizado' });
         }
+        const ficha = fichaResult.rows[0];
 
-        // 2. Actualiza la tabla principal 'fichas_desaparicion' con los datos limpios
+        // 2. Actualiza la tabla principal 'fichas_desaparicion'
         if (Object.keys(fichaPrincipal).length > 0) {
-            const fichaSetClause = Object.keys(fichaPrincipal).map(key => `${key} = ?`).join(', ');
-            await db.run(
-                `UPDATE fichas_desaparicion SET ${fichaSetClause} WHERE id_ficha = ?`,
-                [...Object.values(fichaPrincipal), id]
+            const fichaFields = Object.keys(fichaPrincipal);
+            const fichaValues = Object.values(fichaPrincipal);
+            const fichaSetClause = fichaFields.map((field, index) => `${field} = $${index + 1}`).join(', ');
+            
+            await client.query(
+                `UPDATE fichas_desaparicion SET ${fichaSetClause} WHERE id_ficha = $${fichaFields.length + 1}`,
+                [...fichaValues, id]
             );
         }
 
         // 3. Actualiza la ubicación
         if (ubicacion_desaparicion && Object.keys(ubicacion_desaparicion).length > 0) {
-            const ubicacionSetClause = Object.keys(ubicacion_desaparicion).map(key => `${key} = ?`).join(', ');
-            await db.run(
-                `UPDATE ubicaciones SET ${ubicacionSetClause} WHERE id_ubicacion = ?`,
-                [...Object.values(ubicacion_desaparicion), ficha.id_ubicacion_desaparicion]
+            const ubicacionFields = Object.keys(ubicacion_desaparicion);
+            const ubicacionValues = Object.values(ubicacion_desaparicion);
+            const ubicacionSetClause = ubicacionFields.map((field, index) => `${field} = $${index + 1}`).join(', ');
+            
+            await client.query(
+                `UPDATE ubicaciones SET ${ubicacionSetClause} WHERE id_ubicacion = $${ubicacionFields.length + 1}`,
+                [...ubicacionValues, ficha.id_ubicacion_desaparicion]
             );
         }
 
         // 4. Reemplaza rasgos y vestimenta
-        await db.run(`DELETE FROM ficha_rasgos_fisicos WHERE id_ficha = ?`, [id]);
+        await client.query(`DELETE FROM ficha_rasgos_fisicos WHERE id_ficha = $1`, [id]);
         if (rasgos_fisicos && rasgos_fisicos.length > 0) {
-            const rasgosPromises = rasgos_fisicos.map(rasgo =>
-                db.run(`INSERT INTO ficha_rasgos_fisicos (id_ficha, id_parte_cuerpo, tipo_rasgo, descripcion_detalle) VALUES (?, ?, ?, ?)`,
+            const promises = rasgos_fisicos.map(rasgo =>
+                client.query(`INSERT INTO ficha_rasgos_fisicos (id_ficha, id_parte_cuerpo, tipo_rasgo, descripcion_detalle) VALUES ($1, $2, $3, $4)`,
                     [id, rasgo.id_parte_cuerpo, rasgo.tipo_rasgo, rasgo.descripcion_detalle])
             );
-            await Promise.all(rasgosPromises);
+            await Promise.all(promises);
         }
 
-        await db.run(`DELETE FROM ficha_vestimenta WHERE id_ficha = ?`, [id]);
+        await client.query(`DELETE FROM ficha_vestimenta WHERE id_ficha = $1`, [id]);
         if (vestimenta && vestimenta.length > 0) {
-            const vestimentaPromises = vestimenta.map(prenda =>
-                db.run(`INSERT INTO ficha_vestimenta (id_ficha, id_prenda, color, marca, caracteristica_especial) VALUES (?, ?, ?, ?, ?)`,
+            const promises = vestimenta.map(prenda =>
+                client.query(`INSERT INTO ficha_vestimenta (id_ficha, id_prenda, color, marca, caracteristica_especial) VALUES ($1, $2, $3, $4, $5)`,
                     [id, prenda.id_prenda, prenda.color, prenda.marca, prenda.caracteristica_especial])
             );
-            await Promise.all(vestimentaPromises);
+            await Promise.all(promises);
         }
 
-        await db.exec('COMMIT');
+        await client.query('COMMIT');
         
-        // Opcional: Re-ejecutar búsqueda de coincidencias
+        // La lógica de re-ejecutar el matching se mantiene conceptualmente
         const fichaActualizada = await getFichaCompletaById(id);
         if (fichaActualizada) {
-             await findMatchesForFicha(fichaActualizada);
+             await findMatchesForFicha(req, fichaActualizada);
         }
        
         res.json({ success: true, message: 'Ficha actualizada correctamente' });
     } catch (error) {
-        await db.exec('ROLLBACK');
+        await client.query('ROLLBACK');
         logger.error(`❌ Error al actualizar ficha: ${error.message}`);
         res.status(500).json({ success: false, message: 'Error interno del servidor al actualizar la ficha.' });
+    } finally {
+        client.release();
     }
 };
 
 /**
- * Obtiene todas las fichas de desaparición con todos sus detalles.
- * VERSIÓN AUTOCONTENIDA Y ROBUSTA.
+ * Obtiene todas las fichas de desaparición con sus detalles (Versión PostgreSQL).
  */
 export const getAllFichas = async (req, res) => {
     try {
-        const db = await openDb();
+        const db = openDb();
         const limit = parseInt(req.query.limit) || 20;
         const offset = parseInt(req.query.offset) || 0;
 
-        // 1. Obtenemos los datos principales de TODAS las fichas, con paginación
         const fichasPrincipalesSql = `
             SELECT 
-                fd.*, -- Traemos todos los campos de la ficha, incluyendo foto, edad, etc.
+                fd.*,
                 u.estado, u.municipio,
                 ctl.nombre_tipo AS tipo_lugar
             FROM fichas_desaparicion AS fd
             LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
             LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
             ORDER BY fd.fecha_desaparicion DESC
-            LIMIT ? OFFSET ?;
+            LIMIT $1 OFFSET $2;
         `;
-        const fichasPrincipales = await db.all(fichasPrincipalesSql, [limit, offset]);
+        const fichasPrincipalesResult = await db.query(fichasPrincipalesSql, [limit, offset]);
+        const fichasPrincipales = fichasPrincipalesResult.rows;
 
         if (fichasPrincipales.length === 0) {
             return res.json({ success: true, data: [] });
         }
 
-        // 2. Obtenemos TODOS los rasgos y vestimenta en dos consultas masivas
-        const todosLosRasgos = await db.all(`SELECT * FROM ficha_rasgos_fisicos`);
-        const todaLaVestimenta = await db.all(`SELECT * FROM ficha_vestimenta`);
+        const todosLosRasgosResult = await db.query(`SELECT * FROM ficha_rasgos_fisicos`);
+        const todaLaVestimentaResult = await db.query(`SELECT * FROM ficha_vestimenta`);
+        const todosLosRasgos = todosLosRasgosResult.rows;
+        const todaLaVestimenta = todaLaVestimentaResult.rows;
 
-        // 3. Unimos todo en JavaScript. Esto es mucho más rápido y seguro.
         const fichasCompletas = fichasPrincipales.map(ficha => {
-            // Filtramos los rasgos que pertenecen a esta ficha
             const rasgos_fisicos = todosLosRasgos.filter(r => r.id_ficha === ficha.id_ficha);
-            // Filtramos la vestimenta que pertenece a esta ficha
             const vestimenta = todaLaVestimenta.filter(v => v.id_ficha === ficha.id_ficha);
             
             return {
@@ -293,14 +257,15 @@ export const getAllFichas = async (req, res) => {
 };
 
 /**
- * Obtiene una ficha de desaparición específica por su ID. VERSIÓN FINAL Y COMPLETA.
+/**
+ * Obtiene una ficha de desaparición específica por su ID (Versión PostgreSQL).
  */
 export const getFichaById = async (req, res) => {
     try {
         const { id } = req.params;
-        const db = await openDb();
+        const db = openDb(); // Obtiene el pool de PostgreSQL
 
-        // 1. Consulta principal (sin cambios, ya era completa)
+        // 1. Consultas con la sintaxis de PostgreSQL ($1)
         const fichaSql = `
             SELECT
                 fd.*,
@@ -312,34 +277,38 @@ export const getFichaById = async (req, res) => {
             LEFT JOIN users AS creator ON fd.id_usuario_creador = creator.id
             LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
             LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
-            WHERE fd.id_ficha = ?;
+            WHERE fd.id_ficha = $1;
         `;
-        const ficha = await db.get(fichaSql, [id]);
-
-        if (!ficha) {
-            return res.status(404).json({ success: false, message: 'Ficha no encontrada.' });
-        }
-
-        // ✅ 2. CORRECCIÓN: Se añaden los JOINs para traer los nombres de los catálogos
         const rasgosSql = `
             SELECT frf.*, cpc.nombre_parte 
             FROM ficha_rasgos_fisicos AS frf
             LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
-            WHERE frf.id_ficha = ?;
+            WHERE frf.id_ficha = $1;
         `;
         const vestimentaSql = `
             SELECT fv.*, cp.tipo_prenda
             FROM ficha_vestimenta AS fv
             LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
-            WHERE fv.id_ficha = ?;
+            WHERE fv.id_ficha = $1;
         `;
 
-        const [rasgos_fisicos, vestimenta] = await Promise.all([
-            db.all(rasgosSql, [id]),
-            db.all(vestimentaSql, [id])
+        // 2. Ejecutamos las consultas en paralelo
+        const [fichaResult, rasgosResult, vestimentaResult] = await Promise.all([
+            db.query(fichaSql, [id]),
+            db.query(rasgosSql, [id]),
+            db.query(vestimentaSql, [id])
         ]);
 
-        // 3. Formateo y respuesta
+        if (fichaResult.rowCount === 0) {
+            return res.status(404).json({ success: false, message: 'Ficha no encontrada.' });
+        }
+
+        // 3. Procesamos los resultados desde la propiedad 'rows'
+        const ficha = fichaResult.rows[0];
+        const rasgos_fisicos = rasgosResult.rows;
+        const vestimenta = vestimentaResult.rows;
+
+        // 4. La lógica de formateo se mantiene intacta
         const { estado, municipio, localidad, calle, referencias, codigo_postal, ...restOfFicha } = ficha;
         const fichaCompleta = {
             ...restOfFicha,
@@ -351,59 +320,62 @@ export const getFichaById = async (req, res) => {
         res.json({ success: true, data: fichaCompleta });
 
     } catch (error) {
-        logger.error(`❌ Error al obtener la ficha por ID: ${error.message}`);
+        logger.error(`❌ Error al obtener la ficha por ID (PostgreSQL): ${error.message}`);
         res.status(500).json({ success: false, message: 'Error al obtener la ficha.' });
     }
 };
 
 /**
- * Elimina la ficha de desaparición y los registros asociados. VERSIÓN AUTOCONTENIDA.
+ * Elimina la ficha de desaparición y los registros asociados (Versión PostgreSQL).
  */
 export const deleteFichaDesaparicion = async (req, res) => {
-    const db = await openDb();
-    await db.exec('BEGIN TRANSACTION');
-
+    const client = await openDb().connect();
     try {
+        await client.query('BEGIN');
+
         const { id } = req.params;
         const id_usuario_creador = req.user.id;
 
         // 1. Verifica la propiedad y obtiene el ID de la ubicación
-        const ficha = await db.get(
-            `SELECT id_ubicacion_desaparicion FROM fichas_desaparicion WHERE id_ficha = ? AND id_usuario_creador = ?`,
+        const fichaResult = await client.query(
+            `SELECT id_ubicacion_desaparicion FROM fichas_desaparicion WHERE id_ficha = $1 AND id_usuario_creador = $2`,
             [id, id_usuario_creador]
         );
+        const ficha = fichaResult.rows[0];
 
         if (!ficha) {
-            await db.exec('ROLLBACK');
+            await client.query('ROLLBACK');
             return res.status(404).json({ success: false, message: 'Ficha no encontrada o no autorizado para eliminar.' });
         }
 
-        // 2. Elimina la ficha (rasgos y vestimenta se borran en cascada si la BD está configurada así)
-        await db.run(`DELETE FROM fichas_desaparicion WHERE id_ficha = ?`, [id]);
+        // 2. Elimina la ficha (rasgos y vestimenta se borran por el ON DELETE CASCADE de la DB)
+        await client.query(`DELETE FROM fichas_desaparicion WHERE id_ficha = $1`, [id]);
         
-        // 3. Elimina la ubicación, que no se borra en cascada
-        await db.run(`DELETE FROM ubicaciones WHERE id_ubicacion = ?`, [ficha.id_ubicacion_desaparicion]);
+        // 3. Elimina la ubicación, que no tiene borrado en cascada
+        await client.query(`DELETE FROM ubicaciones WHERE id_ubicacion = $1`, [ficha.id_ubicacion_desaparicion]);
 
-        await db.exec('COMMIT');
+        await client.query('COMMIT');
         res.json({ success: true, message: 'Ficha eliminada correctamente.' });
 
     } catch (error) {
-        await db.exec('ROLLBACK');
-        logger.error(`❌ Error al eliminar ficha: ${error.message}`);
+        await client.query('ROLLBACK');
+        logger.error(`❌ Error al eliminar ficha (PostgreSQL): ${error.message}`);
         res.status(500).json({ success: false, message: 'Error interno del servidor al eliminar la ficha.' });
+    } finally {
+        client.release();
     }
 };
 
 /**
- * Busca fichas de desaparición por un término de búsqueda en múltiples campos. VERSIÓN COMPLETA.
+ * Busca fichas de desaparición por un término de búsqueda en múltiples campos (Versión PostgreSQL).
  */
 export const searchFichas = async (req, res) => {
     try {
-        const db = await openDb();
+        const db = openDb();
         const { searchTerm = '', limit = 20, offset = 0 } = req.query;
         const sqlTerm = `%${searchTerm.toLowerCase()}%`;
 
-        // Esta consulta busca el término en todos los campos relevantes
+        // La consulta usa ILIKE para búsquedas case-insensitive en PostgreSQL
         const fichasSql = `
             SELECT DISTINCT
                 fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.fecha_desaparicion, 
@@ -416,56 +388,57 @@ export const searchFichas = async (req, res) => {
             LEFT JOIN catalogo_prendas AS cp ON fv.id_prenda = cp.id_prenda
             LEFT JOIN catalogo_tipo_lugar AS ctl ON fd.id_tipo_lugar_desaparicion = ctl.id_tipo_lugar
             WHERE fd.estado_ficha = 'activa' AND (
-                LOWER(fd.nombre) LIKE ? OR
-                LOWER(fd.apellido_paterno) LIKE ? OR
-                LOWER(fd.genero) LIKE ? OR
-                LOWER(u.estado) LIKE ? OR
-                LOWER(u.municipio) LIKE ? OR
-                LOWER(frf.descripcion_detalle) LIKE ? OR
-                LOWER(cpc.nombre_parte) LIKE ? OR
-                LOWER(fv.color) LIKE ? OR
-                LOWER(fv.marca) LIKE ? OR
-                LOWER(cp.tipo_prenda) LIKE ? OR
-                LOWER(ctl.nombre_tipo) LIKE ?
+                fd.nombre ILIKE $1 OR
+                fd.apellido_paterno ILIKE $2 OR
+                fd.genero ILIKE $3 OR
+                u.estado ILIKE $4 OR
+                u.municipio ILIKE $5 OR
+                frf.descripcion_detalle ILIKE $6 OR
+                cpc.nombre_parte ILIKE $7 OR
+                fv.color ILIKE $8 OR
+                fv.marca ILIKE $9 OR
+                cp.tipo_prenda ILIKE $10 OR
+                ctl.nombre_tipo ILIKE $11
             )
             ORDER BY fd.fecha_desaparicion DESC
-            LIMIT ? OFFSET ?;
+            LIMIT $12 OFFSET $13;
         `;
         
-        // Creamos un array con el término de búsqueda para cada '?' en la consulta
         const params = Array(11).fill(sqlTerm).concat([limit, offset]);
-
-        const fichas = await db.all(fichasSql, params);
+        const result = await db.query(fichasSql, params);
         
-        res.json({ success: true, data: fichas });
+        res.json({ success: true, data: result.rows });
 
     } catch (error) {
-        logger.error(`❌ Error al buscar fichas: ${error.message}`);
+        logger.error(`❌ Error al buscar fichas (PostgreSQL): ${error.message}`);
         res.status(500).json({ success: false, message: 'Error al realizar la búsqueda de fichas.' });
     }
 };
 
 /**
- * Obtiene el catálogo de tipos de lugar.
+ * Obtiene el catálogo de tipos de lugar (Versión PostgreSQL).
  */
 export const obtenerCatalogoTiposLugar = async (req, res) => {
     try {
-        const db = await openDb();
-        const tipos = await db.all(`SELECT * FROM catalogo_tipo_lugar`);
-        res.json({ success: true, catalogo_tipo_lugar: tipos });
+        const db = openDb();
+        const result = await db.query(`SELECT * FROM catalogo_tipo_lugar`);
+        res.json({ success: true, catalogo_tipo_lugar: result.rows });
     } catch (error) {
-        logger.error(`❌ Error al obtener catálogo de tipos de lugar: ${error.message}`);
+        logger.error(`❌ Error al obtener catálogo de tipos de lugar (PostgreSQL): ${error.message}`);
         res.status(500).json({ success: false, message: 'Error interno del servidor' });
     }
 };
 
 /**
- * Obtiene el catálogo de partes del cuerpo.
+ * Obtiene el catálogo de partes del cuerpo (Versión PostgreSQL).
  */
 export const obtenerCatalogoPartesCuerpo = async (req, res) => {
     try {
-        const db = await openDb();
-        const partes = await db.all(`SELECT * FROM catalogo_partes_cuerpo`);
+        const db = openDb();
+        const result = await db.query(`SELECT * FROM catalogo_partes_cuerpo`);
+        const partes = result.rows;
+        
+        // La lógica de normalización se mantiene igual
         const partesNormalizadas = partes.map(p => ({
             id: p.id_parte_cuerpo,
             nombre: p.nombre_parte,
@@ -473,22 +446,21 @@ export const obtenerCatalogoPartesCuerpo = async (req, res) => {
         }));
         res.json({ success: true, catalogo_partes_cuerpo: partesNormalizadas });
     } catch (error) {
-        logger.error(`❌ Error al obtener catálogo de partes del cuerpo: ${error.message}`);
+        logger.error(`❌ Error al obtener catálogo de partes del cuerpo (PostgreSQL): ${error.message}`);
         res.status(500).json({ success: false, message: 'Error interno del servidor' });
     }
 };
 
-
 /**
- * Obtiene el catálogo de prendas.
+ * Obtiene el catálogo de prendas (Versión PostgreSQL).
  */
 export const obtenerCatalogoPrendas = async (req, res) => {
     try {
-        const db = await openDb();
-        const prendas = await db.all(`SELECT * FROM catalogo_prendas`);
-        res.json({ success: true, catalogo_prendas: prendas });
+        const db = openDb();
+        const result = await db.query(`SELECT * FROM catalogo_prendas`);
+        res.json({ success: true, catalogo_prendas: result.rows });
     } catch (error) {
-        logger.error(`❌ Error al obtener catálogo de prendas: ${error.message}`);
+        logger.error(`❌ Error al obtener catálogo de prendas (PostgreSQL): ${error.message}`);
         res.status(500).json({ success: false, message: 'Error interno del servidor' });
     }
 };
