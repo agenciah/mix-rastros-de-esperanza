@@ -1,44 +1,30 @@
-// RUTA: backend/controllers/feed/feedStatsController.js
-
 import { openDb } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 
+/**
+ * Obtiene todas las estadísticas para el dashboard principal y envía la respuesta HTTP.
+ * Esta versión está unificada para ser más eficiente.
+ */
 export const getStatsData = async (req, res) => {
     try {
-        const db = openDb(); // Obtiene el pool de PostgreSQL
+        const db = openDb();
 
-        // Ejecutamos todas las consultas en paralelo para mayor eficiencia
+        // Ejecutamos todas las consultas de estadísticas en paralelo.
         const [
             totalFichasResult,
             totalHallazgosResult,
             totalCoincidenciasResult,
             casosEncontradosResult,
-            actividadRecienteResult
+            mensajesAdminResult
         ] = await Promise.all([
-            db.query(`SELECT COUNT(*) as count FROM fichas_desaparicion`),
-            db.query(`SELECT COUNT(*) as count FROM hallazgos`),
+            db.query(`SELECT COUNT(*) as count FROM fichas_desaparicion WHERE estado_ficha = 'activa'`),
+            db.query(`SELECT COUNT(*) as count FROM hallazgos WHERE estado_hallazgo = 'encontrado'`),
             db.query(`SELECT COUNT(*) as count FROM coincidencias_confirmadas`),
-            db.query(`
-                SELECT id_ficha, nombre, apellido_paterno
-                FROM fichas_desaparicion
-                WHERE estado_ficha = 'encontrado'
-                ORDER BY fecha_registro_encontrado DESC
-                LIMIT 5;
-            `),
-            db.query(`
-                SELECT
-                    'hallazgo' AS tipo,
-                    id_hallazgo AS id,
-                    nombre,
-                    apellido_paterno,
-                    fecha_hallazgo AS fecha
-                FROM hallazgos
-                ORDER BY fecha_hallazgo DESC
-                LIMIT 3;
-            `)
+            db.query(`SELECT id_ficha, nombre, apellido_paterno FROM fichas_desaparicion WHERE estado_ficha = 'encontrado' ORDER BY fecha_registro_encontrado DESC LIMIT 5`),
+            db.query(`SELECT id_mensaje, titulo, contenido, fecha_creacion FROM mensajes_administrador WHERE estado = 'activo' ORDER BY fecha_creacion DESC LIMIT 3`)
         ]);
 
-        // Procesamos los resultados de las consultas
+        // Construimos el objeto de datos final.
         const statsData = {
             globalStats: {
                 totalFichas: parseInt(totalFichasResult.rows[0].count, 10),
@@ -46,10 +32,12 @@ export const getStatsData = async (req, res) => {
                 casosResueltos: parseInt(totalCoincidenciasResult.rows[0].count, 10)
             },
             casosEncontrados: casosEncontradosResult.rows,
-            actividadReciente: actividadRecienteResult.rows
+            // La actividad reciente (hallazgos) se carga por separado en el frontend.
+            actividadReciente: [], 
+            mensajesAdministrador: mensajesAdminResult.rows
         };
 
-        // Envolvemos la respuesta en un objeto `data` para consistencia
+        // Enviamos la respuesta JSON directamente desde el controlador.
         res.json({ success: true, data: statsData });
 
     } catch (error) {
@@ -57,3 +45,4 @@ export const getStatsData = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error al obtener las estadísticas.' });
     }
 };
+
