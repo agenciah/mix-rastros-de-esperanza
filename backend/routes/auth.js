@@ -69,11 +69,12 @@ router.get('/bienvenida', authenticateToken, (req, res) => {
 
 // RUTA: backend/routes/auth.js
 
-// ✅ RUTA DE CONFIRMACIÓN MIGRAD A POSTGRESQL
+// ✅ RUTA DE CONFIRMACIÓN CORREGIDA
 router.get('/confirm', async (req, res) => {
     const { token } = req.query;
     if (!token) {
-        return res.status(400).send('Token no proporcionado.');
+        // En lugar de .send(), usamos .json() para consistencia
+        return res.status(400).json({ message: 'Token no proporcionado.' });
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_CONFIRM_SECRET || 'confirm_secret');
@@ -85,13 +86,16 @@ router.get('/confirm', async (req, res) => {
         );
 
         if (result.rowCount === 0) {
-            return res.redirect(`${process.env.FRONTEND_URL}/login?error=token_invalido`);
+            // Respondemos con un error JSON que el frontend puede leer
+            return res.status(404).json({ message: 'Token ya utilizado o usuario no encontrado.' });
         }
 
-        res.redirect(`${process.env.FRONTEND_URL}/login?confirmed=true`);
+        // ✅ LA CORRECCIÓN CLAVE: Respondemos con un JSON de éxito
+        res.status(200).json({ success: true, message: 'Correo confirmado correctamente.' });
 
     } catch (err) {
-        res.redirect(`${process.env.FRONTEND_URL}/login?error=token_invalido`);
+        // Respondemos con un error JSON
+        res.status(400).json({ success: false, message: 'Token inválido o expirado.' });
     }
 });
 

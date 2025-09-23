@@ -64,8 +64,7 @@ router.get('/reportes', authenticateAdminToken, getReports);
 // ✅ CORRECCIÓN: La ruta para ver una conversación ahora usa '/conversations/' para evitar conflictos
 router.get('/conversations/:conversationId', authenticateAdminToken, getReportedConversation);
 
-// ✅ RUTA TEMPORAL DE LIMPIEZA
-// Esta ruta borrará todos los usuarios cuando se visite con la clave secreta.
+// ✅ RUTA TEMPORAL DE LIMPIEZA (Adaptada para PostgreSQL)
 router.get('/limpieza-total-usuarios', async (req, res) => {
     // Esta es nuestra clave secreta. Cámbiala si quieres.
     const secretKey = req.query.secret;
@@ -74,10 +73,10 @@ router.get('/limpieza-total-usuarios', async (req, res) => {
     }
 
     try {
-        const db = await openDb();
+        const db = openDb();
         // Ejecutamos el comando para borrar TODOS los usuarios.
-        await db.run('DELETE FROM users');
-        res.status(200).send('✅ ¡Éxito! La tabla de usuarios ha sido limpiada.');
+        await db.query('TRUNCATE TABLE users RESTART IDENTITY CASCADE'); // TRUNCATE es más eficiente en PG
+        res.status(200).send('✅ ¡Éxito! La tabla de usuarios ha sido limpiada y reiniciada.');
         
     } catch (error) {
         console.error('Error durante la limpieza de usuarios:', error);
