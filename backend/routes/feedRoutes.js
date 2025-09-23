@@ -2,10 +2,9 @@ import express from 'express';
 import { getStatsData } from '../controllers/feed/feedStatsController.js';
 import { getAdminMessagesData } from '../controllers/feed/feedAdminMessagesController.js';
 import { getHallazgosList } from '../controllers/hallazgos/hallazgosListController.js'; // ✅ Importa el nuevo controlador
+import logger from '../utils/logger.js'; // ✅ IMPORTACIÓN AÑADIDA
 
 const router = express.Router();
-
-// ... (tus otras rutas)
 
 // ✅ Nueva ruta para el listado de todos los hallazgos
 router.get('/list', async (req, res) => {
