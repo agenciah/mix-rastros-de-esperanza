@@ -42,7 +42,7 @@ export const useHallazgos = (options = { fetchOnMount: false }) => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.get(`/api/hallazgos/${id}`);
+            const response = await api.get(`/hallazgos/${id}`);
             return response.data.data;
         } catch (err) {
             setError(err.response?.data?.message || 'Error al cargar el detalle.');
@@ -55,7 +55,7 @@ export const useHallazgos = (options = { fetchOnMount: false }) => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.post('/api/hallazgos', hallazgoData);
+            const response = await api.post('/hallazgos', hallazgoData);
             return { success: true, data: response.data };
         } catch (err) {
             const errorMsg = err.response?.data?.message || 'Error al crear el hallazgo.';
@@ -71,7 +71,7 @@ export const useHallazgos = (options = { fetchOnMount: false }) => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.put(`/api/hallazgos/${id}`, updatedData);
+            const response = await api.put(`/hallazgos/${id}`, updatedData);
             return { success: true, data: response.data };
         } catch (err) {
             const errorMsg = err.response?.data?.message || 'Error al actualizar el hallazgo.';
@@ -87,7 +87,7 @@ export const useHallazgos = (options = { fetchOnMount: false }) => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await api.delete(`/api/hallazgos/${id}`);
+            const response = await api.delete(`/hallazgos/${id}`);
             // Ya no recargamos automáticamente, el componente decidirá si hacerlo.
             return { success: true, data: response.data };
         } catch (err) {
