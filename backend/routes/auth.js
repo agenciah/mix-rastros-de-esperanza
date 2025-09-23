@@ -71,11 +71,9 @@ router.get('/bienvenida', authenticateToken, (req, res) => {
 
 router.get('/confirm', async (req, res) => {
     const { token } = req.query;
-
     if (!token) {
-        return res.status(400).send('Token no proporcionado.');
+        return res.status(400).json({ message: 'Token no proporcionado.' });
     }
-
     try {
         const decoded = jwt.verify(token, process.env.JWT_CONFIRM_SECRET || 'confirm_secret');
         const db = await openDb();
@@ -86,16 +84,15 @@ router.get('/confirm', async (req, res) => {
         );
 
         if (result.changes === 0) {
-            // Esto puede pasar si el token ya se usó o el usuario no existe.
-            return res.status(404).send('Token ya utilizado o usuario no encontrado.');
+            return res.status(404).json({ message: 'Token ya utilizado o usuario no encontrado.' });
         }
 
-        // Redirige al usuario a una página de éxito en el frontend
-        res.redirect(`https://hastaencontrarte.lat/login?confirmed=true`);
+        // ✅ CORRECCIÓN: En lugar de redirigir, enviamos una respuesta JSON de éxito.
+        res.status(200).json({ success: true, message: 'Correo confirmado correctamente.' });
 
     } catch (err) {
-        // Redirige a una página de error si el token es inválido/expirado
-        res.redirect(`https://hastaencontrarte.lat/login?error=token_invalido`);
+        // ✅ CORRECCIÓN: Enviamos un error JSON.
+        res.status(400).json({ success: false, message: 'Token inválido o expirado.' });
     }
 });
 
