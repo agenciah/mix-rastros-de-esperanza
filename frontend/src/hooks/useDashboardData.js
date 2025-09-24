@@ -19,6 +19,8 @@ export const useDashboardData = () => {
             try {
                 const response = await api.get('/feed/dashboard');
 
+                console.log('Respuesta COMPLETA del backend:', JSON.stringify(response.data, null, 2));
+
                 const responseData = response.data.data;
                 setData({
                     // ✅ Corregido: Leemos del objeto 'stats' que está dentro de los datos
