@@ -4,16 +4,17 @@ import { getDashboardData } from '../controllers/feed/feedMainController.js';
 import { getHallazgosList } from '../controllers/hallazgos/hallazgosListController.js';
 import { getAdminMessagesData } from '../controllers/feed/feedAdminMessagesController.js';
 import logger from '../utils/logger.js'; // ✅ Se importa el logger que faltaba
+import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 // --- Ruta para el Dashboard Principal del Feed ---
 // ✅ Llama al controlador principal que agrupa todos los datos.
-router.get('/dashboard', getDashboardData);
+router.get('/dashboard', authenticateToken, getDashboardData);
 
 // --- Ruta para la Lista Pública Paginada de Hallazgos ---
 // Llama directamente al controlador que se encargará de la paginación.
-router.get('/hallazgos', getHallazgosList);
+router.get('/hallazgos', authenticateToken, getHallazgosList);
 
 router.get('/admin-messages', async (req, res) => {
     try {   
