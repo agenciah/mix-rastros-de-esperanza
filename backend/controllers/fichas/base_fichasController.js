@@ -1,6 +1,6 @@
 // backend/controllers/fichas/fichasController.js
 
-import { openDb } from '../../db/users/initDb.js';
+import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 import { findMatchesForFicha } from './matchingService.js';
 import { getFichaCompletaById, getAllPublicFichas, countActiveFichasByUserId, getFichasByUserId } from '../../db/queries/fichasAndHallazgosQueries.js';

@@ -2,7 +2,7 @@
 /**
  * @fileoverview Funciones de base de datos exclusivas para el dashboard de administrador.
  */
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
@@ -10,7 +10,7 @@ import logger from '../../utils/logger.js';
  * Incluye un conteo de fichas y hallazgos por cada usuario.
  */
 export async function getAllUsuariosAdmin() {
-    const db = openDb();
+    
     const sql = `
         SELECT 
           u.id,

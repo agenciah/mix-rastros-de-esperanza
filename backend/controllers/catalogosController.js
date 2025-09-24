@@ -1,6 +1,6 @@
 // RUTA: backend/controllers/catalogosController.js
 
-import { openDb } from '../db/users/initDb.js';
+import { query } from '../db/users/initDb.js';
 import logger from '../utils/logger.js';
 
 /**
@@ -8,7 +8,7 @@ import logger from '../utils/logger.js';
  */
 export const getAllCatalogos = async (req, res) => {
     try {
-        const db = openDb(); // Obtiene el pool de PostgreSQL
+         // Obtiene el pool de PostgreSQL
         
         // Las consultas se ejecutan en paralelo, como en tu versión original
         const [tiposLugarResult, partesCuerpoResult, prendasResult] = await Promise.all([

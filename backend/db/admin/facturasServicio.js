@@ -1,6 +1,6 @@
 // RUTA: backend/db/admin/facturasServicio.js
 
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 
 export async function createFacturaServicio({
@@ -12,7 +12,7 @@ export async function createFacturaServicio({
     metodo_pago,
     estatus,
 }) {
-    const db = openDb();
+    
     const sql = `
         INSERT INTO facturas_servicio (
             user_id, descripcion, monto, fecha_emision,
@@ -33,7 +33,7 @@ export async function createFacturaServicio({
 }
 
 export async function getAllFacturasServicio() {
-    const db = openDb();
+    
     const sql = `
         SELECT f.*, u.nombre, u.email, u.razon_social_servicio
         FROM facturas_servicio f
@@ -50,7 +50,7 @@ export async function getAllFacturasServicio() {
 }
 
 export async function getFacturasServicioByUser(user_id) {
-    const db = openDb();
+    
     const sql = `
         SELECT * FROM facturas_servicio
         WHERE user_id = $1
@@ -66,7 +66,7 @@ export async function getFacturasServicioByUser(user_id) {
 }
 
 export async function updateFacturaServicio(id, fields) {
-    const db = openDb();
+    
     const keys = Object.keys(fields);
     const values = Object.values(fields);
     const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
@@ -82,7 +82,7 @@ export async function updateFacturaServicio(id, fields) {
 }
 
 export async function deleteFacturaServicio(id) {
-    const db = openDb();
+    
     try {
         await db.query(`DELETE FROM facturas_servicio WHERE id = $1`, [id]);
         return { deleted: true };
@@ -93,7 +93,7 @@ export async function deleteFacturaServicio(id) {
 }
 
 export async function yaTieneFacturaEnPeriodo(user_id, periodo) {
-    const db = openDb();
+    
     const sql = `SELECT id FROM facturas_servicio WHERE user_id = $1 AND periodo = $2;`;
     try {
         const result = await db.query(sql, [user_id, periodo]);
@@ -105,7 +105,7 @@ export async function yaTieneFacturaEnPeriodo(user_id, periodo) {
 }
 
 export async function getUsuariosPendientesDeFacturar() {
-    const db = openDb();
+    
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');

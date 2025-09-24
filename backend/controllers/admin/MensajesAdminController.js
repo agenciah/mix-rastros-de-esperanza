@@ -1,6 +1,6 @@
 // RUTA: backend/controllers/admin/messagesAdminController.js
 
-import { openDb } from '../../db/users/initDb.js';
+import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
@@ -8,7 +8,7 @@ import logger from '../../utils/logger.js';
  */
 export const getAdminMessages = async (req, res) => {
     try {
-        const db = openDb(); // Obtiene el pool de PostgreSQL
+         // Obtiene el pool de PostgreSQL
         const result = await db.query("SELECT * FROM mensajes_administrador ORDER BY fecha_creacion DESC");
         
         // El resultado de la consulta ahora está en la propiedad 'rows'
@@ -33,7 +33,7 @@ export const createAdminMessage = async (req, res) => {
     }
 
     try {
-        const db = openDb();
+        
         const sql = `
             INSERT INTO mensajes_administrador (id_admin, titulo, tipo_mensaje, contenido) 
             VALUES ($1, $2, $3, $4)

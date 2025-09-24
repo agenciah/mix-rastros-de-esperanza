@@ -1,6 +1,6 @@
 // RUTA: backend/db/admin/adminQueriesPagos.js
 
-import { openDb } from "../users/initDb.js";
+import { query } from "../users/initDb.js";
 import logger from '../../utils/logger.js';
 
 /**
@@ -8,7 +8,7 @@ import logger from '../../utils/logger.js';
  * @returns {Promise<Array<object>>} - Array de usuarios con servicio vencido.
  */
 export const findUsersWithExpiredService = async () => {
-    const db = openDb();
+    
     // Usamos CURRENT_DATE para obtener la fecha actual en PostgreSQL.
     const sql = `
         SELECT
@@ -37,7 +37,7 @@ export const findUsersWithExpiredService = async () => {
  * @returns {Promise<object>} - El resultado de la inserción.
  */
 export const marcarPagoComoRecibido = async (userId, monto) => {
-    const db = openDb();
+    
     const client = await db.connect();
     try {
         await client.query('BEGIN');
@@ -73,7 +73,7 @@ export const marcarPagoComoRecibido = async (userId, monto) => {
  * @returns {Promise<Array<object>>} - Lista de pagos recientes.
  */
 export const getPagosRecientes = async () => {
-    const db = openDb();
+    
     const sql = `
         SELECT p.id_pago, p.fecha_pago, p.monto, u.id as userId, u.nombre
         FROM pagos p
@@ -96,7 +96,7 @@ export const getPagosRecientes = async () => {
  * @returns {Promise<object>} - El resultado de la operación.
  */
 export const revertirPagoValidado = async (pagoId) => {
-    const db = openDb();
+    
     const client = await db.connect();
     try {
         await client.query('BEGIN');

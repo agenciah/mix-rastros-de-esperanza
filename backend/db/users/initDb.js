@@ -152,8 +152,16 @@ const pool = new pg.Pool({
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
-export const openDb = () => {
-    return pool;
+// ✅ AÑADE ESTA NUEVA FUNCIÓN EN SU LUGAR
+/**
+ * Ejecuta una consulta a la base de datos usando un cliente del pool.
+ * Esta función centraliza toda la lógica de consultas.
+ * @param {string} text - La consulta SQL con placeholders ($1, $2, etc.).
+ * @param {Array} params - Los valores para los placeholders.
+ * @returns {Promise<QueryResult>} El resultado de la consulta de node-postgres.
+ */
+export const query = (text, params) => {
+    return pool.query(text, params);
 };
 
 // --- Función auxiliar para verificar si una columna ya existe ---

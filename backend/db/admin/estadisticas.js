@@ -1,6 +1,6 @@
 // RUTA: backend/db/admin/estadisticas.js
 
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 import { plans } from '../../shared/planes.js'; // Asumimos que este archivo sigue siendo relevante
 
@@ -9,7 +9,7 @@ import { plans } from '../../shared/planes.js'; // Asumimos que este archivo sig
  * @returns {Promise<number>} El total de usuarios.
  */
 export async function getTotalUsuarios() {
-    const db = openDb();
+    
     try {
         const result = await db.query(`SELECT COUNT(*) as total FROM users`);
         return parseInt(result.rows[0].total, 10) || 0;

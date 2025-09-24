@@ -1,5 +1,5 @@
 import { findUserByEmail, findUserById, updateUserProfile } from '../../db/users/core.js';
-import { openDb } from '../../db/users/initDb.js';
+import { query } from '../../db/users/initDb.js';
 import { plans } from '../../shared/planes.js';
 
 import { sendHEUserDataChangedEmail, sendHEPlanChangedEmail } from '../../utils/hastaEncontrarteEmailService.js';

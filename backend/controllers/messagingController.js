@@ -8,7 +8,7 @@ import {
     insertNewMessage,
     createReport
 } from '../db/queries/messagingQueries.js';
-import { openDb } from '../db/users/initDb.js';
+import { query } from '../db/users/initDb.js';
 import { createNotification } from '../db/queries/notificationsQueries.js';
 
 // Obtiene la lista de conversaciones

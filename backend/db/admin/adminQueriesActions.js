@@ -1,6 +1,6 @@
 // RUTA: backend/db/admin/adminQueriesActions.js
 
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
@@ -9,7 +9,7 @@ import logger from '../../utils/logger.js';
  * @param {string} newStatus - El nuevo estado (ej. 'resuelto', 'desestimado').
  */
 export const updateReportStatus = async (reportId, newStatus) => {
-    const db = openDb();
+    
     const sql = `UPDATE mensajes_reporte SET estado = $1 WHERE id_reporte = $2;`;
     try {
         await db.query(sql, [newStatus, reportId]);
@@ -26,7 +26,7 @@ export const updateReportStatus = async (reportId, newStatus) => {
  * @param {string} newStatus - El nuevo estado de suscripción (ej. 'advertido', 'suspendido').
  */
 export const updateUserStatus = async (userId, newStatus) => {
-    const db = openDb();
+    
     const sql = `UPDATE users SET estado_suscripcion = $1 WHERE id = $2;`;
     try {
         await db.query(sql, [newStatus, userId]);

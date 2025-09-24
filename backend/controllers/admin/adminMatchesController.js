@@ -1,6 +1,6 @@
 // RUTA: backend/controllers/admin/adminMatchesController.js
 
-import { openDb } from '../../db/users/initDb.js';
+import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 // Asumimos que estos archivos de queries ya han sido migrados a PostgreSQL
 import { getFichaCompletaById } from '../../db/queries/fichasQueries.js'; 
@@ -12,7 +12,7 @@ import { getHallazgoCompletoById } from '../../db/queries/hallazgosQueries.js';
  */
 export const getRecentMatches = async (req, res) => {
     try {
-        const db = openDb(); // Obtiene el pool de PostgreSQL
+         // Obtiene el pool de PostgreSQL
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const status = req.query.status || 'all';
@@ -74,7 +74,7 @@ export const getRecentMatches = async (req, res) => {
  */
 export const getMatchDetail = async (req, res) => {
     try {
-        const db = openDb();
+        
         const { id_coincidencia } = req.params;
 
         const posibleCoincidenciaResult = await db.query(
@@ -117,7 +117,7 @@ export const getMatchDetail = async (req, res) => {
  */
 export const updateMatchReviewStatus = async (req, res) => {
     try {
-        const db = openDb();
+        
         const { id_coincidencia } = req.params;
         const { estado, comentarios } = req.body;
 

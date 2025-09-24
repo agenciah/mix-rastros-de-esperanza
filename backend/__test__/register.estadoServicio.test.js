@@ -1,7 +1,7 @@
 // backend/tests/register.estadoServicio.test.js
 import request from 'supertest';
 import app from '../server.js'; // asegúrate de que esta ruta sea correcta
-import { openDb } from '../db/users/initDb.js';
+import { query } from '../db/users/initDb.js';
 
 let db;
 

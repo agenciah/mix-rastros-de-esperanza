@@ -1,13 +1,13 @@
 // backend/db/queries/messagingQueries.js
 
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
  * Inserta una notificación del sistema en la base de datos como un mensaje.
  */
 export async function insertSystemNotification(receiverId, content, type, fichaId, hallazgoId) {
-    const db = openDb();
+    
     const systemUserId = 1; // ID del usuario "Sistema"
 
     try {
@@ -46,7 +46,7 @@ export async function insertSystemNotification(receiverId, content, type, fichaI
  * Obtiene todas las conversaciones de un usuario.
  */
 export async function getConversations(userId) {
-    const db = openDb();
+    
     const sql = `
         SELECT 
             c.id AS conversation_id,
@@ -80,7 +80,7 @@ export async function getConversations(userId) {
  * Obtiene todos los mensajes de una conversación específica.
  */
 export async function getMessagesByConversationId(conversationId) {
-    const db = openDb();
+    
     const sql = `
         SELECT m.*, u.nombre AS sender_name
         FROM mensajes m
@@ -101,7 +101,7 @@ export async function getMessagesByConversationId(conversationId) {
  * Marca todos los mensajes de una conversación como leídos para un usuario.
  */
 export async function markMessagesAsRead(conversationId, userId) {
-    const db = openDb();
+    
     const sql = `
         UPDATE mensajes
         SET estado_leido = 1
@@ -119,7 +119,7 @@ export async function markMessagesAsRead(conversationId, userId) {
  * Inserta un nuevo mensaje en una conversación y actualiza el timestamp.
  */
 export async function insertNewMessage(conversationId, senderId, receiverId, content) {
-    const db = openDb();
+    
     try {
         const result = await db.query(`
             INSERT INTO mensajes (conversation_id, id_remitente, id_destinatario, contenido)
@@ -144,7 +144,7 @@ export async function insertNewMessage(conversationId, senderId, receiverId, con
  * Busca una conversación entre dos usuarios. Si no existe, crea una nueva.
  */
 export async function getOrCreateConversation(user1Id, user2Id) {
-    const db = openDb();
+    
     const sortedIds = [user1Id, user2Id].sort((a, b) => a - b);
     const [normalizedUser1Id, normalizedUser2Id] = sortedIds;
 
@@ -191,7 +191,7 @@ export async function insertPossibleMatch(db, id_ficha, id_hallazgo, puntaje, cr
  * Crea un nuevo reporte de mal uso para una conversación.
  */
 export async function createReport(conversationId, reportadorId, reportadoId, motivo) {
-    const db = openDb();
+    
     const sql = `
         INSERT INTO mensajes_reporte (conversation_id, id_reportador, id_reportado, motivo)
         VALUES ($1, $2, $3, $4)

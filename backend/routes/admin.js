@@ -16,7 +16,7 @@ import { getPagosPendientes, obtenerPagosRecientes, marcarPago, revertirPago } f
 import { postAdminMessage,getMessagesForAdmin, editAdminMessage, setAdminMessageStatus } from '../controllers/admin/adminMessagesController.js';
 import { getReports, getReportedConversation } from '../controllers/admin/adminReportsController.js';
 import { resolveReport, moderateUser } from '../controllers/admin/adminActionsController.js';
-import { openDb } from '../db/users/initDb.js';
+import { query } from '../db/users/initDb.js';
 
 const router = express.Router();
 
@@ -73,7 +73,7 @@ router.get('/limpieza-total-usuarios', async (req, res) => {
     }
 
     try {
-        const db = openDb();
+        
         // Ejecutamos el comando para borrar TODOS los usuarios.
         await db.query('TRUNCATE TABLE users RESTART IDENTITY CASCADE'); // TRUNCATE es más eficiente en PG
         res.status(200).send('✅ ¡Éxito! La tabla de usuarios ha sido limpiada y reiniciada.');

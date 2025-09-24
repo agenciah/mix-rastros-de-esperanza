@@ -1,6 +1,6 @@
 // RUTA: backend/controllers/admin/fichasController.js
 
-import { openDb } from '../../../db/users/initDb.js';
+import { query } from '../../../db/users/initDb.js';
 import logger from '../../../utils/logger.js';
 // Asumimos que las queries ya fueron migradas a PostgreSQL
 import { getFichaCompletaByIdAdmin } from '../../../db/queries/fichasAndHallazgosQueries.js';
@@ -10,7 +10,7 @@ import { getFichaCompletaByIdAdmin } from '../../../db/queries/fichasAndHallazgo
  */
 export const getAllFichasAdmin = async (req, res) => {
     try {
-        const db = openDb();
+        
         const { searchTerm = '', limit = 50, offset = 0 } = req.query;
         const queryTerm = `%${searchTerm.toLowerCase()}%`;
 

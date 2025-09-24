@@ -1,6 +1,6 @@
 // RUTA: backend/db/admin/dashboard.js
 
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
@@ -8,7 +8,7 @@ import logger from '../../utils/logger.js';
  * @returns {Promise<Array<Object>>} Un array con los planes y el número de usuarios.
  */
 export async function obtenerUsuariosPorPlan() {
-    const db = openDb();
+    
     // Nota: PostgreSQL usa ->> 0 para extraer el primer elemento de un array JSON como texto.
     const sql = `
         SELECT
@@ -37,7 +37,7 @@ export async function obtenerUsuariosPorPlan() {
  * @returns {Promise<Object>} Un objeto con las cuentas de facturados y pendientes.
  */
 export async function obtenerTicketsFacturadosVsPendientes() {
-    const db = openDb();
+    
     // Usamos la sintaxis FILTER de PostgreSQL, que es más eficiente.
     const sql = `
         SELECT
@@ -66,7 +66,7 @@ export async function obtenerTicketsFacturadosVsPendientes() {
  * @returns {Promise<Array<Object>>} Un array de facturas pendientes.
  */
 export async function obtenerFacturasServicioPendientes() {
-    const db = openDb();
+    
     const sql = `
         SELECT
             fs.id,
@@ -94,7 +94,7 @@ export async function obtenerFacturasServicioPendientes() {
  * @returns {Promise<number>} El número total de nuevos usuarios.
  */
 export async function obtenerNuevosUsuariosDesde(fecha) {
-    const db = openDb();
+    
     const sql = `SELECT COUNT(*) as total FROM users WHERE trial_start_date >= $1;`;
     try {
         const result = await db.query(sql, [fecha]);
@@ -111,7 +111,7 @@ export async function obtenerNuevosUsuariosDesde(fecha) {
  * @returns {Promise<number>} El número total de cancelaciones.
  */
 export async function obtenerCancelacionesDesde(fecha) {
-    const db = openDb();
+    
     const sql = `SELECT COUNT(*) as total FROM users WHERE cancelado = 1 AND cancelacion_efectiva >= $1;`;
     try {
         const result = await db.query(sql, [fecha]);

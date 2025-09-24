@@ -1,13 +1,13 @@
 // RUTA: backend/db/queries/hallazgosQueries.js
 
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
  * FUNCIÓN MAESTRA: Obtiene un hallazgo completo por su ID con todos los datos.
  */
 export const getHallazgoCompletoById = async (id) => {
-    const db = openDb();
+    
     const hallazgoPrincipalSql = `
         SELECT
             h.*,
@@ -49,7 +49,7 @@ export const getHallazgoCompletoById = async (id) => {
  * Obtiene todos los hallazgos activos utilizando la función maestra.
  */
 export const getAllHallazgosCompletos = async () => {
-    const db = openDb();
+    
     try {
         const hallazgosIdsResult = await db.query(`SELECT id_hallazgo FROM hallazgos WHERE estado_hallazgo = 'encontrado'`);
         const hallazgosIds = hallazgosIdsResult.rows;
@@ -72,7 +72,7 @@ export const getAllHallazgosCompletos = async () => {
  * Busca hallazgos basándose en múltiples criterios detallados.
  */
 export const searchHallazgos = async (params) => {
-    const db = openDb();
+    
     let query = `
         SELECT
             h.id_hallazgo, h.nombre, h.apellido_paterno, h.apellido_materno,
@@ -121,7 +121,7 @@ export const searchHallazgos = async (params) => {
  * Busca hallazgos por un término de búsqueda general y exhaustivo.
  */
 export const searchHallazgosByKeyword = async (searchTerm = '', limit = 20, offset = 0) => {
-    const db = openDb();
+    
     const sqlTerm = `%${searchTerm.toLowerCase()}%`;
     const hallazgosSql = `
         SELECT DISTINCT
@@ -161,7 +161,7 @@ export const searchHallazgosByKeyword = async (searchTerm = '', limit = 20, offs
  * Obtiene todos los catálogos necesarios para los formularios de hallazgos.
  */
 export const getAllHallazgosCatalogos = async () => {
-    const db = openDb();
+    
     try {
         const [tiposLugar, partesCuerpo, prendas] = await Promise.all([
             db.query(`SELECT id_tipo_lugar, nombre_tipo FROM catalogo_tipo_lugar ORDER BY nombre_tipo`),

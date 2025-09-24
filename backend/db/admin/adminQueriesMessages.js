@@ -1,6 +1,6 @@
 // RUTA: backend/db/admin/adminQueriesMessages.js
 
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
@@ -9,7 +9,7 @@ import logger from '../../utils/logger.js';
  * @returns {Promise<object>} - Resultado de la inserción.
  */
 export const createAdminMessage = async ({ titulo, contenido, tipo_mensaje, id_admin }) => {
-    const db = openDb();
+    
     const sql = `
         INSERT INTO mensajes_administrador (titulo, contenido, tipo_mensaje, id_admin)
         VALUES ($1, $2, $3, $4)
@@ -29,7 +29,7 @@ export const createAdminMessage = async ({ titulo, contenido, tipo_mensaje, id_a
  * @returns {Promise<Array<object>>} - Lista de todos los mensajes.
  */
 export const getAllAdminMessages = async () => {
-    const db = openDb();
+    
     const sql = `SELECT * FROM mensajes_administrador ORDER BY fecha_creacion DESC;`;
     try {
         const result = await db.query(sql);
@@ -48,7 +48,7 @@ export const getAllAdminMessages = async () => {
  * @returns {Promise<object>} - Resultado de la actualización.
  */
 export const updateAdminMessage = async (id_mensaje, { titulo, contenido }) => {
-    const db = openDb();
+    
     const sql = `UPDATE mensajes_administrador SET titulo = $1, contenido = $2 WHERE id_mensaje = $3;`;
     try {
         await db.query(sql, [titulo, contenido, id_mensaje]);
@@ -66,7 +66,7 @@ export const updateAdminMessage = async (id_mensaje, { titulo, contenido }) => {
  * @returns {Promise<object>} - Resultado de la actualización.
  */
 export const updateAdminMessageStatus = async (id_mensaje, estado) => {
-    const db = openDb();
+    
     const sql = `UPDATE mensajes_administrador SET estado = $1 WHERE id_mensaje = $2;`;
     try {
         await db.query(sql, [estado, id_mensaje]);

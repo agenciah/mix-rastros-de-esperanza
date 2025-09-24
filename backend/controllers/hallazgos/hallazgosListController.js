@@ -1,4 +1,4 @@
-import { openDb } from '../../db/users/initDb.js';
+import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
@@ -6,7 +6,7 @@ import logger from '../../utils/logger.js';
  */
 export const getHallazgosList = async (req, res) => {
     try {
-        const db = openDb();
+        
         const limit = parseInt(req.query.limit) || 10;
         const offset = parseInt(req.query.offset) || 0;
 

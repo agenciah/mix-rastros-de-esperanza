@@ -1,4 +1,4 @@
-import { openDb } from './users/initDb.js';
+import { query } from './users/initDb.js';
 import { format } from 'date-fns';
 
 /**
@@ -7,7 +7,7 @@ import { format } from 'date-fns';
  * @param {string} motivo - El motivo de la cancelación.
  */
 export async function registrarCancelacion(userId, motivo) {
-    const db = openDb(); // Obtiene el pool de PostgreSQL
+     // Obtiene el pool de PostgreSQL
     const fechaSolicitud = new Date(); // PostgreSQL maneja objetos Date directamente
 
     // 1. Guardar solicitud
@@ -37,7 +37,7 @@ export async function registrarCancelacion(userId, motivo) {
  * @returns {Promise<object|null>}
  */
 export async function obtenerUsuarioPorId(userId) {
-    const db = openDb();
+    
     const res = await db.query(
         `SELECT 
             u.id, u.nombre, u.email, u.plan, u.trial_start_date,
@@ -57,7 +57,7 @@ export async function obtenerUsuarioPorId(userId) {
  * @param {Date} fechaFin - La fecha en que la cancelación se hace efectiva.
  */
 export async function marcarUsuarioComoCancelado(userId, fechaFin) {
-    const db = openDb();
+    
     await db.query(
         `UPDATE users
          SET cancelado = 1,
@@ -73,7 +73,7 @@ export async function marcarUsuarioComoCancelado(userId, fechaFin) {
  * @returns {Promise<boolean>}
  */
 export async function revertirCancelacion(userId) {
-    const db = openDb();
+    
     const result1 = await db.query(
         `UPDATE users SET cancelado = 0, cancelacion_efectiva = NULL WHERE id = $1`,
         [userId]
@@ -92,7 +92,7 @@ export async function revertirCancelacion(userId) {
  * @returns {Promise<object|null>}
  */
 export async function obtenerCancelacionActiva(userId) {
-    const db = openDb();
+    
     const res = await db.query(`
         SELECT * FROM cancelaciones
         WHERE user_id = $1 AND estado = 'pendiente'

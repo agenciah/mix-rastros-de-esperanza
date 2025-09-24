@@ -1,6 +1,6 @@
 // RUTA: backend/controllers/feed/feedMatchesController.js
 
-import { openDb } from '../../db/users/initDb.js';
+import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 // ✅ 1. Importamos la función maestra que ya migramos
 import { getFichaCompletaById } from '../../db/queries/fichasQueries.js'; 
@@ -13,7 +13,7 @@ import { findMatchesForFicha } from '../fichas/matchingService.js';
  */
 export const getMatchesData = async (userId) => {
     try {
-        const db = openDb(); // Obtiene el pool de PostgreSQL
+         // Obtiene el pool de PostgreSQL
 
         // 1. Obtener todas las fichas de desaparición creadas por el usuario
         const userFichasResult = await db.query(

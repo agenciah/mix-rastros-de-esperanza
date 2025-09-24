@@ -1,7 +1,7 @@
 // RUTA: backend/db/queries/fichasActions.js
 // Este archivo contiene EXCLUSIVAMENTE operaciones de escritura (CREATE, UPDATE, DELETE).
 
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**

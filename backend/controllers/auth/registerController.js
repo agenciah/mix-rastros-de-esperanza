@@ -4,7 +4,7 @@ import logger from '../../utils/logger.js';
 // Se importa únicamente el servicio de correo nuevo
 import { sendHEConfirmationEmail } from '../../utils/hastaEncontrarteEmailService.js';
 import { findUserByEmail, findUserByPhone, createUser } from '../../db/users/core.js';
-import { openDb } from '../../db/users/initDb.js';
+import { query } from '../../db/users/initDb.js';
 
 const JWT_CONFIRM_SECRET = process.env.JWT_CONFIRM_SECRET || 'confirm_secret';
 
@@ -12,7 +12,7 @@ const JWT_CONFIRM_SECRET = process.env.JWT_CONFIRM_SECRET || 'confirm_secret';
  * Genera un número de referencia único (Versión PostgreSQL).
  */
 async function generarNumeroReferenciaUnico() {
-    const db = openDb(); // Obtiene el pool de PostgreSQL
+     // Obtiene el pool de PostgreSQL
     let numero;
     let exists = true;
     while (exists) {

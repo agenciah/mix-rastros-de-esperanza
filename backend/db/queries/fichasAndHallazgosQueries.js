@@ -1,4 +1,4 @@
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 // Asumimos que hallazgosQueries.js también será migrado
 import { getHallazgoCompletoById } from './hallazgosQueries.js';
@@ -9,7 +9,7 @@ import { getHallazgoCompletoById } from './hallazgosQueries.js';
  * @returns {Promise<object | null>} - La ficha completa o null si no se encuentra.
  */
 export const getFichaCompletaById = async (id) => {
-    const db = openDb(); // Obtiene el pool de PostgreSQL
+     // Obtiene el pool de PostgreSQL
 
     const fichaPrincipalSql = `
         SELECT
@@ -61,7 +61,7 @@ export const getFichaCompletaById = async (id) => {
  * @returns {Promise<Array<object>>} - Array de fichas que coinciden.
  */
 export const searchFichas = async (params) => {
-    const db = openDb();
+    
     let query = `
         SELECT
             fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.apellido_materno,
@@ -154,7 +154,7 @@ export const getAllHallazgosCompletos = async () => {
  * Obtiene una ficha de desaparición con detalles para el admin (Versión PostgreSQL).
  */
 export const getFichaCompletaByIdAdmin = async (id_ficha) => {
-    const db = openDb();
+    
     
     const fichaSql = `
         SELECT
@@ -200,7 +200,7 @@ export const getFichaCompletaByIdAdmin = async (id_ficha) => {
  * @returns {Promise<Array<object>>} - Array de hallazgos que coinciden.
  */
 export const searchHallazgos = async (params) => {
-    const db = openDb();
+    
     let query = `
         SELECT
             h.id_hallazgo, h.nombre, h.apellido_paterno, h.apellido_materno,
@@ -274,7 +274,7 @@ export const searchHallazgos = async (params) => {
  * @returns {Promise<object>} - Un objeto con arrays de los catálogos.
  */
 export const getAllHallazgosCatalogos = async () => {
-    const db = openDb();
+    
     try {
         const [tiposLugarResult, partesCuerpoResult, prendasResult] = await Promise.all([
             db.query(`SELECT id_tipo_lugar, nombre_tipo FROM catalogo_tipo_lugar ORDER BY nombre_tipo`),
@@ -298,7 +298,7 @@ export const getAllHallazgosCatalogos = async () => {
  * @returns {Promise<Array<object>>} - Array de hallazgos que coinciden.
  */
 export const searchHallazgosByKeyword = async (searchTerm = '', limit = 20, offset = 0) => {
-    const db = openDb();
+    
     const sqlTerm = `%${searchTerm.toLowerCase()}%`;
 
     // ✅ CORRECCIÓN: La consulta ahora usa placeholders posicionales ($1, $2, etc.)
@@ -358,7 +358,7 @@ export const searchHallazgosByKeyword = async (searchTerm = '', limit = 20, offs
  * @returns {Promise<Array<object>>} - Un array de fichas para el feed.
  */
 export const getAllPublicFichas = async (limit = 10, offset = 0) => {
-    const db = openDb();
+    
     const sql = `
         SELECT
             fd.id_ficha, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,
@@ -386,7 +386,7 @@ export const getAllPublicFichas = async (limit = 10, offset = 0) => {
  * @returns {Promise<number>} - El número de fichas activas.
  */
 export const countActiveFichasByUserId = async (userId) => {
-    const db = openDb();
+    
     const sql = `SELECT COUNT(*) AS count FROM fichas_desaparicion WHERE id_usuario_creador = $1 AND estado_ficha = 'activa';`;
     try {
         const result = await db.query(sql, [userId]);

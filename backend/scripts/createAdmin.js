@@ -1,5 +1,5 @@
 // scripts/createAdmin.js
-import { openDb } from "../db/users/initDb.js";
+import { query } from "../db/users/initDb.js";
 import bcrypt from "bcrypt";
 
 const crearAdmin = async () => {

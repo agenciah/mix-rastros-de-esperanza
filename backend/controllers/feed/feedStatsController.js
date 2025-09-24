@@ -1,6 +1,6 @@
 // feedStatsController.js
 
-import { openDb } from '../../db/users/initDb.js';
+import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
@@ -9,7 +9,7 @@ import logger from '../../utils/logger.js';
  */
 export const getStatsData = async () => { // ❗️ Eliminamos req y res
     try {
-        const db = openDb();
+        
 
         const [
             totalFichasResult,

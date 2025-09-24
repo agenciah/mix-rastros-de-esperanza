@@ -1,4 +1,4 @@
-import { openDb } from './users/initDb.js'
+import { query } from './users/initDb.js'
 
 export async function crearEstadoServicioInicial(userId, trialEndDate, proximoPago, facturasRestantes, servicioActivo, cancelacionProgramada = null) {
   try {

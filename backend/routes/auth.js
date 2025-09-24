@@ -4,7 +4,7 @@ import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import { open } from 'sqlite';
 import sqlite3 from 'sqlite3';
-import { openDb } from '../db/users/initDb.js';
+import { query } from '../db/users/initDb.js';
 
 // 🔄 Nuevas rutas a controladores descompuestos
 import { registerUser } from '../controllers/auth/registerController.js';
@@ -78,7 +78,7 @@ router.get('/confirm', async (req, res) => {
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_CONFIRM_SECRET || 'confirm_secret');
-        const db = openDb();
+        
 
         const result = await db.query(
             `UPDATE users SET email_confirmed = 1, confirmation_token = NULL WHERE email = $1 AND email_confirmed = 0`,

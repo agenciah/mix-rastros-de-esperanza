@@ -1,8 +1,8 @@
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js'; // Asumimos que tienes logger aquí
 
 export async function createNotification(userId, type, content, url) {
-    const db = openDb();
+    
     const sql = `
         INSERT INTO notificaciones (id_usuario_destinatario, tipo, contenido, url_destino) 
         VALUES ($1, $2, $3, $4)
@@ -21,7 +21,7 @@ export async function createNotification(userId, type, content, url) {
  * @returns {Promise<Array<object>>} - Una lista de notificaciones.
  */
 export async function getNotificationsByUserId(userId) {
-    const db = openDb();
+    
     const sql = `
         SELECT * FROM notificaciones 
         WHERE id_usuario_destinatario = $1 
@@ -42,7 +42,7 @@ export async function getNotificationsByUserId(userId) {
  * @param {number} userId - El ID del usuario.
  */
 export async function markNotificationsAsRead(userId) {
-    const db = openDb();
+    
     const sql = `
         UPDATE notificaciones 
         SET estado = 'leido' 

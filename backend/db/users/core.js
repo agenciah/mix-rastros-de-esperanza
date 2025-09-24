@@ -3,7 +3,7 @@
  * actualizado para rastros-de-esperanza y PostgreSQL.
  */
 
-import { openDb } from './initDb.js';
+import { query } from './initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
@@ -18,7 +18,7 @@ export async function createUser({
     numero_referencia_unico = null, fichas_activas_pagadas = 0,
     estado_suscripcion = 'inactivo',
 }) {
-    const db = openDb(); // Obtiene el pool de conexiones de PostgreSQL
+     // Obtiene el pool de conexiones de PostgreSQL
     const trialStartDate = new Date(); // PostgreSQL maneja bien los objetos Date
     const initialState = JSON.stringify({ flow: null, step: null, data: {} });
 
@@ -75,7 +75,7 @@ export async function createUser({
  * Buscar usuario por email (Versión PostgreSQL)
  */
 export async function findUserByEmail(email) {
-    const db = openDb();
+    
     // Se usa $1 como placeholder
     const res = await db.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = res.rows[0]; // El resultado está en la propiedad 'rows'
@@ -105,7 +105,7 @@ export async function findUserByEmail(email) {
  * Buscar usuario por teléfono (Versión PostgreSQL)
  */
 export async function findUserByPhone(phone) {
-    const db = openDb();
+    
     const res = await db.query('SELECT * FROM users WHERE telefono = $1', [phone]);
     const user = res.rows[0];
 
@@ -134,7 +134,7 @@ export async function findUserByPhone(phone) {
  * Buscar usuario por ID (Versión PostgreSQL)
  */
 export async function findUserById(id) {
-    const db = openDb();
+    
     const res = await db.query('SELECT * FROM users WHERE id = $1', [id]);
     const user = res.rows[0];
 
@@ -165,7 +165,7 @@ export async function findUserById(id) {
  * Actualizar perfil básico (Versión PostgreSQL)
  */
 export async function updateUserProfile(userId, { nombre, email, telefono, estado_republica }) {
-    const db = openDb();
+    
     await db.query(
         `UPDATE users SET nombre = $1, email = $2, telefono = $3, estado_republica = $4 WHERE id = $5`,
         [nombre, email, telefono || null, estado_republica || null, userId]
@@ -176,7 +176,7 @@ export async function updateUserProfile(userId, { nombre, email, telefono, estad
  * Actualizar estado de conversación (Versión PostgreSQL)
  */
 export async function updateUserState(phone, state) {
-    const db = openDb();
+    
     const stateString = JSON.stringify(state);
     await db.query('UPDATE users SET user_state = $1 WHERE telefono = $2', [stateString, phone]);
 }
@@ -185,7 +185,7 @@ export async function updateUserState(phone, state) {
  * Actualizar token de confirmación (Versión PostgreSQL)
  */
 export async function updateUserConfirmationToken(email, token) {
-    const db = openDb();
+    
     await db.query('UPDATE users SET confirmation_token = $1 WHERE email = $2', [token, email]);
 }
 
@@ -193,7 +193,7 @@ export async function updateUserConfirmationToken(email, token) {
  * Cambiar rol (Versión PostgreSQL)
  */
 export async function updateUserRole(email, newRole) {
-    const db = openDb();
+    
     await db.query('UPDATE users SET role = $1 WHERE email = $2', [newRole, email]);
 }
 
@@ -201,7 +201,7 @@ export async function updateUserRole(email, newRole) {
  * Cambiar contraseña (Versión PostgreSQL)
  */
 export async function updateUserPassword(id, nuevaHash) {
-    const db = openDb();
+    
     await db.query('UPDATE users SET password = $1 WHERE id = $2', [nuevaHash, id]);
 }
 
@@ -209,7 +209,7 @@ export async function updateUserPassword(id, nuevaHash) {
  * Actualizar suscripción (Versión PostgreSQL)
  */
 export async function updateUserSubscription(userId, { estado_suscripcion, fichas_activas_pagadas }) {
-    const db = openDb();
+    
     await db.query(
         `UPDATE users SET estado_suscripcion = $1, fichas_activas_pagadas = $2 WHERE id = $3`,
         [estado_suscripcion, fichas_activas_pagadas, userId]
@@ -220,7 +220,7 @@ export async function updateUserSubscription(userId, { estado_suscripcion, ficha
  * Actualizar ubicación (Versión PostgreSQL)
  */
 export async function updateUserLocation(userId, estado_republica) {
-    const db = openDb();
+    
     await db.query(
         `UPDATE users SET estado_republica = $1 WHERE id = $2`,
         [estado_republica, userId]
@@ -231,7 +231,7 @@ export async function updateUserLocation(userId, estado_republica) {
  * Actualizar última conexión (Versión PostgreSQL)
  */
 export async function updateUserUltimaConexion(userId, ultima_conexion) {
-    const db = openDb();
+    
     await db.query(
         `UPDATE users SET ultima_conexion = $1 WHERE id = $2`,
         [ultima_conexion, userId]
@@ -242,7 +242,7 @@ export async function updateUserUltimaConexion(userId, ultima_conexion) {
  * Actualizar número de referencia (Versión PostgreSQL)
  */
 export async function updateUserNumeroReferencia(userId, numero_referencia_unico) {
-    const db = openDb();
+    
     await db.query(
         `UPDATE users SET numero_referencia_unico = $1 WHERE id = $2`,
         [numero_referencia_unico, userId]

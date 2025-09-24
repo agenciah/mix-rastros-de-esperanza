@@ -1,6 +1,6 @@
 // RUTA: backend/controllers/admin/hallazgos/adminHallazgosController.js
 
-import { openDb } from '../../../db/users/initDb.js';
+import { query } from '../../../db/users/initDb.js';
 import logger from '../../../utils/logger.js';
 // Asumimos que la función de queries ya fue migrada a PostgreSQL
 import { getAllHallazgosCatalogos } from '../../../db/queries/fichasAndHallazgosQueries.js';
@@ -10,7 +10,7 @@ import { getAllHallazgosCatalogos } from '../../../db/queries/fichasAndHallazgos
  */
 export const getAllHallazgosAdmin = async (req, res) => {
     try {
-        const db = openDb(); // Obtiene el pool de PostgreSQL
+         // Obtiene el pool de PostgreSQL
         const { searchTerm = '' } = req.query;
         const queryTerm = `%${searchTerm.toLowerCase()}%`;
 
@@ -41,7 +41,7 @@ export const getAllHallazgosAdmin = async (req, res) => {
  */
 export const getHallazgoByIdAdmin = async (req, res) => {
     try {
-        const db = openDb();
+        
         const { id } = req.params;
 
         const sql = `

@@ -1,4 +1,4 @@
-import { openDb } from '../../db/users/initDb.js';
+import { query } from '../../db/users/initDb.js';
 import { getAllUsuariosAdmin } from '../../db/admin/usuarios.js';
 import logger from '../../utils/logger.js';
 
@@ -32,7 +32,7 @@ export async function actualizarUsuario(req, res) {
     } = req.body;
 
     try {
-        const db = openDb(); // Obtiene el pool de PostgreSQL
+         // Obtiene el pool de PostgreSQL
 
         // 1. Validar que el usuario exista
         const userResult = await db.query('SELECT * FROM users WHERE id = $1', [id]);

@@ -4,7 +4,7 @@ import { authenticateToken } from '../middleware/authMiddleware.js';
 import * as perfilController from '../controllers/usuarios/perfilController.js';
 import { forgotPassword, resetPassword } from '../controllers/auth/forgotPasswordController.js'
 
-import { openDb } from '../db/users/initDb.js';
+import { query } from '../db/users/initDb.js';
 
 const router = express.Router();
 

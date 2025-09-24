@@ -1,6 +1,6 @@
 // backend/controllers/fichas/fichasController.js
 
-import { openDb } from '../../db/users/initDb.js';
+import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 import { findMatchesForFicha } from './matchingService.js';
 import { getFichaCompletaById, getAllPublicFichas, countActiveFichasByUserId } from '../../db/queries/fichasAndHallazgosQueries.js';
@@ -210,7 +210,7 @@ export const actualizarFicha = async (req, res) => {
  */
 export const getAllFichas = async (req, res) => {
     try {
-        const db = openDb();
+        
         const limit = parseInt(req.query.limit) || 20;
         const offset = parseInt(req.query.offset) || 0;
 
@@ -263,7 +263,7 @@ export const getAllFichas = async (req, res) => {
 export const getFichaById = async (req, res) => {
     try {
         const { id } = req.params;
-        const db = openDb(); // Obtiene el pool de PostgreSQL
+         // Obtiene el pool de PostgreSQL
 
         // 1. Consultas con la sintaxis de PostgreSQL ($1)
         const fichaSql = `
@@ -371,7 +371,7 @@ export const deleteFichaDesaparicion = async (req, res) => {
  */
 export const searchFichas = async (req, res) => {
     try {
-        const db = openDb();
+        
         const { searchTerm = '', limit = 20, offset = 0 } = req.query;
         const sqlTerm = `%${searchTerm.toLowerCase()}%`;
 
@@ -420,7 +420,7 @@ export const searchFichas = async (req, res) => {
  */
 export const obtenerCatalogoTiposLugar = async (req, res) => {
     try {
-        const db = openDb();
+        
         const result = await db.query(`SELECT * FROM catalogo_tipo_lugar`);
         res.json({ success: true, catalogo_tipo_lugar: result.rows });
     } catch (error) {
@@ -434,7 +434,7 @@ export const obtenerCatalogoTiposLugar = async (req, res) => {
  */
 export const obtenerCatalogoPartesCuerpo = async (req, res) => {
     try {
-        const db = openDb();
+        
         const result = await db.query(`SELECT * FROM catalogo_partes_cuerpo`);
         const partes = result.rows;
         
@@ -456,7 +456,7 @@ export const obtenerCatalogoPartesCuerpo = async (req, res) => {
  */
 export const obtenerCatalogoPrendas = async (req, res) => {
     try {
-        const db = openDb();
+        
         const result = await db.query(`SELECT * FROM catalogo_prendas`);
         res.json({ success: true, catalogo_prendas: result.rows });
     } catch (error) {

@@ -1,14 +1,14 @@
 // RUTA: backend/db/queries/fichasQueries.js
 // Contiene EXCLUSIVAMENTE operaciones de lectura (GET) para fichas.
 
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
  * FUNCIÓN MAESTRA: Obtiene UNA ficha completa por su ID.
  */
 export const getFichaCompletaById = async (id) => {
-    const db = openDb();
+    
     const fichaSql = `
         SELECT
             fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,

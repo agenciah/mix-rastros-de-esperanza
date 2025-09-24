@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { openDb } from '../../db/users/initDb.js';
+import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js'; // Es una buena práctica añadir logger
 
 const JWT_SECRET = process.env.JWT_ADMIN_SECRET || 'clave_secreta_admin_temporal'; // Usar una clave secreta diferente para admin
@@ -13,7 +13,7 @@ export async function loginAdmin(req, res) {
     }
 
     try {
-        const db = openDb(); // Obtiene el pool de PostgreSQL
+         // Obtiene el pool de PostgreSQL
 
         // Se usa db.query y placeholder $1
         const adminResult = await db.query(

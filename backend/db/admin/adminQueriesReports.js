@@ -1,6 +1,6 @@
 // RUTA: backend/db/admin/adminQueriesReports.js
 
-import { openDb } from '../users/initDb.js';
+import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
@@ -9,7 +9,7 @@ import logger from '../../utils/logger.js';
  * @returns {Promise<Array<object>>} - Lista de reportes pendientes.
  */
 export const getPendingReports = async () => {
-    const db = openDb();
+    
     const sql = `
         SELECT
             mr.id_reporte,

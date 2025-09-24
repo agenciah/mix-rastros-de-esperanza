@@ -1,4 +1,4 @@
-import { openDb } from '../../db/users/initDb.js';
+import { query } from '../../db/users/initDb.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { sendHEResetPasswordEmail, sendHEPasswordChangedEmail } from '../../utils/hastaEncontrarteEmailService.js';
@@ -15,7 +15,7 @@ export const forgotPassword = async (req, res) => {
     }
 
     try {
-        const db = openDb(); // Obtiene el pool de PostgreSQL
+         // Obtiene el pool de PostgreSQL
         const normalizedEmail = email.trim().toLowerCase();
         
         // Se usa db.query y placeholder $1
@@ -62,7 +62,7 @@ export const resetPassword = async (req, res) => {
     }
 
     try {
-        const db = openDb();
+        
         
         // PostgreSQL usa NOW() para obtener la fecha y hora actual
         const userResult = await db.query(

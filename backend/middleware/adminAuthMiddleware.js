@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { openDb } from '../db/users/initDb.js';
+import { query } from '../db/users/initDb.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_temporal';
 
