@@ -1,5 +1,5 @@
 import express from 'express';
-import { getStatsData } from '../controllers/feed/feedStatsController.js';
+import { getDashboardData } from '../controllers/feed/feedMainController.js';
 // ✅ Se elimina la importación de getAdminMessagesData, ya que ahora está dentro de getStatsData.
 import { getHallazgosList } from '../controllers/hallazgos/hallazgosListController.js';
 import { getAdminMessagesData } from '../controllers/feed/feedAdminMessagesController.js';
@@ -8,15 +8,15 @@ import logger from '../utils/logger.js'; // ✅ Se importa el logger que faltaba
 const router = express.Router();
 
 // --- Ruta para el Dashboard Principal del Feed ---
-// Llama directamente al controlador que se encargará de toda la lógica.
-router.get('/dashboard', getStatsData);
+// ✅ Llama al controlador principal que agrupa todos los datos.
+router.get('/dashboard', getDashboardData);
 
 // --- Ruta para la Lista Pública Paginada de Hallazgos ---
 // Llama directamente al controlador que se encargará de la paginación.
 router.get('/hallazgos', getHallazgosList);
 
 router.get('/admin-messages', async (req, res) => {
-    try {
+    try {   
         const messages = await getAdminMessagesData();
         res.json({ success: true, data: messages });
     } catch (error) {
