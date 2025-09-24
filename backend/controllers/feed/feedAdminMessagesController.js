@@ -1,11 +1,12 @@
-// backend/controllers/feed/feedAdminMessagesController.js
+// RUTA: backend/controllers/feed/feedAdminMessagesController.js
 import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 
 /**
- * Obtiene todos los mensajes públicos del administrador y envía la respuesta HTTP.
+ * Obtiene todos los mensajes públicos del administrador y DEVUELVE los datos.
+ * Ya no maneja req y res.
  */
-export const getAdminMessagesData = async (req, res) => {
+export const getAdminMessagesData = async () => { // ✅ Se eliminan req y res
     try {
         const sql = `
             SELECT id_mensaje, titulo, contenido, fecha_creacion
@@ -14,12 +15,13 @@ export const getAdminMessagesData = async (req, res) => {
             ORDER BY fecha_creacion DESC
             LIMIT 5;
         `;
-        const result = await query(sql); // ✅ Corregido
+        const result = await query(sql);
 
-        res.json({ success: true, data: result.rows });
+        return result.rows; // ✅ Retorna los datos
 
     } catch (error) {
         logger.error(`❌ Error al obtener mensajes del administrador (PostgreSQL): ${error.message}`);
-        res.status(500).json({ success: false, message: 'Error al obtener los mensajes del administrador.' });
+        // ✅ Lanza el error para que el controlador que la llama lo gestione
+        throw new Error('Error al obtener los mensajes del administrador.');
     }
 };
