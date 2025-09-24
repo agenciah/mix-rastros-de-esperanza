@@ -18,7 +18,7 @@ import { getFichasCompletasByUserId } from '../../db/queries/fichasQueries.js';
  * y busca automáticamente coincidencias con hallazgos (Versión PostgreSQL).
  */
 export const createFichaDesaparicion = async (req, res) => {
-    const client = await pool.connect(); // ✅ Corregido
+    const client = await pool.connect();
     try {
         await client.query('BEGIN');
 
@@ -30,6 +30,13 @@ export const createFichaDesaparicion = async (req, res) => {
         } = req.body;
 
         const id_usuario_creador = req.user.id;
+
+        // ✅ INICIA CORRECCIÓN: Convertimos los campos numéricos vacíos a null
+        // Si el valor es un string vacío (''), lo cambiamos a null; si no, lo dejamos como está.
+        const edad_estimada_db = edad_estimada === '' ? null : edad_estimada;
+        const estatura_db = estatura === '' ? null : estatura;
+        const peso_db = peso === '' ? null : peso;
+        // ✅ FIN CORRECCIÓN
 
         // 1. Insertar la ubicación y obtener el ID devuelto
         const u = ubicacion_desaparicion;
@@ -51,11 +58,14 @@ export const createFichaDesaparicion = async (req, res) => {
             [
                 id_usuario_creador, nombre, segundo_nombre, apellido_paterno, apellido_materno,
                 fecha_desaparicion, id_ubicacion_desaparicion, id_tipo_lugar_desaparicion,
-                foto_perfil, edad_estimada, genero, estatura, complexion, peso
+                foto_perfil,
+                // ✅ Usamos las nuevas variables saneadas
+                edad_estimada_db, genero, estatura_db, complexion, peso_db
             ]
         );
         const idFicha = fichaResult.rows[0].id_ficha;
 
+        // ... (el resto de la función para insertar rasgos, vestimenta, buscar matches, etc., sigue igual)
         // 3. Insertar rasgos físicos
         if (rasgos_fisicos && rasgos_fisicos.length > 0) {
             const rasgosPromises = rasgos_fisicos.map(rasgo =>
@@ -80,7 +90,7 @@ export const createFichaDesaparicion = async (req, res) => {
             await Promise.all(vestimentaPromises);
         }
 
-        // 5. Búsqueda de coincidencias (esta llamada se mantiene igual)
+        // 5. Búsqueda de coincidencias
         const matches = await findMatchesForFicha(req, {
             id_ficha: idFicha,
             ...req.body
@@ -110,7 +120,7 @@ export const createFichaDesaparicion = async (req, res) => {
  * Actualiza una ficha existente, verificando la propiedad del usuario (Versión PostgreSQL).
  */
 export const actualizarFicha = async (req, res) => {
-    const client = await pool.connect(); // ✅ Corregido
+    const client = await pool.connect();
     try {
         await client.query('BEGIN');
 
@@ -125,8 +135,14 @@ export const actualizarFicha = async (req, res) => {
             tipo_lugar,
             nombre_usuario,
             email_usuario,
-            ...fichaPrincipal
+            ...fichaPrincipal // Contiene edad_estimada, estatura, peso, etc.
         } = req.body;
+
+        // ✅ INICIA CORRECCIÓN: Limpiamos los datos numéricos antes de usarlos
+        if (fichaPrincipal.edad_estimada === '') fichaPrincipal.edad_estimada = null;
+        if (fichaPrincipal.estatura === '') fichaPrincipal.estatura = null;
+        if (fichaPrincipal.peso === '') fichaPrincipal.peso = null;
+        // ✅ FIN CORRECCIÓN
 
         // 1. Verifica la propiedad de la ficha
         const fichaResult = await client.query(
@@ -145,7 +161,7 @@ export const actualizarFicha = async (req, res) => {
             const fichaFields = Object.keys(fichaPrincipal);
             const fichaValues = Object.values(fichaPrincipal);
             const fichaSetClause = fichaFields.map((field, index) => `${field} = $${index + 1}`).join(', ');
-
+            
             await client.query(
                 `UPDATE fichas_desaparicion SET ${fichaSetClause} WHERE id_ficha = $${fichaFields.length + 1}`,
                 [...fichaValues, id]
@@ -157,7 +173,7 @@ export const actualizarFicha = async (req, res) => {
             const ubicacionFields = Object.keys(ubicacion_desaparicion);
             const ubicacionValues = Object.values(ubicacion_desaparicion);
             const ubicacionSetClause = ubicacionFields.map((field, index) => `${field} = $${index + 1}`).join(', ');
-
+            
             await client.query(
                 `UPDATE ubicaciones SET ${ubicacionSetClause} WHERE id_ubicacion = $${ubicacionFields.length + 1}`,
                 [...ubicacionValues, ficha.id_ubicacion_desaparicion]
@@ -184,12 +200,12 @@ export const actualizarFicha = async (req, res) => {
         }
 
         await client.query('COMMIT');
-
+        
         const fichaActualizada = await getFichaCompletaById(id);
         if (fichaActualizada) {
             await findMatchesForFicha(req, fichaActualizada);
         }
-
+        
         res.json({ success: true, message: 'Ficha actualizada correctamente' });
     } catch (error) {
         await client.query('ROLLBACK');

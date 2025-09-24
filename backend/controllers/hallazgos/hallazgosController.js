@@ -53,10 +53,10 @@ async function notificarUsuariosDeFichas(req, matches, hallazgo) {
 // --- Funciones del CRUD de Hallazgos ---
 
 /**
- * Crea un nuevo hallazgo. VERSIÓN COMPLETA Y CORREGIDA para PostgreSQL.
+ * Creates a new finding. COMPLETE AND CORRECTED version for PostgreSQL.
  */
 export const createHallazgo = async (req, res) => {
-    const client = await pool.connect(); // ✅ Corregido
+    const client = await pool.connect();
     try {
         await client.query('BEGIN');
 
@@ -69,8 +69,13 @@ export const createHallazgo = async (req, res) => {
         } = req.body;
 
         const id_usuario_buscador = req.user.id;
+        
+        // ✅ START CORRECTION: Convert empty numeric fields to null
+        const edad_estimada_db = edad_estimada === '' ? null : edad_estimada;
+        const estatura_db = estatura === '' ? null : estatura;
+        const peso_db = peso === '' ? null : peso;
+        // ✅ END CORRECTION
 
-        // 1. Insertar ubicación
         const u = ubicacion_hallazgo;
         const ubicacionResult = await client.query(
             `INSERT INTO ubicaciones (estado, municipio, localidad, calle, referencias, latitud, longitud, codigo_postal)
@@ -79,7 +84,6 @@ export const createHallazgo = async (req, res) => {
         );
         const id_ubicacion_hallazgo = ubicacionResult.rows[0].id_ubicacion;
 
-        // 2. Insertar hallazgo principal
         const hallazgoResult = await client.query(
             `INSERT INTO hallazgos (
                 id_usuario_buscador, nombre, segundo_nombre, apellido_paterno, apellido_materno,
@@ -90,12 +94,14 @@ export const createHallazgo = async (req, res) => {
             [
                 id_usuario_buscador, nombre, segundo_nombre, apellido_paterno, apellido_materno,
                 id_ubicacion_hallazgo, id_tipo_lugar_hallazgo, fecha_hallazgo,
-                descripcion_general_hallazgo, edad_estimada, genero, estatura, complexion, peso, foto_hallazgo
+                descripcion_general_hallazgo, 
+                // ✅ Use the new sanitized variables
+                edad_estimada_db, genero, estatura_db, complexion, peso_db, 
+                foto_hallazgo
             ]
         );
         const idHallazgo = hallazgoResult.rows[0].id_hallazgo;
 
-        // 3. Insertar características y vestimenta
         if (caracteristicas && caracteristicas.length > 0) {
             const caracteristicasPromises = caracteristicas.map(c =>
                 client.query(`INSERT INTO hallazgo_caracteristicas (id_hallazgo, id_parte_cuerpo, tipo_caracteristica, descripcion) VALUES ($1, $2, $3, $4)`,
@@ -110,20 +116,16 @@ export const createHallazgo = async (req, res) => {
             );
             await Promise.all(vestimentaPromises);
         }
-
-        // 4. Buscamos coincidencias
+        
         const hallazgoDataCompleta = { id_hallazgo: idHallazgo, ...req.body };
         const matches = await findMatchesForHallazgo(hallazgoDataCompleta);
 
-        // 5. Guardamos los cambios
         await client.query('COMMIT');
 
-        // 6. Notificamos a los usuarios (fuera de la transacción)
         if (matches?.length > 0) {
             await notificarUsuariosDeFichas(req, matches, hallazgoDataCompleta);
         }
 
-        // 7. Responder al cliente
         res.status(201).json({
             success: true,
             message: `Hallazgo creado con éxito. ${matches.length > 0 ? `Se encontraron ${matches.length} posibles coincidencias.` : 'No se encontraron coincidencias inmediatas.'}`,
@@ -248,10 +250,10 @@ export const getHallazgoById = async (req, res) => {
 };
 
 /**
- * Actualiza un hallazgo existente (Versión PostgreSQL).
+ * Updates an existing finding (PostgreSQL version).
  */
 export const actualizarHallazgo = async (req, res) => {
-    const client = await pool.connect(); // ✅ Corregido
+    const client = await pool.connect();
     try {
         await client.query('BEGIN');
         const { id } = req.params;
@@ -261,6 +263,13 @@ export const actualizarHallazgo = async (req, res) => {
             id_hallazgo, tipo_lugar, nombre_usuario_buscador,
             ...hallazgoPrincipal
         } = req.body;
+        
+        // ✅ START CORRECTION: Sanitize numeric data before using it in the update
+        if (hallazgoPrincipal.edad_estimada === '') hallazgoPrincipal.edad_estimada = null;
+        if (hallazgoPrincipal.estatura === '') hallazgoPrincipal.estatura = null;
+        if (hallazgoPrincipal.peso === '') hallazgoPrincipal.peso = null;
+        // ✅ END CORRECTION
+
         const hallazgoResult = await client.query(
             `SELECT id_ubicacion_hallazgo FROM hallazgos WHERE id_hallazgo = $1 AND id_usuario_buscador = $2`,
             [id, id_usuario_buscador]
