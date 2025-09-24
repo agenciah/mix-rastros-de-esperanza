@@ -19,14 +19,18 @@ export const useDashboardData = () => {
             try {
                 const response = await api.get('/feed/dashboard');
 
-                
+                const responseData = response.data.data;
                 setData({
-                    ...data, // Mantén el estado actual si lo necesitas
-                    globalStats: response.data.stats.globalStats,
-                    casosEncontrados: response.data.stats.casosEncontrados,
-                    actividadReciente: response.data.stats.actividadReciente, // ✅ Asegúrate de que este dato se guarde correctamente
-                    mensajesAdministrador: response.data.messages,
-                    fichasRecientes: response.data.fichasRecientes || [] // Nuevas fichas recientes
+                    // ✅ Corregido: Leemos del objeto 'stats' que está dentro de los datos
+                    globalStats: responseData.stats.globalStats,
+                    casosEncontrados: responseData.stats.casosEncontrados,
+                    actividadReciente: responseData.stats.actividadReciente,
+                    
+                    // ✅ Corregido: Usamos 'adminMessages' en lugar de 'messages'
+                    mensajesAdministrador: responseData.adminMessages,
+
+                    // ✅ Corregido: Leemos de la raíz de los datos
+                    fichasRecientes: responseData.fichasRecientes || []
                 });
             } catch (err) {
                 console.error("Error al cargar los datos del dashboard:", err);
