@@ -45,13 +45,25 @@ export default function FichaEditLayout() {
             if (id) {
                 const data = await getFichaById(id);
                 if (data) {
+                    // ✅ INICIA CORRECCIÓN: Formateamos la fecha antes de pasarla al formulario
+                    if (data.fecha_desaparicion) {
+                        try {
+                            // Convertimos la fecha a formato YYYY-MM-DD que el input[type=date] entiende
+                            data.fecha_desaparicion = new Date(data.fecha_desaparicion).toISOString().split('T')[0];
+                        } catch (e) {
+                            console.error("Error al formatear la fecha de desaparición:", e);
+                            data.fecha_desaparicion = ''; // Dejar en blanco si hay error
+                        }
+                    }
+                    // ✅ FIN CORRECCIÓN
+
                     setFormData(data);
                 }
             }
         };
         fetchInitialData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id, getFichaById]);
+    }, [id, getFichaById, setFormData]);
 
     // Lógica de envío
     const handleUpdateSubmit = async (e) => {

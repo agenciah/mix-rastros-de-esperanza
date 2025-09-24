@@ -42,7 +42,21 @@ export default function HallazgoEditLayout() {
         const fetchInitialData = async () => {
             if (id) {
                 const data = await getHallazgoById(id);
-                if (data) setFormData(data);
+                if (data) {
+                    // ✅ INICIA CORRECCIÓN: Formateamos la fecha del hallazgo
+                    if (data.fecha_hallazgo) {
+                        try {
+                            // Convertimos a YYYY-MM-DD para el input de fecha
+                            data.fecha_hallazgo = new Date(data.fecha_hallazgo).toISOString().split('T')[0];
+                        } catch (e) {
+                            console.error("Error al formatear la fecha de hallazgo:", e);
+                            data.fecha_hallazgo = ''; // Dejar en blanco si hay error
+                        }
+                    }
+                    // ✅ FIN CORRECCIÓN
+                    
+                    setFormData(data);
+                }
             }
         };
         fetchInitialData();
