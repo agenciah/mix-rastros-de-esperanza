@@ -406,3 +406,9 @@ Error: ENOENT: no such file or directory, open '/home/alex1986/test_gastos_bot/g
 [2025-09-19 10:16:43] ERROR: ❌ Error en getMisFichas: fichasQueries is not defined
 [2025-09-19 10:19:33] ERROR: ❌ Error en getMisFichas: fichasQueries is not defined
 [2025-09-19 10:19:33] ERROR: ❌ Error en getMisFichas: fichasQueries is not defined
+[2025-09-24 10:53:56] ERROR: ❌ Error fatal al iniciar la app: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+[2025-09-24 10:57:22] ERROR: ❌ Error fatal al iniciar la app: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+[2025-09-24 10:59:43] ERROR: ❌ Error fatal al iniciar la app: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+[2025-09-24 11:00:31] ERROR: ❌ Error fatal al iniciar la app: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+[2025-09-24 11:04:30] ERROR: ❌ Error fatal al iniciar la app: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+[2025-09-24 11:08:14] ERROR: ❌ Error fatal al iniciar la app: openDb is not defined

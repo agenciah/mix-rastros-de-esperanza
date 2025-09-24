@@ -9,7 +9,6 @@ import logger from '../../utils/logger.js';
  * @returns {Promise<Array<object>>} - Lista de reportes pendientes.
  */
 export const getPendingReports = async () => {
-    
     const sql = `
         SELECT
             mr.id_reporte,
@@ -27,7 +26,7 @@ export const getPendingReports = async () => {
         ORDER BY mr.fecha_creacion ASC;
     `;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error al obtener los reportes pendientes (PostgreSQL): ${error.message}`);

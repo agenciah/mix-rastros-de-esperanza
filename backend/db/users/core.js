@@ -1,3 +1,5 @@
+// RUTA: backend/db/users/core.js
+
 /**
  * @fileoverview Funciones principales para la gestión de usuarios en la base de datos,
  * actualizado para rastros-de-esperanza y PostgreSQL.
@@ -18,7 +20,6 @@ export async function createUser({
     numero_referencia_unico = null, fichas_activas_pagadas = 0,
     estado_suscripcion = 'inactivo',
 }) {
-     // Obtiene el pool de conexiones de PostgreSQL
     const trialStartDate = new Date(); // PostgreSQL maneja bien los objetos Date
     const initialState = JSON.stringify({ flow: null, step: null, data: {} });
 
@@ -29,7 +30,7 @@ export async function createUser({
     try {
         // La sintaxis de PostgreSQL usa $1, $2, etc. como placeholders.
         // Usamos 'RETURNING id' para obtener el ID del usuario recién creado.
-        const res = await db.query(
+        const res = await query( // ✅ Corregido
             `INSERT INTO users (
                 nombre, telefono, email, password, plan, trial_start_date,
                 confirmation_token, role,
@@ -75,10 +76,8 @@ export async function createUser({
  * Buscar usuario por email (Versión PostgreSQL)
  */
 export async function findUserByEmail(email) {
-    
-    // Se usa $1 como placeholder
-    const res = await db.query('SELECT * FROM users WHERE email = $1', [email]);
-    const user = res.rows[0]; // El resultado está en la propiedad 'rows'
+    const res = await query('SELECT * FROM users WHERE email = $1', [email]); // ✅ Corregido
+    const user = res.rows[0];
 
     if (user && user.plan) {
         try {
@@ -105,8 +104,7 @@ export async function findUserByEmail(email) {
  * Buscar usuario por teléfono (Versión PostgreSQL)
  */
 export async function findUserByPhone(phone) {
-    
-    const res = await db.query('SELECT * FROM users WHERE telefono = $1', [phone]);
+    const res = await query('SELECT * FROM users WHERE telefono = $1', [phone]); // ✅ Corregido
     const user = res.rows[0];
 
     if (user && user.plan) {
@@ -134,8 +132,7 @@ export async function findUserByPhone(phone) {
  * Buscar usuario por ID (Versión PostgreSQL)
  */
 export async function findUserById(id) {
-    
-    const res = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+    const res = await query('SELECT * FROM users WHERE id = $1', [id]); // ✅ Corregido
     const user = res.rows[0];
 
     if (user) {
@@ -165,8 +162,7 @@ export async function findUserById(id) {
  * Actualizar perfil básico (Versión PostgreSQL)
  */
 export async function updateUserProfile(userId, { nombre, email, telefono, estado_republica }) {
-    
-    await db.query(
+    await query( // ✅ Corregido
         `UPDATE users SET nombre = $1, email = $2, telefono = $3, estado_republica = $4 WHERE id = $5`,
         [nombre, email, telefono || null, estado_republica || null, userId]
     );
@@ -176,41 +172,36 @@ export async function updateUserProfile(userId, { nombre, email, telefono, estad
  * Actualizar estado de conversación (Versión PostgreSQL)
  */
 export async function updateUserState(phone, state) {
-    
     const stateString = JSON.stringify(state);
-    await db.query('UPDATE users SET user_state = $1 WHERE telefono = $2', [stateString, phone]);
+    await query('UPDATE users SET user_state = $1 WHERE telefono = $2', [stateString, phone]); // ✅ Corregido
 }
 
 /**
  * Actualizar token de confirmación (Versión PostgreSQL)
  */
 export async function updateUserConfirmationToken(email, token) {
-    
-    await db.query('UPDATE users SET confirmation_token = $1 WHERE email = $2', [token, email]);
+    await query('UPDATE users SET confirmation_token = $1 WHERE email = $2', [token, email]); // ✅ Corregido
 }
 
 /**
  * Cambiar rol (Versión PostgreSQL)
  */
 export async function updateUserRole(email, newRole) {
-    
-    await db.query('UPDATE users SET role = $1 WHERE email = $2', [newRole, email]);
+    await query('UPDATE users SET role = $1 WHERE email = $2', [newRole, email]); // ✅ Corregido
 }
 
 /**
  * Cambiar contraseña (Versión PostgreSQL)
  */
 export async function updateUserPassword(id, nuevaHash) {
-    
-    await db.query('UPDATE users SET password = $1 WHERE id = $2', [nuevaHash, id]);
+    await query('UPDATE users SET password = $1 WHERE id = $2', [nuevaHash, id]); // ✅ Corregido
 }
 
 /**
  * Actualizar suscripción (Versión PostgreSQL)
  */
 export async function updateUserSubscription(userId, { estado_suscripcion, fichas_activas_pagadas }) {
-    
-    await db.query(
+    await query( // ✅ Corregido
         `UPDATE users SET estado_suscripcion = $1, fichas_activas_pagadas = $2 WHERE id = $3`,
         [estado_suscripcion, fichas_activas_pagadas, userId]
     );
@@ -220,8 +211,7 @@ export async function updateUserSubscription(userId, { estado_suscripcion, ficha
  * Actualizar ubicación (Versión PostgreSQL)
  */
 export async function updateUserLocation(userId, estado_republica) {
-    
-    await db.query(
+    await query( // ✅ Corregido
         `UPDATE users SET estado_republica = $1 WHERE id = $2`,
         [estado_republica, userId]
     );
@@ -231,8 +221,7 @@ export async function updateUserLocation(userId, estado_republica) {
  * Actualizar última conexión (Versión PostgreSQL)
  */
 export async function updateUserUltimaConexion(userId, ultima_conexion) {
-    
-    await db.query(
+    await query( // ✅ Corregido
         `UPDATE users SET ultima_conexion = $1 WHERE id = $2`,
         [ultima_conexion, userId]
     );
@@ -242,10 +231,8 @@ export async function updateUserUltimaConexion(userId, ultima_conexion) {
  * Actualizar número de referencia (Versión PostgreSQL)
  */
 export async function updateUserNumeroReferencia(userId, numero_referencia_unico) {
-    
-    await db.query(
+    await query( // ✅ Corregido
         `UPDATE users SET numero_referencia_unico = $1 WHERE id = $2`,
         [numero_referencia_unico, userId]
     );
 }
-

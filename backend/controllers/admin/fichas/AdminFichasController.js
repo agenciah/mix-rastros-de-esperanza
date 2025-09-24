@@ -1,6 +1,6 @@
 // RUTA: backend/controllers/admin/fichasController.js
 
-import { query } from '../../../db/users/initDb.js';
+import { query, pool } from '../../../db/users/initDb.js'; // ✅ Corregido: Importamos 'pool'
 import logger from '../../../utils/logger.js';
 // Asumimos que las queries ya fueron migradas a PostgreSQL
 import { getFichaCompletaByIdAdmin } from '../../../db/queries/fichasAndHallazgosQueries.js';
@@ -10,7 +10,6 @@ import { getFichaCompletaByIdAdmin } from '../../../db/queries/fichasAndHallazgo
  */
 export const getAllFichasAdmin = async (req, res) => {
     try {
-        
         const { searchTerm = '', limit = 50, offset = 0 } = req.query;
         const queryTerm = `%${searchTerm.toLowerCase()}%`;
 
@@ -22,13 +21,13 @@ export const getAllFichasAdmin = async (req, res) => {
                 u.nombre AS nombre_usuario, u.email AS email_usuario
             FROM fichas_desaparicion AS fd
             LEFT JOIN users AS u ON fd.id_usuario_creador = u.id
-            WHERE 
+            WHERE
                 LOWER(CONCAT(fd.nombre, ' ', COALESCE(fd.segundo_nombre, ''), ' ', fd.apellido_paterno, ' ', COALESCE(fd.apellido_materno, ''))) ILIKE $1
             ORDER BY fd.fecha_desaparicion DESC
             LIMIT $2 OFFSET $3;
         `;
-        
-        const result = await db.query(fichasSql, [queryTerm, limit, offset]);
+
+        const result = await query(fichasSql, [queryTerm, limit, offset]); // ✅ Corregido
         res.json({ success: true, data: result.rows });
 
     } catch (error) {
@@ -49,7 +48,7 @@ export const getFichaByIdAdmin = async (req, res) => {
         if (!fichaCompleta) {
             return res.status(404).json({ success: false, message: 'Ficha no encontrada.' });
         }
-        
+
         res.json({ success: true, data: fichaCompleta });
     } catch (error) {
         logger.error(`❌ Error al obtener la ficha por ID para admin: ${error.message}`);
@@ -61,7 +60,7 @@ export const getFichaByIdAdmin = async (req, res) => {
  * Actualiza una ficha existente desde el panel de admin (Versión PostgreSQL).
  */
 export const updateFichaAdmin = async (req, res) => {
-    const client = await openDb().connect();
+    const client = await pool.connect(); // ✅ Corregido: Usamos 'pool' directamente
     try {
         await client.query('BEGIN');
         const { id } = req.params;
@@ -116,7 +115,7 @@ export const updateFichaAdmin = async (req, res) => {
             const promises = vestimenta.map(p => client.query(`INSERT INTO ficha_vestimenta (id_ficha, id_prenda, color, marca, caracteristica_especial) VALUES ($1, $2, $3, $4, $5)`, [id, p.id_prenda, p.color, p.marca, p.caracteristica_especial]));
             await Promise.all(promises);
         }
-        
+
         await client.query('COMMIT');
         res.json({ success: true, message: 'Ficha actualizada correctamente' });
 
@@ -133,7 +132,7 @@ export const updateFichaAdmin = async (req, res) => {
  * Elimina una ficha de desaparición desde el panel de admin (Versión PostgreSQL).
  */
 export const deleteFichaAdmin = async (req, res) => {
-    const client = await openDb().connect();
+    const client = await pool.connect(); // ✅ Corregido: Usamos 'pool' directamente
     try {
         await client.query('BEGIN');
         const { id } = req.params;

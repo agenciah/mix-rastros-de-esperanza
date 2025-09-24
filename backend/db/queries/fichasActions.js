@@ -10,7 +10,7 @@ import logger from '../../utils/logger.js';
  * @returns {Promise<number>} El ID de la nueva ficha creada.
  */
 export const createFichaCompleta = async (fichaData) => {
-    const client = await openDb().connect();
+    const client = await pool.connect();
     try {
         await client.query('BEGIN');
         
@@ -70,7 +70,7 @@ export const createFichaCompleta = async (fichaData) => {
  * @returns {Promise<boolean>} - true si la operación fue exitosa.
  */
 export const updateFichaCompleta = async (idFicha, fichaData, userId) => {
-    const client = await openDb().connect();
+    const client = await pool.connect()
     try {
         await client.query('BEGIN');
 
@@ -129,7 +129,7 @@ export const updateFichaCompleta = async (idFicha, fichaData, userId) => {
  * @returns {Promise<boolean>} - true si la operación fue exitosa.
  */
 export const deleteFichaCompleta = async (idFicha, userId) => {
-    const client = await openDb().connect();
+    const client = await pool.connect();
     try {
         await client.query('BEGIN');
 

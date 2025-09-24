@@ -10,9 +10,8 @@ import logger from '../../utils/logger.js';
  * Incluye un conteo de fichas y hallazgos por cada usuario.
  */
 export async function getAllUsuariosAdmin() {
-    
     const sql = `
-        SELECT 
+        SELECT
           u.id,
           u.nombre,
           u.email,
@@ -30,7 +29,7 @@ export async function getAllUsuariosAdmin() {
         ORDER BY u.id DESC;
     `;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         // Convertimos los conteos a números, ya que PostgreSQL los devuelve como strings
         return result.rows.map(user => ({
             ...user,

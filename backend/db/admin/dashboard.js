@@ -8,7 +8,6 @@ import logger from '../../utils/logger.js';
  * @returns {Promise<Array<Object>>} Un array con los planes y el número de usuarios.
  */
 export async function obtenerUsuariosPorPlan() {
-    
     // Nota: PostgreSQL usa ->> 0 para extraer el primer elemento de un array JSON como texto.
     const sql = `
         SELECT
@@ -19,7 +18,7 @@ export async function obtenerUsuariosPorPlan() {
         GROUP BY plan_id;
     `;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         // El mapeo se mantiene igual, ya que la consulta devuelve los mismos alias.
         return result.rows.map(row => ({
             plan: row.plan_id,
@@ -37,7 +36,6 @@ export async function obtenerUsuariosPorPlan() {
  * @returns {Promise<Object>} Un objeto con las cuentas de facturados y pendientes.
  */
 export async function obtenerTicketsFacturadosVsPendientes() {
-    
     // Usamos la sintaxis FILTER de PostgreSQL, que es más eficiente.
     const sql = `
         SELECT
@@ -47,7 +45,7 @@ export async function obtenerTicketsFacturadosVsPendientes() {
         WHERE es_facturable = true;
     `;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         const data = result.rows[0];
         return {
             facturados: parseInt(data.facturados, 10) || 0,
@@ -66,7 +64,6 @@ export async function obtenerTicketsFacturadosVsPendientes() {
  * @returns {Promise<Array<Object>>} Un array de facturas pendientes.
  */
 export async function obtenerFacturasServicioPendientes() {
-    
     const sql = `
         SELECT
             fs.id,
@@ -80,7 +77,7 @@ export async function obtenerFacturasServicioPendientes() {
         LIMIT 5;
     `;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error al obtener facturas pendientes (PostgreSQL): ${error.message}`);
@@ -94,10 +91,9 @@ export async function obtenerFacturasServicioPendientes() {
  * @returns {Promise<number>} El número total de nuevos usuarios.
  */
 export async function obtenerNuevosUsuariosDesde(fecha) {
-    
     const sql = `SELECT COUNT(*) as total FROM users WHERE trial_start_date >= $1;`;
     try {
-        const result = await db.query(sql, [fecha]);
+        const result = await query(sql, [fecha]); // ✅ Corregido
         return parseInt(result.rows[0].total, 10) || 0;
     } catch (error) {
         logger.error(`❌ Error al obtener nuevos usuarios (PostgreSQL): ${error.message}`);
@@ -111,10 +107,9 @@ export async function obtenerNuevosUsuariosDesde(fecha) {
  * @returns {Promise<number>} El número total de cancelaciones.
  */
 export async function obtenerCancelacionesDesde(fecha) {
-    
     const sql = `SELECT COUNT(*) as total FROM users WHERE cancelado = 1 AND cancelacion_efectiva >= $1;`;
     try {
-        const result = await db.query(sql, [fecha]);
+        const result = await query(sql, [fecha]); // ✅ Corregido
         return parseInt(result.rows[0].total, 10) || 0;
     } catch (error) {
         logger.error(`❌ Error al obtener cancelaciones (PostgreSQL): ${error.message}`);

@@ -9,9 +9,8 @@ import { plans } from '../../shared/planes.js'; // Asumimos que este archivo sig
  * @returns {Promise<number>} El total de usuarios.
  */
 export async function getTotalUsuarios() {
-    
     try {
-        const result = await db.query(`SELECT COUNT(*) as total FROM users`);
+        const result = await query(`SELECT COUNT(*) as total FROM users`); // ✅ Corregido
         return parseInt(result.rows[0].total, 10) || 0;
     } catch (error) {
         logger.error(`❌ Error en getTotalUsuarios (PostgreSQL): ${error.message}`);
@@ -24,9 +23,8 @@ export async function getTotalUsuarios() {
  * @returns {Promise<number>} El total de fichas.
  */
 export async function getTotalFichas() {
-    const db = await openDb();
     try {
-        const result = await db.query(`SELECT COUNT(*) as total FROM fichas_desaparicion`);
+        const result = await query(`SELECT COUNT(*) as total FROM fichas_desaparicion`); // ✅ Corregido
         return parseInt(result.rows[0].total, 10) || 0;
     } catch (error) {
         logger.error(`❌ Error en getTotalFichas (PostgreSQL): ${error.message}`);
@@ -39,9 +37,8 @@ export async function getTotalFichas() {
  * @returns {Promise<number>} El total de hallazgos.
  */
 export async function getTotalHallazgos() {
-    const db = await openDb();
     try {
-        const result = await db.query(`SELECT COUNT(*) as total FROM hallazgos`);
+        const result = await query(`SELECT COUNT(*) as total FROM hallazgos`); // ✅ Corregido
         return parseInt(result.rows[0].total, 10) || 0;
     } catch (error) {
         logger.error(`❌ Error en getTotalHallazgos (PostgreSQL): ${error.message}`);
@@ -54,9 +51,8 @@ export async function getTotalHallazgos() {
  * @returns {Promise<number>} El total de ingresos.
  */
 export async function getTotalIngresosConfirmados() {
-    const db = await openDb();
     try {
-        const result = await db.query(`SELECT SUM(monto) as total FROM pagos WHERE estado_pago = 'confirmado'`);
+        const result = await query(`SELECT SUM(monto) as total FROM pagos WHERE estado_pago = 'confirmado'`); // ✅ Corregido
         return parseFloat(result.rows[0].total) || 0;
     } catch (error) {
         logger.error(`❌ Error en getTotalIngresosConfirmados (PostgreSQL): ${error.message}`);
@@ -69,9 +65,8 @@ export async function getTotalIngresosConfirmados() {
  * @returns {Promise<number>} El total de ingresos pendientes.
  */
 export async function getTotalIngresosPendientes() {
-    const db = await openDb();
     try {
-        const result = await db.query(`SELECT SUM(monto) as total FROM pagos WHERE estado_pago = 'pendiente'`);
+        const result = await query(`SELECT SUM(monto) as total FROM pagos WHERE estado_pago = 'pendiente'`); // ✅ Corregido
         return parseFloat(result.rows[0].total) || 0;
     } catch (error) {
         logger.error(`❌ Error en getTotalIngresosPendientes (PostgreSQL): ${error.message}`);
@@ -84,7 +79,6 @@ export async function getTotalIngresosPendientes() {
  * @returns {Promise<Array<Object>>} Un array con el ingreso total por mes y año.
  */
 export async function getIngresosConfirmadosPorMes() {
-    const db = await openDb();
     const sql = `
         SELECT
             TO_CHAR(fecha_pago, 'YYYY-MM') as mes,
@@ -95,7 +89,7 @@ export async function getIngresosConfirmadosPorMes() {
         ORDER BY mes ASC;
     `;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         return result.rows.map(row => ({
             ...row,
             total: parseFloat(row.total)
@@ -111,7 +105,6 @@ export async function getIngresosConfirmadosPorMes() {
  * @returns {Promise<Array<Object>>} Un array con los ingresos totales pendientes por mes.
  */
 export async function getIngresosPendientesPorMes() {
-    const db = await openDb();
     const sql = `
         SELECT
             TO_CHAR(fecha_pago, 'YYYY-MM') as mes,
@@ -122,7 +115,7 @@ export async function getIngresosPendientesPorMes() {
         ORDER BY mes ASC;
     `;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         return result.rows.map(row => ({
             ...row,
             total: parseFloat(row.total)
@@ -138,7 +131,6 @@ export async function getIngresosPendientesPorMes() {
  * @returns {Promise<Array<Object>>} Un array con los planes y el número de usuarios.
  */
 export async function getUsuariosPorPlan() {
-    const db = await openDb();
     // Usamos ->> 0 para extraer el primer elemento del array JSON como texto.
     const sql = `
         SELECT
@@ -149,7 +141,7 @@ export async function getUsuariosPorPlan() {
         GROUP BY plan_id;
     `;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         return result.rows.map(row => ({
             plan: row.plan_id,
             total: parseInt(row.total, 10)
@@ -181,9 +173,8 @@ export async function getTotalIngresosSuscripciones() {
  * @returns {Promise<number>} El total de coincidencias.
  */
 export async function getTotalCoincidencias() {
-    const db = await openDb();
     try {
-        const result = await db.query(`SELECT COUNT(*) as total FROM coincidencias_confirmadas`);
+        const result = await query(`SELECT COUNT(*) as total FROM coincidencias_confirmadas`); // ✅ Corregido
         return parseInt(result.rows[0].total, 10) || 0;
     } catch (error) {
         logger.error(`❌ Error en getTotalCoincidencias (PostgreSQL): ${error.message}`);
@@ -196,9 +187,8 @@ export async function getTotalCoincidencias() {
  * @returns {Promise<number>} El total de cancelaciones.
  */
 export async function getTotalCancelaciones() {
-    const db = await openDb();
     try {
-        const result = await db.query(`SELECT COUNT(*) as total FROM users WHERE cancelado = 1`);
+        const result = await query(`SELECT COUNT(*) as total FROM users WHERE cancelado = 1`); // ✅ Corregido
         return parseInt(result.rows[0].total, 10) || 0;
     } catch (error) {
         logger.error(`❌ Error en getTotalCancelaciones (PostgreSQL): ${error.message}`);

@@ -12,7 +12,6 @@ export async function createFacturaServicio({
     metodo_pago,
     estatus,
 }) {
-    
     const sql = `
         INSERT INTO facturas_servicio (
             user_id, descripcion, monto, fecha_emision,
@@ -21,7 +20,7 @@ export async function createFacturaServicio({
         RETURNING id;
     `;
     try {
-        const result = await db.query(sql, [
+        const result = await query(sql, [ // ✅ Corregido
             user_id, descripcion, monto, fecha_emision,
             fecha_pago, metodo_pago, estatus
         ]);
@@ -33,7 +32,6 @@ export async function createFacturaServicio({
 }
 
 export async function getAllFacturasServicio() {
-    
     const sql = `
         SELECT f.*, u.nombre, u.email, u.razon_social_servicio
         FROM facturas_servicio f
@@ -41,7 +39,7 @@ export async function getAllFacturasServicio() {
         ORDER BY fecha_emision DESC;
     `;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error en getAllFacturasServicio (PostgreSQL): ${error.message}`);
@@ -50,14 +48,13 @@ export async function getAllFacturasServicio() {
 }
 
 export async function getFacturasServicioByUser(user_id) {
-    
     const sql = `
         SELECT * FROM facturas_servicio
         WHERE user_id = $1
         ORDER BY fecha_emision DESC;
     `;
     try {
-        const result = await db.query(sql, [user_id]);
+        const result = await query(sql, [user_id]); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error en getFacturasServicioByUser (PostgreSQL): ${error.message}`);
@@ -66,14 +63,13 @@ export async function getFacturasServicioByUser(user_id) {
 }
 
 export async function updateFacturaServicio(id, fields) {
-    
     const keys = Object.keys(fields);
     const values = Object.values(fields);
     const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
-    const query = `UPDATE facturas_servicio SET ${setClause} WHERE id = $${keys.length + 1}`;
-    
+    const sqlQuery = `UPDATE facturas_servicio SET ${setClause} WHERE id = $${keys.length + 1}`; // Renombrada para evitar conflicto con la función 'query'
+
     try {
-        await db.query(query, [...values, id]);
+        await query(sqlQuery, [...values, id]); // ✅ Corregido
         return { id };
     } catch (error) {
         logger.error(`❌ Error en updateFacturaServicio (PostgreSQL): ${error.message}`);
@@ -82,9 +78,8 @@ export async function updateFacturaServicio(id, fields) {
 }
 
 export async function deleteFacturaServicio(id) {
-    
     try {
-        await db.query(`DELETE FROM facturas_servicio WHERE id = $1`, [id]);
+        await query(`DELETE FROM facturas_servicio WHERE id = $1`, [id]); // ✅ Corregido
         return { deleted: true };
     } catch (error) {
         logger.error(`❌ Error en deleteFacturaServicio (PostgreSQL): ${error.message}`);
@@ -93,10 +88,9 @@ export async function deleteFacturaServicio(id) {
 }
 
 export async function yaTieneFacturaEnPeriodo(user_id, periodo) {
-    
     const sql = `SELECT id FROM facturas_servicio WHERE user_id = $1 AND periodo = $2;`;
     try {
-        const result = await db.query(sql, [user_id, periodo]);
+        const result = await query(sql, [user_id, periodo]); // ✅ Corregido
         return result.rowCount > 0;
     } catch (error) {
         logger.error(`❌ Error en yaTieneFacturaEnPeriodo (PostgreSQL): ${error.message}`);
@@ -105,7 +99,6 @@ export async function yaTieneFacturaEnPeriodo(user_id, periodo) {
 }
 
 export async function getUsuariosPendientesDeFacturar() {
-    
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
@@ -114,10 +107,10 @@ export async function getUsuariosPendientesDeFacturar() {
     // PostgreSQL usa TO_CHAR para formatear fechas en las consultas
     const sql = `
         SELECT u.id, u.nombre, u.email, u.plan,
-               u.razon_social_servicio, u.rfc_servicio, u.uso_cfdi_servicio, 
+               u.razon_social_servicio, u.rfc_servicio, u.uso_cfdi_servicio,
                u.cp_fiscal_servicio, u.email_fiscal_servicio
         FROM users u
-        LEFT JOIN facturas_servicio fs ON u.id = fs.user_id 
+        LEFT JOIN facturas_servicio fs ON u.id = fs.user_id
             AND TO_CHAR(fs.fecha_emision, 'YYYY-MM') = $1
         WHERE
             u.razon_social_servicio IS NOT NULL AND u.razon_social_servicio != '' AND
@@ -127,7 +120,7 @@ export async function getUsuariosPendientesDeFacturar() {
         ORDER BY u.nombre ASC;
     `;
     try {
-        const result = await db.query(sql, [periodoActual]);
+        const result = await query(sql, [periodoActual]); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error en getUsuariosPendientesDeFacturar (PostgreSQL): ${error.message}`);
@@ -136,7 +129,6 @@ export async function getUsuariosPendientesDeFacturar() {
 }
 
 export async function getFacturasRecientes() {
-    const db = await openDb();
     // PostgreSQL puede manejar intervalos de tiempo de forma más natural
     const sql = `
         SELECT fs.*, u.nombre, u.email, u.razon_social_servicio
@@ -146,7 +138,7 @@ export async function getFacturasRecientes() {
         ORDER BY fs.fecha_emision DESC;
     `;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error en getFacturasRecientes (PostgreSQL): ${error.message}`);

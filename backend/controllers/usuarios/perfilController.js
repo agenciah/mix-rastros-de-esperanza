@@ -38,36 +38,29 @@ export const obtenerUsuarioPorId = async (req, res) => {
 };
 
 export const actualizarPlanes = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const { planes } = req.body;
+    try {
+        const userId = req.user.id;
+        const { planes } = req.body;
 
-    if (!Array.isArray(planes)) {
-      return res.status(400).json({ error: 'Formato inválido. Se esperaba un array en la propiedad "planes".' });
+        if (!Array.isArray(planes)) {
+            return res.status(400).json({ error: 'Formato inválido. Se esperaba un array en la propiedad "planes".' });
+        }
+
+        // ✅ Corregido
+        await query(`UPDATE users SET plan = $1 WHERE id = $2`, [
+            JSON.stringify(planes),
+            userId,
+        ]);
+
+        // ... (tu lógica de envío de correo)
+
+        res.json({ mensaje: 'Planes actualizados correctamente', planes });
+    } catch (error) {
+        console.error('Error al actualizar planes:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
-
-    const db = await openDb();
-    await db.run(`UPDATE users SET plan = ? WHERE id = ?`, [
-      JSON.stringify(planes),
-      userId,
-    ]);
-
-    
-        // ✅ 2. LLAMAMOS A LA NUEVA FUNCIÓN DE CORREO
-        // await sendHEPlanChangedEmail(
-        //     req.user.email, 
-        //     req.user.nombre, 
-        //     planes.map(plan => plan.nombre).join(', ')
-        // );
-        // Nota: He comentado esta línea por ahora, ya que primero necesitamos crear la plantilla.
-
-
-    res.json({ mensaje: 'Planes actualizados correctamente', planes });
-  } catch (error) {
-    console.error('Error al actualizar planes:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
 };
+
 
 export const actualizarPerfil = async (req, res) => {
     try {

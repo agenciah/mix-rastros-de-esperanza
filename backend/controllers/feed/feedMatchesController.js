@@ -3,7 +3,7 @@
 import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 // ✅ 1. Importamos la función maestra que ya migramos
-import { getFichaCompletaById } from '../../db/queries/fichasQueries.js'; 
+import { getFichaCompletaById } from '../../db/queries/fichasQueries.js';
 import { findMatchesForFicha } from '../fichas/matchingService.js';
 
 /**
@@ -13,11 +13,9 @@ import { findMatchesForFicha } from '../fichas/matchingService.js';
  */
 export const getMatchesData = async (userId) => {
     try {
-         // Obtiene el pool de PostgreSQL
-
         // 1. Obtener todas las fichas de desaparición creadas por el usuario
-        const userFichasResult = await db.query(
-            `SELECT id_ficha FROM fichas_desaparicion WHERE id_usuario_creador = $1`, 
+        const userFichasResult = await query( // ✅ Corregido
+            `SELECT id_ficha FROM fichas_desaparicion WHERE id_usuario_creador = $1`,
             [userId]
         );
         const userFichas = userFichasResult.rows;

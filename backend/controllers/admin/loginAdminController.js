@@ -1,9 +1,10 @@
+// backend/controllers/admin/loginAdminController.js
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { query } from '../../db/users/initDb.js';
-import logger from '../../utils/logger.js'; // Es una buena práctica añadir logger
+import logger from '../../utils/logger.js';
 
-const JWT_SECRET = process.env.JWT_ADMIN_SECRET || 'clave_secreta_admin_temporal'; // Usar una clave secreta diferente para admin
+const JWT_SECRET = process.env.JWT_ADMIN_SECRET || 'clave_secreta_admin_temporal';
 
 export async function loginAdmin(req, res) {
     const { email, password } = req.body;
@@ -13,14 +14,12 @@ export async function loginAdmin(req, res) {
     }
 
     try {
-         // Obtiene el pool de PostgreSQL
-
-        // Se usa db.query y placeholder $1
-        const adminResult = await db.query(
+        // Se usa la función 'query' importada y el placeholder $1
+        const adminResult = await query( // ✅ Corregido
             'SELECT * FROM admins WHERE email = $1',
             [email]
         );
-        
+
         const admin = adminResult.rows[0];
 
         if (!admin) {
@@ -33,7 +32,7 @@ export async function loginAdmin(req, res) {
         }
 
         const token = jwt.sign(
-            { id: admin.id, email: admin.email, role: 'admin' }, // Añadimos el rol para seguridad
+            { id: admin.id, email: admin.email, role: 'admin' },
             JWT_SECRET,
             { expiresIn: '12h' }
         );

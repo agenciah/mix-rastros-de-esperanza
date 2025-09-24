@@ -1,6 +1,6 @@
 // backend/controllers/fichas/fichasController.js
 
-import { query } from '../../db/users/initDb.js';
+import { query, pool } from '../../db/users/initDb.js'; // ✅ Corregido: Importamos 'pool'
 import logger from '../../utils/logger.js';
 import { findMatchesForFicha } from './matchingService.js';
 import { getFichaCompletaById, getAllPublicFichas, countActiveFichasByUserId } from '../../db/queries/fichasAndHallazgosQueries.js';
@@ -18,10 +18,8 @@ import { getFichasCompletasByUserId } from '../../db/queries/fichasQueries.js';
  * y busca automáticamente coincidencias con hallazgos (Versión PostgreSQL).
  */
 export const createFichaDesaparicion = async (req, res) => {
-    // Obtenemos un cliente del pool de conexiones para manejar la transacción
-    const client = await openDb().connect();
+    const client = await pool.connect(); // ✅ Corregido
     try {
-        // Iniciamos la transacción
         await client.query('BEGIN');
 
         const {
@@ -85,7 +83,7 @@ export const createFichaDesaparicion = async (req, res) => {
         // 5. Búsqueda de coincidencias (esta llamada se mantiene igual)
         const matches = await findMatchesForFicha(req, {
             id_ficha: idFicha,
-            ...req.body // Pasamos el body completo como en la versión original
+            ...req.body
         });
 
         // 6. Si todo fue exitoso, guardamos los cambios
@@ -100,12 +98,10 @@ export const createFichaDesaparicion = async (req, res) => {
         });
 
     } catch (error) {
-        // Si algo falla en cualquier punto, revertimos la transacción
         await client.query('ROLLBACK');
         logger.error(`❌ Error al crear ficha (PostgreSQL): ${error.message}`);
         res.status(500).json({ success: false, message: 'Error interno del servidor al crear ficha' });
     } finally {
-        // Liberamos el cliente de vuelta al pool, es muy importante
         client.release();
     }
 };
@@ -114,7 +110,7 @@ export const createFichaDesaparicion = async (req, res) => {
  * Actualiza una ficha existente, verificando la propiedad del usuario (Versión PostgreSQL).
  */
 export const actualizarFicha = async (req, res) => {
-    const client = await openDb().connect();
+    const client = await pool.connect(); // ✅ Corregido
     try {
         await client.query('BEGIN');
 
@@ -149,7 +145,7 @@ export const actualizarFicha = async (req, res) => {
             const fichaFields = Object.keys(fichaPrincipal);
             const fichaValues = Object.values(fichaPrincipal);
             const fichaSetClause = fichaFields.map((field, index) => `${field} = $${index + 1}`).join(', ');
-            
+
             await client.query(
                 `UPDATE fichas_desaparicion SET ${fichaSetClause} WHERE id_ficha = $${fichaFields.length + 1}`,
                 [...fichaValues, id]
@@ -161,7 +157,7 @@ export const actualizarFicha = async (req, res) => {
             const ubicacionFields = Object.keys(ubicacion_desaparicion);
             const ubicacionValues = Object.values(ubicacion_desaparicion);
             const ubicacionSetClause = ubicacionFields.map((field, index) => `${field} = $${index + 1}`).join(', ');
-            
+
             await client.query(
                 `UPDATE ubicaciones SET ${ubicacionSetClause} WHERE id_ubicacion = $${ubicacionFields.length + 1}`,
                 [...ubicacionValues, ficha.id_ubicacion_desaparicion]
@@ -188,13 +184,12 @@ export const actualizarFicha = async (req, res) => {
         }
 
         await client.query('COMMIT');
-        
-        // La lógica de re-ejecutar el matching se mantiene conceptualmente
+
         const fichaActualizada = await getFichaCompletaById(id);
         if (fichaActualizada) {
-             await findMatchesForFicha(req, fichaActualizada);
+            await findMatchesForFicha(req, fichaActualizada);
         }
-       
+
         res.json({ success: true, message: 'Ficha actualizada correctamente' });
     } catch (error) {
         await client.query('ROLLBACK');
@@ -210,12 +205,11 @@ export const actualizarFicha = async (req, res) => {
  */
 export const getAllFichas = async (req, res) => {
     try {
-        
         const limit = parseInt(req.query.limit) || 20;
         const offset = parseInt(req.query.offset) || 0;
 
         const fichasPrincipalesSql = `
-            SELECT 
+            SELECT
                 fd.*,
                 u.estado, u.municipio,
                 ctl.nombre_tipo AS tipo_lugar
@@ -225,22 +219,22 @@ export const getAllFichas = async (req, res) => {
             ORDER BY fd.fecha_desaparicion DESC
             LIMIT $1 OFFSET $2;
         `;
-        const fichasPrincipalesResult = await db.query(fichasPrincipalesSql, [limit, offset]);
+        const fichasPrincipalesResult = await query(fichasPrincipalesSql, [limit, offset]); // ✅ Corregido
         const fichasPrincipales = fichasPrincipalesResult.rows;
 
         if (fichasPrincipales.length === 0) {
             return res.json({ success: true, data: [] });
         }
 
-        const todosLosRasgosResult = await db.query(`SELECT * FROM ficha_rasgos_fisicos`);
-        const todaLaVestimentaResult = await db.query(`SELECT * FROM ficha_vestimenta`);
+        const todosLosRasgosResult = await query(`SELECT * FROM ficha_rasgos_fisicos`); // ✅ Corregido
+        const todaLaVestimentaResult = await query(`SELECT * FROM ficha_vestimenta`); // ✅ Corregido
         const todosLosRasgos = todosLosRasgosResult.rows;
         const todaLaVestimenta = todaLaVestimentaResult.rows;
 
         const fichasCompletas = fichasPrincipales.map(ficha => {
             const rasgos_fisicos = todosLosRasgos.filter(r => r.id_ficha === ficha.id_ficha);
             const vestimenta = todaLaVestimenta.filter(v => v.id_ficha === ficha.id_ficha);
-            
+
             return {
                 ...ficha,
                 rasgos_fisicos,
@@ -257,15 +251,12 @@ export const getAllFichas = async (req, res) => {
 };
 
 /**
-/**
  * Obtiene una ficha de desaparición específica por su ID (Versión PostgreSQL).
  */
 export const getFichaById = async (req, res) => {
     try {
         const { id } = req.params;
-         // Obtiene el pool de PostgreSQL
 
-        // 1. Consultas con la sintaxis de PostgreSQL ($1)
         const fichaSql = `
             SELECT
                 fd.*,
@@ -280,7 +271,7 @@ export const getFichaById = async (req, res) => {
             WHERE fd.id_ficha = $1;
         `;
         const rasgosSql = `
-            SELECT frf.*, cpc.nombre_parte 
+            SELECT frf.*, cpc.nombre_parte
             FROM ficha_rasgos_fisicos AS frf
             LEFT JOIN catalogo_partes_cuerpo AS cpc ON frf.id_parte_cuerpo = cpc.id_parte_cuerpo
             WHERE frf.id_ficha = $1;
@@ -292,23 +283,20 @@ export const getFichaById = async (req, res) => {
             WHERE fv.id_ficha = $1;
         `;
 
-        // 2. Ejecutamos las consultas en paralelo
         const [fichaResult, rasgosResult, vestimentaResult] = await Promise.all([
-            db.query(fichaSql, [id]),
-            db.query(rasgosSql, [id]),
-            db.query(vestimentaSql, [id])
+            query(fichaSql, [id]),      // ✅ Corregido
+            query(rasgosSql, [id]),     // ✅ Corregido
+            query(vestimentaSql, [id])  // ✅ Corregido
         ]);
 
         if (fichaResult.rowCount === 0) {
             return res.status(404).json({ success: false, message: 'Ficha no encontrada.' });
         }
 
-        // 3. Procesamos los resultados desde la propiedad 'rows'
         const ficha = fichaResult.rows[0];
         const rasgos_fisicos = rasgosResult.rows;
         const vestimenta = vestimentaResult.rows;
 
-        // 4. La lógica de formateo se mantiene intacta
         const { estado, municipio, localidad, calle, referencias, codigo_postal, ...restOfFicha } = ficha;
         const fichaCompleta = {
             ...restOfFicha,
@@ -316,7 +304,7 @@ export const getFichaById = async (req, res) => {
             rasgos_fisicos: rasgos_fisicos || [],
             vestimenta: vestimenta || []
         };
-        
+
         res.json({ success: true, data: fichaCompleta });
 
     } catch (error) {
@@ -329,14 +317,13 @@ export const getFichaById = async (req, res) => {
  * Elimina la ficha de desaparición y los registros asociados (Versión PostgreSQL).
  */
 export const deleteFichaDesaparicion = async (req, res) => {
-    const client = await openDb().connect();
+    const client = await pool.connect(); // ✅ Corregido
     try {
         await client.query('BEGIN');
 
         const { id } = req.params;
         const id_usuario_creador = req.user.id;
 
-        // 1. Verifica la propiedad y obtiene el ID de la ubicación
         const fichaResult = await client.query(
             `SELECT id_ubicacion_desaparicion FROM fichas_desaparicion WHERE id_ficha = $1 AND id_usuario_creador = $2`,
             [id, id_usuario_creador]
@@ -348,10 +335,7 @@ export const deleteFichaDesaparicion = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Ficha no encontrada o no autorizado para eliminar.' });
         }
 
-        // 2. Elimina la ficha (rasgos y vestimenta se borran por el ON DELETE CASCADE de la DB)
         await client.query(`DELETE FROM fichas_desaparicion WHERE id_ficha = $1`, [id]);
-        
-        // 3. Elimina la ubicación, que no tiene borrado en cascada
         await client.query(`DELETE FROM ubicaciones WHERE id_ubicacion = $1`, [ficha.id_ubicacion_desaparicion]);
 
         await client.query('COMMIT');
@@ -371,14 +355,12 @@ export const deleteFichaDesaparicion = async (req, res) => {
  */
 export const searchFichas = async (req, res) => {
     try {
-        
         const { searchTerm = '', limit = 20, offset = 0 } = req.query;
         const sqlTerm = `%${searchTerm.toLowerCase()}%`;
 
-        // La consulta usa ILIKE para búsquedas case-insensitive en PostgreSQL
         const fichasSql = `
             SELECT DISTINCT
-                fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.fecha_desaparicion, 
+                fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.fecha_desaparicion,
                 fd.foto_perfil, fd.genero, fd.edad_estimada, u.estado, u.municipio
             FROM fichas_desaparicion AS fd
             LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
@@ -403,10 +385,10 @@ export const searchFichas = async (req, res) => {
             ORDER BY fd.fecha_desaparicion DESC
             LIMIT $12 OFFSET $13;
         `;
-        
+
         const params = Array(11).fill(sqlTerm).concat([limit, offset]);
-        const result = await db.query(fichasSql, params);
-        
+        const result = await query(fichasSql, params); // ✅ Corregido
+
         res.json({ success: true, data: result.rows });
 
     } catch (error) {
@@ -420,8 +402,7 @@ export const searchFichas = async (req, res) => {
  */
 export const obtenerCatalogoTiposLugar = async (req, res) => {
     try {
-        
-        const result = await db.query(`SELECT * FROM catalogo_tipo_lugar`);
+        const result = await query(`SELECT * FROM catalogo_tipo_lugar`); // ✅ Corregido
         res.json({ success: true, catalogo_tipo_lugar: result.rows });
     } catch (error) {
         logger.error(`❌ Error al obtener catálogo de tipos de lugar (PostgreSQL): ${error.message}`);
@@ -434,11 +415,9 @@ export const obtenerCatalogoTiposLugar = async (req, res) => {
  */
 export const obtenerCatalogoPartesCuerpo = async (req, res) => {
     try {
-        
-        const result = await db.query(`SELECT * FROM catalogo_partes_cuerpo`);
+        const result = await query(`SELECT * FROM catalogo_partes_cuerpo`); // ✅ Corregido
         const partes = result.rows;
-        
-        // La lógica de normalización se mantiene igual
+
         const partesNormalizadas = partes.map(p => ({
             id: p.id_parte_cuerpo,
             nombre: p.nombre_parte,
@@ -456,8 +435,7 @@ export const obtenerCatalogoPartesCuerpo = async (req, res) => {
  */
 export const obtenerCatalogoPrendas = async (req, res) => {
     try {
-        
-        const result = await db.query(`SELECT * FROM catalogo_prendas`);
+        const result = await query(`SELECT * FROM catalogo_prendas`); // ✅ Corregido
         res.json({ success: true, catalogo_prendas: result.rows });
     } catch (error) {
         logger.error(`❌ Error al obtener catálogo de prendas (PostgreSQL): ${error.message}`);
@@ -467,16 +445,14 @@ export const obtenerCatalogoPrendas = async (req, res) => {
 
 /**
  * Obtiene las fichas públicas para el feed principal de forma paginada.
- * No requiere autenticación.
  */
 export const getPublicFichasFeed = async (req, res) => {
     try {
-        // Obtenemos limit y offset de la URL, con valores por defecto
         const limit = parseInt(req.query.limit) || 10;
         const offset = parseInt(req.query.offset) || 0;
 
         const fichas = await getAllPublicFichas(limit, offset);
-        
+
         res.json({ success: true, data: fichas });
 
     } catch (error) {

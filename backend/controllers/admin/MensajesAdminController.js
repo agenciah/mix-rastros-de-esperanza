@@ -8,9 +8,8 @@ import logger from '../../utils/logger.js';
  */
 export const getAdminMessages = async (req, res) => {
     try {
-         // Obtiene el pool de PostgreSQL
-        const result = await db.query("SELECT * FROM mensajes_administrador ORDER BY fecha_creacion DESC");
-        
+        const result = await query("SELECT * FROM mensajes_administrador ORDER BY fecha_creacion DESC"); // ✅ Corregido
+
         // El resultado de la consulta ahora está en la propiedad 'rows'
         res.json({ success: true, data: result.rows });
 
@@ -26,26 +25,25 @@ export const getAdminMessages = async (req, res) => {
 export const createAdminMessage = async (req, res) => {
     const { titulo, tipo_mensaje, contenido } = req.body;
     // En un sistema de auth completo, el id_admin se obtendría del token
-    const id_admin = 1; 
+    const id_admin = 1;
 
     if (!titulo || !contenido) {
         return res.status(400).json({ success: false, message: "Título y contenido son obligatorios." });
     }
 
     try {
-        
         const sql = `
-            INSERT INTO mensajes_administrador (id_admin, titulo, tipo_mensaje, contenido) 
+            INSERT INTO mensajes_administrador (id_admin, titulo, tipo_mensaje, contenido)
             VALUES ($1, $2, $3, $4)
-            RETURNING id_mensaje; 
+            RETURNING id_mensaje;
         `;
-        
-        // Usamos db.query y placeholders $1, $2, etc.
-        const result = await db.query(sql, [id_admin, titulo, tipo_mensaje, contenido]);
-        
+
+        // Usamos la función 'query' y placeholders $1, $2, etc.
+        const result = await query(sql, [id_admin, titulo, tipo_mensaje, contenido]); // ✅ Corregido
+
         // Obtenemos el ID devuelto por la consulta con RETURNING
         const newId = result.rows[0].id_mensaje;
-        
+
         res.status(201).json({ success: true, message: "Mensaje creado con éxito.", id: newId });
 
     } catch (error) {

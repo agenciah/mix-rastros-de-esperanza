@@ -1,3 +1,5 @@
+// backend/controllers/auth/registerController.js
+
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import logger from '../../utils/logger.js';
@@ -12,13 +14,12 @@ const JWT_CONFIRM_SECRET = process.env.JWT_CONFIRM_SECRET || 'confirm_secret';
  * Genera un número de referencia único (Versión PostgreSQL).
  */
 async function generarNumeroReferenciaUnico() {
-     // Obtiene el pool de PostgreSQL
     let numero;
     let exists = true;
     while (exists) {
         numero = Math.floor(100000 + Math.random() * 900000).toString();
-        // Se usa db.query y placeholders $1
-        const result = await db.query(`SELECT id FROM users WHERE numero_referencia_unico = $1`, [numero]);
+        // Se usa la función 'query' y placeholders $1
+        const result = await query(`SELECT id FROM users WHERE numero_referencia_unico = $1`, [numero]); // ✅ Corregido
         // El resultado de la consulta ahora está en result.rowCount
         if (result.rowCount === 0) {
             exists = false;

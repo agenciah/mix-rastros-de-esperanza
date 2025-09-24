@@ -1,6 +1,6 @@
 // RUTA: backend/db/admin/adminQueriesPagos.js
 
-import { query } from "../users/initDb.js";
+import { query, pool } from "../users/initDb.js"; // ✅ Corregido: Importamos 'pool'
 import logger from '../../utils/logger.js';
 
 /**
@@ -8,7 +8,6 @@ import logger from '../../utils/logger.js';
  * @returns {Promise<Array<object>>} - Array de usuarios con servicio vencido.
  */
 export const findUsersWithExpiredService = async () => {
-    
     // Usamos CURRENT_DATE para obtener la fecha actual en PostgreSQL.
     const sql = `
         SELECT
@@ -22,7 +21,7 @@ export const findUsersWithExpiredService = async () => {
         WHERE es.fecha_fin < CURRENT_DATE;
     `;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error al encontrar usuarios con servicio expirado (PostgreSQL): ${error.message}`);
@@ -37,17 +36,16 @@ export const findUsersWithExpiredService = async () => {
  * @returns {Promise<object>} - El resultado de la inserción.
  */
 export const marcarPagoComoRecibido = async (userId, monto) => {
-    
-    const client = await db.connect();
+    const client = await pool.connect(); // ✅ Corregido
     try {
         await client.query('BEGIN');
-        
+
         // 1. Inserta el registro del pago usando RETURNING para obtener el ID
         const pagoResult = await client.query(
-            `INSERT INTO pagos (id_ficha, monto, estado_pago, fecha_pago, metodo_pago) 
+            `INSERT INTO pagos (id_ficha, monto, estado_pago, fecha_pago, metodo_pago)
              VALUES ($1, $2, 'completado', CURRENT_DATE, 'manual')
              RETURNING id_pago`,
-            [userId, monto] 
+            [userId, monto]
         );
 
         // 2. Actualiza la fecha de fin de servicio a un mes en el futuro
@@ -73,7 +71,6 @@ export const marcarPagoComoRecibido = async (userId, monto) => {
  * @returns {Promise<Array<object>>} - Lista de pagos recientes.
  */
 export const getPagosRecientes = async () => {
-    
     const sql = `
         SELECT p.id_pago, p.fecha_pago, p.monto, u.id as userId, u.nombre
         FROM pagos p
@@ -82,7 +79,7 @@ export const getPagosRecientes = async () => {
         ORDER BY p.fecha_pago DESC;
     `;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error al obtener pagos recientes (PostgreSQL): ${error.message}`);
@@ -96,11 +93,10 @@ export const getPagosRecientes = async () => {
  * @returns {Promise<object>} - El resultado de la operación.
  */
 export const revertirPagoValidado = async (pagoId) => {
-    
-    const client = await db.connect();
+    const client = await pool.connect(); // ✅ Corregido
     try {
         await client.query('BEGIN');
-        
+
         const pagoResult = await client.query('SELECT id_ficha FROM pagos WHERE id_pago = $1', [pagoId]);
         if (pagoResult.rowCount === 0) throw new Error('Pago no encontrado');
         const userId = pagoResult.rows[0].id_ficha;
@@ -113,7 +109,7 @@ export const revertirPagoValidado = async (pagoId) => {
             `UPDATE estado_servicio SET fecha_fin = NOW() - INTERVAL '1 month' WHERE user_id = $1`,
             [userId]
         );
-        
+
         await client.query('COMMIT');
         return { success: true };
 

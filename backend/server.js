@@ -1,28 +1,20 @@
-// RUTA: backend/server.js
-
-import dotenv from 'dotenv';
-dotenv.config();
-
+// RUTA: backend/server.js (VERSIÓN FINAL)
 import http from 'http';
 import { WebSocketServer } from 'ws';
 import jwt from 'jsonwebtoken';
 
-import app from './app.js'; // Importa la aplicación YA CONFIGURADA
+import app from './app.js';
 import logger from './utils/logger.js';
 import { ensureAllTables, insertCatalogos } from './db/users/initDb.js';
-// import { iniciarLimpiezaUsuariosJob } from './cron/cleanupUsersJob.js'; // Puedes reactivar los crons después
 
 async function main() {
     try {
         await ensureAllTables();
         await insertCatalogos();
-        
-        // iniciarLimpiezaUsuariosJob();
 
         const server = http.createServer(app);
         const wss = new WebSocketServer({ server });
-        
-        // ... (Tu lógica de WebSockets se queda aquí)
+
         const clients = new Map();
         const sendNotificationToUser = (userId, message) => {
             const client = clients.get(userId);
@@ -31,6 +23,7 @@ async function main() {
             }
         };
         app.locals.sendNotificationToUser = sendNotificationToUser;
+
         wss.on('connection', (ws) => {
             ws.on('message', (message) => {
                 try {

@@ -1,3 +1,4 @@
+// backend/controllers/feed/feedAdminMessagesController.js
 import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 
@@ -6,7 +7,6 @@ import logger from '../../utils/logger.js';
  */
 export const getAdminMessagesData = async (req, res) => {
     try {
-        
         const sql = `
             SELECT id_mensaje, titulo, contenido, fecha_creacion
             FROM mensajes_administrador
@@ -14,8 +14,8 @@ export const getAdminMessagesData = async (req, res) => {
             ORDER BY fecha_creacion DESC
             LIMIT 5;
         `;
-        const result = await db.query(sql);
-        
+        const result = await query(sql); // ✅ Corregido
+
         res.json({ success: true, data: result.rows });
 
     } catch (error) {
@@ -23,4 +23,3 @@ export const getAdminMessagesData = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error al obtener los mensajes del administrador.' });
     }
 };
-

@@ -18,20 +18,20 @@ router.post('/password/reset', resetPassword)
 
 // Debug endpoints, solo para desarrollo:
 router.get('/debug/usuarios', async (req, res) => {
-  const db = await openDb();
-  const users = await db.all('SELECT id, nombre, email, telefono FROM users');
-  res.json(users);
+    // ✅ Corregido
+    const result = await query('SELECT id, nombre, email, telefono FROM users');
+    res.json(result.rows);
 });
 
 router.get('/debug/fiscales-servicio-noauth', async (req, res) => {
-  const db = await openDb();
-  const rows = await db.all(`
-    SELECT id, nombre, email, 
-      razon_social_servicio, rfc_servicio, cp_fiscal_servicio,
-      uso_cfdi_servicio, email_fiscal_servicio
-    FROM users
-  `);
-  res.json(rows);
+    // ✅ Corregido
+    const result = await query(`
+        SELECT id, nombre, email,
+            razon_social_servicio, rfc_servicio, cp_fiscal_servicio,
+            uso_cfdi_servicio, email_fiscal_servicio
+        FROM users
+    `);
+    res.json(result.rows);
 });
 
 export default router;

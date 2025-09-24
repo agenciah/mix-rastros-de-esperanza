@@ -1,3 +1,5 @@
+// RUTA: backend/db/queries/fichasAndHallazgosQueries.js
+
 import { query } from '../users/initDb.js';
 import logger from '../../utils/logger.js';
 // Asumimos que hallazgosQueries.js también será migrado
@@ -9,8 +11,6 @@ import { getHallazgoCompletoById } from './hallazgosQueries.js';
  * @returns {Promise<object | null>} - La ficha completa o null si no se encuentra.
  */
 export const getFichaCompletaById = async (id) => {
-     // Obtiene el pool de PostgreSQL
-
     const fichaPrincipalSql = `
         SELECT
             fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,
@@ -29,9 +29,9 @@ export const getFichaCompletaById = async (id) => {
 
     try {
         const [fichaResult, rasgosResult, vestimentaResult] = await Promise.all([
-            db.query(fichaPrincipalSql, [id]),
-            db.query(rasgosSql, [id]),
-            db.query(vestimentaSql, [id])
+            query(fichaPrincipalSql, [id]), // ✅ Corregido
+            query(rasgosSql, [id]),         // ✅ Corregido
+            query(vestimentaSql, [id])      // ✅ Corregido
         ]);
 
         if (fichaResult.rowCount === 0) {
@@ -61,8 +61,7 @@ export const getFichaCompletaById = async (id) => {
  * @returns {Promise<Array<object>>} - Array de fichas que coinciden.
  */
 export const searchFichas = async (params) => {
-    
-    let query = `
+    let sqlQuery = `
         SELECT
             fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.apellido_materno,
             fd.fecha_desaparicion, fd.foto_perfil, fd.estado_ficha,
@@ -77,7 +76,7 @@ export const searchFichas = async (params) => {
     let paramIndex = 1;
 
     if (params.nombre) {
-        conditions.push(`fd.nombre ILIKE $${paramIndex++}`); // ILIKE es case-insensitive en PostgreSQL
+        conditions.push(`fd.nombre ILIKE $${paramIndex++}`);
         queryParams.push(`%${params.nombre}%`);
     }
     if (params.apellido) {
@@ -116,13 +115,13 @@ export const searchFichas = async (params) => {
     conditions.push(`fd.estado_ficha = 'activa'`);
 
     if (conditions.length > 0) {
-        query += ` WHERE ` + conditions.join(' AND ');
+        sqlQuery += ` WHERE ` + conditions.join(' AND ');
     }
 
-    query += ` ORDER BY fd.fecha_desaparicion DESC`;
+    sqlQuery += ` ORDER BY fd.fecha_desaparicion DESC`;
 
     try {
-        const result = await db.query(query, queryParams);
+        const result = await query(sqlQuery, queryParams); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error en la búsqueda de fichas (PostgreSQL): ${error.message}`);
@@ -135,9 +134,7 @@ export const searchFichas = async (params) => {
  * @returns {Promise<Array<object>>} - Lista de hallazgos completos.
  */
 export const getAllHallazgosCompletos = async () => {
-    const db = await openDb();
-    
-    const hallazgosIdsResult = await db.query(`SELECT id_hallazgo FROM hallazgos WHERE estado_hallazgo = 'encontrado'`);
+    const hallazgosIdsResult = await query(`SELECT id_hallazgo FROM hallazgos WHERE estado_hallazgo = 'encontrado'`); // ✅ Corregido
     const hallazgosIds = hallazgosIdsResult.rows;
 
     if (!hallazgosIds || hallazgosIds.length === 0) {
@@ -154,8 +151,6 @@ export const getAllHallazgosCompletos = async () => {
  * Obtiene una ficha de desaparición con detalles para el admin (Versión PostgreSQL).
  */
 export const getFichaCompletaByIdAdmin = async (id_ficha) => {
-    
-    
     const fichaSql = `
         SELECT
             fd.*,
@@ -172,9 +167,9 @@ export const getFichaCompletaByIdAdmin = async (id_ficha) => {
     
     try {
         const [fichaResult, rasgosResult, vestimentaResult] = await Promise.all([
-            db.query(fichaSql, [id_ficha]),
-            db.query(rasgosSql, [id_ficha]),
-            db.query(vestimentaSql, [id_ficha])
+            query(fichaSql, [id_ficha]),      // ✅ Corregido
+            query(rasgosSql, [id_ficha]),     // ✅ Corregido
+            query(vestimentaSql, [id_ficha])  // ✅ Corregido
         ]);
 
         if (fichaResult.rowCount === 0) return null;
@@ -200,8 +195,7 @@ export const getFichaCompletaByIdAdmin = async (id_ficha) => {
  * @returns {Promise<Array<object>>} - Array de hallazgos que coinciden.
  */
 export const searchHallazgos = async (params) => {
-    
-    let query = `
+    let sqlQuery = `
         SELECT
             h.id_hallazgo, h.nombre, h.apellido_paterno, h.apellido_materno,
             h.fecha_hallazgo, h.foto_hallazgo, h.descripcion_general_hallazgo, h.estado_hallazgo,
@@ -255,13 +249,13 @@ export const searchHallazgos = async (params) => {
     conditions.push(`h.estado_hallazgo = 'encontrado'`);
 
     if (conditions.length > 0) {
-        query += ` WHERE ` + conditions.join(' AND ');
+        sqlQuery += ` WHERE ` + conditions.join(' AND ');
     }
 
-    query += ` ORDER BY h.fecha_hallazgo DESC`;
+    sqlQuery += ` ORDER BY h.fecha_hallazgo DESC`;
 
     try {
-        const result = await db.query(query, queryParams);
+        const result = await query(sqlQuery, queryParams); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error en la búsqueda de hallazgos (PostgreSQL): ${error.message}`);
@@ -274,12 +268,11 @@ export const searchHallazgos = async (params) => {
  * @returns {Promise<object>} - Un objeto con arrays de los catálogos.
  */
 export const getAllHallazgosCatalogos = async () => {
-    
     try {
         const [tiposLugarResult, partesCuerpoResult, prendasResult] = await Promise.all([
-            db.query(`SELECT id_tipo_lugar, nombre_tipo FROM catalogo_tipo_lugar ORDER BY nombre_tipo`),
-            db.query(`SELECT id_parte_cuerpo, nombre_parte, categoria_principal FROM catalogo_partes_cuerpo ORDER BY nombre_parte`),
-            db.query(`SELECT id_prenda, tipo_prenda, categoria_general FROM catalogo_prendas ORDER BY tipo_prenda`)
+            query(`SELECT id_tipo_lugar, nombre_tipo FROM catalogo_tipo_lugar ORDER BY nombre_tipo`), // ✅ Corregido
+            query(`SELECT id_parte_cuerpo, nombre_parte, categoria_principal FROM catalogo_partes_cuerpo ORDER BY nombre_parte`), // ✅ Corregido
+            query(`SELECT id_prenda, tipo_prenda, categoria_general FROM catalogo_prendas ORDER BY tipo_prenda`) // ✅ Corregido
         ]);
         
         return {
@@ -298,13 +291,11 @@ export const getAllHallazgosCatalogos = async () => {
  * @returns {Promise<Array<object>>} - Array de hallazgos que coinciden.
  */
 export const searchHallazgosByKeyword = async (searchTerm = '', limit = 20, offset = 0) => {
-    
     const sqlTerm = `%${searchTerm.toLowerCase()}%`;
 
-    // ✅ CORRECCIÓN: La consulta ahora usa placeholders posicionales ($1, $2, etc.)
     const hallazgosSql = `
         SELECT DISTINCT
-            h.id_hallazgo, h.nombre, h.segundo_nombre, h.apellido_paterno, 
+            h.id_hallazgo, h.nombre, h.segundo_nombre, h.apellido_paterno,
             h.apellido_materno, h.fecha_hallazgo, h.descripcion_general_hallazgo,
             h.edad_estimada, h.genero, h.estatura, h.complexion, h.peso,
             u.estado, u.municipio, u.localidad, h.foto_hallazgo
@@ -315,7 +306,7 @@ export const searchHallazgosByKeyword = async (searchTerm = '', limit = 20, offs
         LEFT JOIN catalogo_tipo_lugar AS ctl ON h.id_tipo_lugar_hallazgo = ctl.id_tipo_lugar
         LEFT JOIN hallazgo_caracteristicas AS hc ON h.id_hallazgo = hc.id_hallazgo
         LEFT JOIN catalogo_partes_cuerpo AS cpc ON hc.id_parte_cuerpo = cpc.id_parte_cuerpo
-        WHERE 
+        WHERE
             h.nombre ILIKE $1 OR
             h.segundo_nombre ILIKE $2 OR
             h.apellido_paterno ILIKE $3 OR
@@ -341,11 +332,10 @@ export const searchHallazgosByKeyword = async (searchTerm = '', limit = 20, offs
         LIMIT $21 OFFSET $22;
     `;
     
-    // ✅ CORRECCIÓN: El array de parámetros ahora tiene un valor para cada placeholder
     const params = Array(20).fill(sqlTerm).concat([limit, offset]);
 
     try {
-        const hallazgosResult = await db.query(hallazgosSql, params);
+        const hallazgosResult = await query(hallazgosSql, params); // ✅ Corregido
         return hallazgosResult.rows;
     } catch (error) {
         logger.error(`❌ Error en la consulta SQL exhaustiva (PostgreSQL): ${error.message}`);
@@ -358,7 +348,6 @@ export const searchHallazgosByKeyword = async (searchTerm = '', limit = 20, offs
  * @returns {Promise<Array<object>>} - Un array de fichas para el feed.
  */
 export const getAllPublicFichas = async (limit = 10, offset = 0) => {
-    
     const sql = `
         SELECT
             fd.id_ficha, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,
@@ -366,13 +355,13 @@ export const getAllPublicFichas = async (limit = 10, offset = 0) => {
             fd.genero, fd.edad_estimada, u.estado, u.municipio
         FROM fichas_desaparicion AS fd
         LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
-        WHERE fd.estado_ficha = 'activa' 
+        WHERE fd.estado_ficha = 'activa'
         ORDER BY fd.fecha_desaparicion DESC
         LIMIT $1 OFFSET $2;
     `;
     
     try {
-        const result = await db.query(sql, [limit, offset]);
+        const result = await query(sql, [limit, offset]); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error al obtener las fichas públicas del feed (PostgreSQL): ${error.message}`);
@@ -386,14 +375,12 @@ export const getAllPublicFichas = async (limit = 10, offset = 0) => {
  * @returns {Promise<number>} - El número de fichas activas.
  */
 export const countActiveFichasByUserId = async (userId) => {
-    
     const sql = `SELECT COUNT(*) AS count FROM fichas_desaparicion WHERE id_usuario_creador = $1 AND estado_ficha = 'activa';`;
     try {
-        const result = await db.query(sql, [userId]);
+        const result = await query(sql, [userId]); // ✅ Corregido
         return parseInt(result.rows[0].count, 10) || 0;
     } catch (error) {
         logger.error(`❌ Error al contar las fichas activas del usuario (PostgreSQL): ${error.message}`);
         throw error;
     }
 };
-

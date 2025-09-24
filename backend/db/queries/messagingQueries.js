@@ -7,33 +7,32 @@ import logger from '../../utils/logger.js';
  * Inserta una notificación del sistema en la base de datos como un mensaje.
  */
 export async function insertSystemNotification(receiverId, content, type, fichaId, hallazgoId) {
-    
     const systemUserId = 1; // ID del usuario "Sistema"
 
     try {
-        let conversationResult = await db.query(`
+        let conversationResult = await query(`
             SELECT id FROM conversations
             WHERE (user1_id = $1 AND user2_id = $2) AND type = $3
-        `, [systemUserId, receiverId, type]);
+        `, [systemUserId, receiverId, type]); // ✅ Corregido
 
         let conversationId;
 
         if (conversationResult.rowCount > 0) {
             conversationId = conversationResult.rows[0].id;
         } else {
-            const newConvResult = await db.query(`
+            const newConvResult = await query(`
                 INSERT INTO conversations (user1_id, user2_id, type, last_message_at)
                 VALUES ($1, $2, $3, NOW())
                 RETURNING id
-            `, [systemUserId, receiverId, type]);
+            `, [systemUserId, receiverId, type]); // ✅ Corregido
             conversationId = newConvResult.rows[0].id;
         }
 
-        await db.query(`
+        await query(`
             INSERT INTO mensajes (conversation_id, id_remitente, id_destinatario, contenido, id_ficha, id_coincidencia)
             VALUES ($1, $2, $3, $4, $5, $6)
-        `, [conversationId, systemUserId, receiverId, content, fichaId, hallazgoId]);
-        
+        `, [conversationId, systemUserId, receiverId, content, fichaId, hallazgoId]); // ✅ Corregido
+
         logger.info(`Notificación de match insertada en la conversación ${conversationId}.`);
         return conversationId;
     } catch (error) {
@@ -46,9 +45,8 @@ export async function insertSystemNotification(receiverId, content, type, fichaI
  * Obtiene todas las conversaciones de un usuario.
  */
 export async function getConversations(userId) {
-    
     const sql = `
-        SELECT 
+        SELECT
             c.id AS conversation_id,
             CASE
                 WHEN c.user1_id = $1 THEN u2.nombre
@@ -68,7 +66,7 @@ export async function getConversations(userId) {
         ORDER BY c.last_message_at DESC
     `;
     try {
-        const result = await db.query(sql, [userId]);
+        const result = await query(sql, [userId]); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`Error en getConversations (PostgreSQL): ${error.message}`);
@@ -80,7 +78,6 @@ export async function getConversations(userId) {
  * Obtiene todos los mensajes de una conversación específica.
  */
 export async function getMessagesByConversationId(conversationId) {
-    
     const sql = `
         SELECT m.*, u.nombre AS sender_name
         FROM mensajes m
@@ -89,7 +86,7 @@ export async function getMessagesByConversationId(conversationId) {
         ORDER BY m.fecha_envio ASC
     `;
     try {
-        const result = await db.query(sql, [conversationId]);
+        const result = await query(sql, [conversationId]); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`Error en getMessagesByConversationId (PostgreSQL): ${error.message}`);
@@ -101,14 +98,13 @@ export async function getMessagesByConversationId(conversationId) {
  * Marca todos los mensajes de una conversación como leídos para un usuario.
  */
 export async function markMessagesAsRead(conversationId, userId) {
-    
     const sql = `
         UPDATE mensajes
         SET estado_leido = 1
         WHERE conversation_id = $1 AND id_remitente != $2
     `;
     try {
-        await db.query(sql, [conversationId, userId]);
+        await query(sql, [conversationId, userId]); // ✅ Corregido
     } catch (error) {
         logger.error(`Error en markMessagesAsRead (PostgreSQL): ${error.message}`);
         throw error;
@@ -119,19 +115,18 @@ export async function markMessagesAsRead(conversationId, userId) {
  * Inserta un nuevo mensaje en una conversación y actualiza el timestamp.
  */
 export async function insertNewMessage(conversationId, senderId, receiverId, content) {
-    
     try {
-        const result = await db.query(`
+        const result = await query(`
             INSERT INTO mensajes (conversation_id, id_remitente, id_destinatario, contenido)
             VALUES ($1, $2, $3, $4)
             RETURNING *
-        `, [conversationId, senderId, receiverId, content]);
-        
-        await db.query(`
+        `, [conversationId, senderId, receiverId, content]); // ✅ Corregido
+
+        await query(`
             UPDATE conversations
             SET last_message_at = NOW()
             WHERE id = $1
-        `, [conversationId]);
+        `, [conversationId]); // ✅ Corregido
 
         return result.rows[0];
     } catch (error) {
@@ -144,12 +139,11 @@ export async function insertNewMessage(conversationId, senderId, receiverId, con
  * Busca una conversación entre dos usuarios. Si no existe, crea una nueva.
  */
 export async function getOrCreateConversation(user1Id, user2Id) {
-    
     const sortedIds = [user1Id, user2Id].sort((a, b) => a - b);
     const [normalizedUser1Id, normalizedUser2Id] = sortedIds;
 
     try {
-        let conversationResult = await db.query(
+        let conversationResult = await query( // ✅ Corregido
             `SELECT id FROM conversations WHERE user1_id = $1 AND user2_id = $2`,
             [normalizedUser1Id, normalizedUser2Id]
         );
@@ -157,7 +151,7 @@ export async function getOrCreateConversation(user1Id, user2Id) {
         if (conversationResult.rowCount > 0) {
             return conversationResult.rows[0].id;
         } else {
-            const newConvResult = await db.query(
+            const newConvResult = await query( // ✅ Corregido
                 `INSERT INTO conversations (user1_id, user2_id, created_at) VALUES ($1, $2, NOW()) RETURNING id`,
                 [normalizedUser1Id, normalizedUser2Id]
             );
@@ -172,14 +166,14 @@ export async function getOrCreateConversation(user1Id, user2Id) {
 /**
  * Inserta una posible coincidencia en la base de datos para auditoría.
  */
-export async function insertPossibleMatch(db, id_ficha, id_hallazgo, puntaje, criterios_match) {
+export async function insertPossibleMatch(id_ficha, id_hallazgo, puntaje, criterios_match) { // ✅ Corregido: Se eliminó el parámetro 'db'
     try {
-        const result = await db.query(`
+        const result = await query(`
             INSERT INTO posibles_coincidencias (id_ficha, id_hallazgo, puntaje, criterios_match)
             VALUES ($1, $2, $3, $4)
             RETURNING id_posible_coincidencia
-        `, [id_ficha, id_hallazgo, puntaje, JSON.stringify(criterios_match)]);
-        
+        `, [id_ficha, id_hallazgo, puntaje, JSON.stringify(criterios_match)]); // ✅ Corregido
+
         return result.rows[0].id_posible_coincidencia;
     } catch (error) {
         logger.error(`Error al insertar posible coincidencia (PostgreSQL): ${error.message}`);
@@ -191,14 +185,13 @@ export async function insertPossibleMatch(db, id_ficha, id_hallazgo, puntaje, cr
  * Crea un nuevo reporte de mal uso para una conversación.
  */
 export async function createReport(conversationId, reportadorId, reportadoId, motivo) {
-    
     const sql = `
         INSERT INTO mensajes_reporte (conversation_id, id_reportador, id_reportado, motivo)
         VALUES ($1, $2, $3, $4)
         RETURNING id_reporte;
     `;
     try {
-        const result = await db.query(sql, [conversationId, reportadorId, reportadoId, motivo]);
+        const result = await query(sql, [conversationId, reportadorId, reportadoId, motivo]); // ✅ Corregido
         return result.rows[0].id_reporte;
     } catch (error) {
         logger.error(`Error al crear reporte (PostgreSQL): ${error.message}`);

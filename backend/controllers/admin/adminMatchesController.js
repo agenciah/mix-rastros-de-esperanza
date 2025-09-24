@@ -3,7 +3,7 @@
 import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 // Asumimos que estos archivos de queries ya han sido migrados a PostgreSQL
-import { getFichaCompletaById } from '../../db/queries/fichasQueries.js'; 
+import { getFichaCompletaById } from '../../db/queries/fichasQueries.js';
 import { getHallazgoCompletoById } from '../../db/queries/hallazgosQueries.js';
 
 /**
@@ -12,7 +12,6 @@ import { getHallazgoCompletoById } from '../../db/queries/hallazgosQueries.js';
  */
 export const getRecentMatches = async (req, res) => {
     try {
-         // Obtiene el pool de PostgreSQL
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const status = req.query.status || 'all';
@@ -20,14 +19,14 @@ export const getRecentMatches = async (req, res) => {
 
         let whereClause = '';
         const queryParams = [];
-        
+
         if (status && status !== 'all') {
             whereClause = `WHERE estado_revision = $1`;
             queryParams.push(status);
         }
 
         const matchesSql = `
-            SELECT 
+            SELECT
                 p.id_posible_coincidencia, p.id_ficha, p.id_hallazgo,
                 p.puntaje, p.criterios_match, p.fecha_creacion, p.estado_revision,
                 f.nombre AS nombre_ficha, f.apellido_paterno AS apellido_paterno_ficha,
@@ -39,12 +38,12 @@ export const getRecentMatches = async (req, res) => {
             ORDER BY p.fecha_creacion DESC
             LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2}
         `;
-        
+
         const countSql = `SELECT COUNT(*) AS count FROM posibles_coincidencias ${whereClause}`;
 
         const [matchesResult, countResult] = await Promise.all([
-            db.query(matchesSql, [...queryParams, limit, offset]),
-            db.query(countSql, queryParams) // El count no necesita limit/offset
+            query(matchesSql, [...queryParams, limit, offset]), // ✅ Corregido
+            query(countSql, queryParams)                       // ✅ Corregido
         ]);
 
         const matches = matchesResult.rows;
@@ -54,7 +53,7 @@ export const getRecentMatches = async (req, res) => {
             ...match,
             criterios_match: JSON.parse(match.criterios_match || '[]')
         }));
-        
+
         res.status(200).json({
             matches: matchesWithParsedCriteria,
             totalItems: count,
@@ -74,11 +73,10 @@ export const getRecentMatches = async (req, res) => {
  */
 export const getMatchDetail = async (req, res) => {
     try {
-        
         const { id_coincidencia } = req.params;
 
-        const posibleCoincidenciaResult = await db.query(
-            `SELECT * FROM posibles_coincidencias WHERE id_posible_coincidencia = $1`, 
+        const posibleCoincidenciaResult = await query( // ✅ Corregido
+            `SELECT * FROM posibles_coincidencias WHERE id_posible_coincidencia = $1`,
             [id_coincidencia]
         );
         const posibleCoincidencia = posibleCoincidenciaResult.rows[0];
@@ -117,11 +115,10 @@ export const getMatchDetail = async (req, res) => {
  */
 export const updateMatchReviewStatus = async (req, res) => {
     try {
-        
         const { id_coincidencia } = req.params;
         const { estado, comentarios } = req.body;
 
-        await db.query(
+        await query( // ✅ Corregido
             `UPDATE posibles_coincidencias
              SET estado_revision = $1, comentarios_admin = $2
              WHERE id_posible_coincidencia = $3`,
@@ -130,7 +127,7 @@ export const updateMatchReviewStatus = async (req, res) => {
 
         res.status(200).json({ message: "Estado de la coincidencia actualizado correctamente." });
 
-    } catch (error){  
+    } catch (error){
         logger.error(`❌ Error al actualizar el estado de la coincidencia ${req.params.id_coincidencia} (PostgreSQL): ${error.message}`);
         res.status(500).json({ message: "Error interno del servidor." });
     }

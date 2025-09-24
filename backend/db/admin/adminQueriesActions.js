@@ -9,10 +9,9 @@ import logger from '../../utils/logger.js';
  * @param {string} newStatus - El nuevo estado (ej. 'resuelto', 'desestimado').
  */
 export const updateReportStatus = async (reportId, newStatus) => {
-    
     const sql = `UPDATE mensajes_reporte SET estado = $1 WHERE id_reporte = $2;`;
     try {
-        await db.query(sql, [newStatus, reportId]);
+        await query(sql, [newStatus, reportId]); // ✅ Corregido
         return { success: true };
     } catch (error) {
         logger.error(`❌ Error al actualizar estado del reporte ${reportId} (PostgreSQL): ${error.message}`);
@@ -26,10 +25,9 @@ export const updateReportStatus = async (reportId, newStatus) => {
  * @param {string} newStatus - El nuevo estado de suscripción (ej. 'advertido', 'suspendido').
  */
 export const updateUserStatus = async (userId, newStatus) => {
-    
     const sql = `UPDATE users SET estado_suscripcion = $1 WHERE id = $2;`;
     try {
-        await db.query(sql, [newStatus, userId]);
+        await query(sql, [newStatus, userId]); // ✅ Corregido
         return { success: true };
     } catch (error) {
         logger.error(`❌ Error al actualizar estado del usuario ${userId} (PostgreSQL): ${error.message}`);

@@ -9,14 +9,13 @@ import logger from '../../utils/logger.js';
  * @returns {Promise<object>} - Resultado de la inserción.
  */
 export const createAdminMessage = async ({ titulo, contenido, tipo_mensaje, id_admin }) => {
-    
     const sql = `
         INSERT INTO mensajes_administrador (titulo, contenido, tipo_mensaje, id_admin)
         VALUES ($1, $2, $3, $4)
         RETURNING id_mensaje;
     `;
     try {
-        const result = await db.query(sql, [titulo, contenido, tipo_mensaje, id_admin]);
+        const result = await query(sql, [titulo, contenido, tipo_mensaje, id_admin]); // ✅ Corregido
         return { success: true, id_mensaje: result.rows[0].id_mensaje };
     } catch (error) {
         logger.error(`❌ Error al crear mensaje de admin (PostgreSQL): ${error.message}`);
@@ -29,10 +28,9 @@ export const createAdminMessage = async ({ titulo, contenido, tipo_mensaje, id_a
  * @returns {Promise<Array<object>>} - Lista de todos los mensajes.
  */
 export const getAllAdminMessages = async () => {
-    
     const sql = `SELECT * FROM mensajes_administrador ORDER BY fecha_creacion DESC;`;
     try {
-        const result = await db.query(sql);
+        const result = await query(sql); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error al obtener todos los mensajes de admin (PostgreSQL): ${error.message}`);
@@ -48,10 +46,9 @@ export const getAllAdminMessages = async () => {
  * @returns {Promise<object>} - Resultado de la actualización.
  */
 export const updateAdminMessage = async (id_mensaje, { titulo, contenido }) => {
-    
     const sql = `UPDATE mensajes_administrador SET titulo = $1, contenido = $2 WHERE id_mensaje = $3;`;
     try {
-        await db.query(sql, [titulo, contenido, id_mensaje]);
+        await query(sql, [titulo, contenido, id_mensaje]); // ✅ Corregido
         return { success: true };
     } catch (error) {
         logger.error(`❌ Error al actualizar mensaje de admin ${id_mensaje} (PostgreSQL): ${error.message}`);
@@ -66,10 +63,9 @@ export const updateAdminMessage = async (id_mensaje, { titulo, contenido }) => {
  * @returns {Promise<object>} - Resultado de la actualización.
  */
 export const updateAdminMessageStatus = async (id_mensaje, estado) => {
-    
     const sql = `UPDATE mensajes_administrador SET estado = $1 WHERE id_mensaje = $2;`;
     try {
-        await db.query(sql, [estado, id_mensaje]);
+        await query(sql, [estado, id_mensaje]); // ✅ Correg-ido
         return { success: true };
     } catch (error) {
         logger.error(`❌ Error al cambiar estado del mensaje ${id_mensaje} (PostgreSQL): ${error.message}`);

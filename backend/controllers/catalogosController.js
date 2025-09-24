@@ -8,13 +8,11 @@ import logger from '../utils/logger.js';
  */
 export const getAllCatalogos = async (req, res) => {
     try {
-         // Obtiene el pool de PostgreSQL
-        
-        // Las consultas se ejecutan en paralelo, como en tu versión original
+        // Las consultas se ejecutan en paralelo con la nueva función 'query'
         const [tiposLugarResult, partesCuerpoResult, prendasResult] = await Promise.all([
-            db.query(`SELECT * FROM catalogo_tipo_lugar ORDER BY nombre_tipo`),
-            db.query(`SELECT * FROM catalogo_partes_cuerpo ORDER BY nombre_parte`),
-            db.query(`SELECT * FROM catalogo_prendas ORDER BY tipo_prenda`)
+            query(`SELECT * FROM catalogo_tipo_lugar ORDER BY nombre_tipo`),      // ✅ Corregido
+            query(`SELECT * FROM catalogo_partes_cuerpo ORDER BY nombre_parte`), // ✅ Corregido
+            query(`SELECT * FROM catalogo_prendas ORDER BY tipo_prenda`)         // ✅ Corregido
         ]);
 
         // Los resultados ahora están en la propiedad 'rows'

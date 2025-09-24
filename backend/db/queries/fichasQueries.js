@@ -8,7 +8,6 @@ import logger from '../../utils/logger.js';
  * FUNCIÓN MAESTRA: Obtiene UNA ficha completa por su ID.
  */
 export const getFichaCompletaById = async (id) => {
-    
     const fichaSql = `
         SELECT
             fd.id_ficha, fd.id_usuario_creador, fd.nombre, fd.segundo_nombre, fd.apellido_paterno,
@@ -30,9 +29,9 @@ export const getFichaCompletaById = async (id) => {
 
     try {
         const [fichaResult, rasgosResult, vestimentaResult] = await Promise.all([
-            db.query(fichaSql, [id]),
-            db.query(rasgosSql, [id]),
-            db.query(vestimentaSql, [id])
+            query(fichaSql, [id]),      // ✅ Corregido
+            query(rasgosSql, [id]),     // ✅ Corregido
+            query(vestimentaSql, [id])  // ✅ Corregido
         ]);
 
         if (fichaResult.rowCount === 0) return null;
@@ -56,15 +55,14 @@ export const getFichaCompletaById = async (id) => {
  * Obtiene TODAS las fichas de un usuario específico con todos sus campos.
  */
 export const getFichasCompletasByUserId = async (userId) => {
-    const db = await openDb();
     const idsSql = `SELECT id_ficha FROM fichas_desaparicion WHERE id_usuario_creador = $1 ORDER BY fecha_desaparicion DESC`;
-    
+
     try {
-        const fichaIdsResult = await db.query(idsSql, [userId]);
+        const fichaIdsResult = await query(idsSql, [userId]); // ✅ Corregido
         const fichaIds = fichaIdsResult.rows;
-        
+
         if (!fichaIds || fichaIds.length === 0) return [];
-        
+
         const fichasPromises = fichaIds.map(item => getFichaCompletaById(item.id_ficha));
         return Promise.all(fichasPromises);
     } catch (error) {
@@ -77,19 +75,18 @@ export const getFichasCompletasByUserId = async (userId) => {
  * Obtiene una lista paginada de fichas públicas para el feed.
  */
 export const getFichasFeed = async (limit = 10, offset = 0) => {
-    const db = await openDb();
     const sql = `
         SELECT
-            fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.fecha_desaparicion, 
+            fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.fecha_desaparicion,
             fd.foto_perfil, fd.genero, fd.edad_estimada, u.estado, u.municipio
         FROM fichas_desaparicion AS fd
         LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
-        WHERE fd.estado_ficha = 'activa' 
+        WHERE fd.estado_ficha = 'activa'
         ORDER BY fd.fecha_desaparicion DESC
         LIMIT $1 OFFSET $2;
     `;
     try {
-        const result = await db.query(sql, [limit, offset]);
+        const result = await query(sql, [limit, offset]); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error en getFichasFeed (PostgreSQL): ${error.message}`);
@@ -101,11 +98,10 @@ export const getFichasFeed = async (limit = 10, offset = 0) => {
  * BÚSQUEDA UNIVERSAL: Busca fichas por un término clave.
  */
 export const searchFichasByKeyword = async (searchTerm = '', limit = 10, offset = 0) => {
-    const db = await openDb();
     const sqlTerm = `%${searchTerm.toLowerCase()}%`;
     const sql = `
         SELECT DISTINCT
-            fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.fecha_desaparicion, 
+            fd.id_ficha, fd.nombre, fd.apellido_paterno, fd.fecha_desaparicion,
             fd.foto_perfil, fd.genero, fd.edad_estimada, u.estado, u.municipio
         FROM fichas_desaparicion AS fd
         LEFT JOIN ubicaciones AS u ON fd.id_ubicacion_desaparicion = u.id_ubicacion
@@ -132,7 +128,7 @@ export const searchFichasByKeyword = async (searchTerm = '', limit = 10, offset 
     `;
     const params = Array(11).fill(sqlTerm).concat([limit, offset]);
     try {
-        const result = await db.query(sql, params);
+        const result = await query(sql, params); // ✅ Corregido
         return result.rows;
     } catch (error) {
         logger.error(`❌ Error en searchFichasByKeyword (PostgreSQL): ${error.message}`);

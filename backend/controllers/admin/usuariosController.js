@@ -1,3 +1,5 @@
+// backend/controllers/admin/usuariosController.js
+
 import { query } from '../../db/users/initDb.js';
 import { getAllUsuariosAdmin } from '../../db/admin/usuarios.js';
 import logger from '../../utils/logger.js';
@@ -32,16 +34,14 @@ export async function actualizarUsuario(req, res) {
     } = req.body;
 
     try {
-         // Obtiene el pool de PostgreSQL
-
         // 1. Validar que el usuario exista
-        const userResult = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+        const userResult = await query('SELECT * FROM users WHERE id = $1', [id]); // ✅ Corregido
         if (userResult.rowCount === 0) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
         // 2. Actualizar campos usando placeholders de PostgreSQL ($1, $2, etc.)
-        await db.query(
+        await query( // ✅ Corregido
             `UPDATE users SET
                 nombre = $1,
                 email = $2,

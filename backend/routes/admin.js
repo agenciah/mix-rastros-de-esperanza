@@ -1,3 +1,4 @@
+// backend/routes/admin.js
 import express from 'express';
 // Se elimina la importación de 'obtenerUsuariosParaFacturacionServicio' de usuariosController.js
 import { obtenerUsuariosParaAdmin, actualizarUsuario } from '../controllers/admin/usuariosController.js';
@@ -7,13 +8,13 @@ import { loginAdmin } from '../controllers/admin/loginAdminController.js';
 import { authenticateAdminToken } from '../middleware/adminAuthMiddleware.js';
 import fichasRoutes from './admin/fichasAdmin.js';
 import hallazgosRoutes from './admin/hallazgosAdmin.js';
-import { 
-    getRecentMatches, 
-    getMatchDetail, 
-    updateMatchReviewStatus 
+import {
+    getRecentMatches,
+    getMatchDetail,
+    updateMatchReviewStatus
 } from '../controllers/admin/adminMatchesController.js';
 import { getPagosPendientes, obtenerPagosRecientes, marcarPago, revertirPago } from '../controllers/admin/adminPagosController.js';
-import { postAdminMessage,getMessagesForAdmin, editAdminMessage, setAdminMessageStatus } from '../controllers/admin/adminMessagesController.js';
+import { postAdminMessage, getMessagesForAdmin, editAdminMessage, setAdminMessageStatus } from '../controllers/admin/adminMessagesController.js';
 import { getReports, getReportedConversation } from '../controllers/admin/adminReportsController.js';
 import { resolveReport, moderateUser } from '../controllers/admin/adminActionsController.js';
 import { query } from '../db/users/initDb.js';
@@ -58,6 +59,7 @@ router.put('/mensajes/:id', authenticateAdminToken, editAdminMessage);
 router.put('/mensajes/:id/estado', authenticateAdminToken, setAdminMessageStatus);
 
 // --- RUTAS PARA GESTIÓN DE REPORTES ---
+
 // ✅ CORRECCIÓN: La ruta ahora es '/reportes' en plural y en español
 router.get('/reportes', authenticateAdminToken, getReports);
 
@@ -73,11 +75,10 @@ router.get('/limpieza-total-usuarios', async (req, res) => {
     }
 
     try {
-        
         // Ejecutamos el comando para borrar TODOS los usuarios.
-        await db.query('TRUNCATE TABLE users RESTART IDENTITY CASCADE'); // TRUNCATE es más eficiente en PG
+        await query('TRUNCATE TABLE users RESTART IDENTITY CASCADE'); // ✅ Corregido: TRUNCATE es más eficiente en PG
         res.status(200).send('✅ ¡Éxito! La tabla de usuarios ha sido limpiada y reiniciada.');
-        
+
     } catch (error) {
         console.error('Error durante la limpieza de usuarios:', error);
         res.status(500).send(`Error al limpiar la base de datos: ${error.message}`);

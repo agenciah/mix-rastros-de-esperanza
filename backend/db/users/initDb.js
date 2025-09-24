@@ -144,21 +144,31 @@ const PRENDAS = [
     { tipo: "Uniforme laboral", cat: "Otros" },
 ];
 
-// ======================
-// 2. Conexión a la base de datos
-// ======================
-const pool = new pg.Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+// --- INICIA EL CÓDIGO DE DEPURACIÓN FINAL ---
+console.log('--- Depurando variables de entorno en initDb.js ---');
+console.log(`DB_HOST: ${process.env.DB_HOST} (Tipo: ${typeof process.env.DB_HOST})`);
+console.log(`DB_USER: ${process.env.DB_USER} (Tipo: ${typeof process.env.DB_USER})`);
+console.log(`DB_PASSWORD: ${process.env.DB_PASSWORD ? 'Cargada (oculta por seguridad)' : 'NO CARGADA'} (Tipo: ${typeof process.env.DB_PASSWORD})`);
+console.log(`DB_NAME: ${process.env.DB_NAME} (Tipo: ${typeof process.env.DB_NAME})`);
+console.log(`DB_PORT: ${process.env.DB_PORT} (Tipo: ${typeof process.env.DB_PORT})`);
+console.log('----------------------------------------------------');
+// --- TERMINA EL CÓDIGO DE DEPURACIÓN FINAL ---
+
+// ✅ CORRECCIÓN FINAL: Usamos variables individuales para una conexión más robusta.
+export const pool = new pg.Pool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
-// ✅ AÑADE ESTA NUEVA FUNCIÓN EN SU LUGAR
 /**
  * Ejecuta una consulta a la base de datos usando un cliente del pool.
- * Esta función centraliza toda la lógica de consultas.
- * @param {string} text - La consulta SQL con placeholders ($1, $2, etc.).
- * @param {Array} params - Los valores para los placeholders.
- * @returns {Promise<QueryResult>} El resultado de la consulta de node-postgres.
+ * ... (resto de tus comentarios y la función query)
  */
 export const query = (text, params) => {
     return pool.query(text, params);
@@ -527,7 +537,7 @@ const PRENDAS = [
     { tipo: "Uniforme laboral", cat: "Otros" },
 ];
     
-    const client = await openDb().connect();
+    const client = await pool.connect();
     logger.info("⏳ Iniciando seed de catálogos…");
     try {
         await client.query("BEGIN");

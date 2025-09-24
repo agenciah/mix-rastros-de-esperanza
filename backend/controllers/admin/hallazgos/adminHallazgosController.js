@@ -1,6 +1,6 @@
 // RUTA: backend/controllers/admin/hallazgos/adminHallazgosController.js
 
-import { query } from '../../../db/users/initDb.js';
+import { query, pool } from '../../../db/users/initDb.js'; // ✅ Corregido: Importamos 'pool'
 import logger from '../../../utils/logger.js';
 // Asumimos que la función de queries ya fue migrada a PostgreSQL
 import { getAllHallazgosCatalogos } from '../../../db/queries/fichasAndHallazgosQueries.js';
@@ -10,7 +10,6 @@ import { getAllHallazgosCatalogos } from '../../../db/queries/fichasAndHallazgos
  */
 export const getAllHallazgosAdmin = async (req, res) => {
     try {
-         // Obtiene el pool de PostgreSQL
         const { searchTerm = '' } = req.query;
         const queryTerm = `%${searchTerm.toLowerCase()}%`;
 
@@ -27,7 +26,7 @@ export const getAllHallazgosAdmin = async (req, res) => {
             ORDER BY h.fecha_hallazgo DESC;
         `;
 
-        const result = await db.query(sql, [queryTerm]);
+        const result = await query(sql, [queryTerm]); // ✅ Corregido
         res.json({ success: true, data: result.rows });
 
     } catch (error) {
@@ -41,7 +40,6 @@ export const getAllHallazgosAdmin = async (req, res) => {
  */
 export const getHallazgoByIdAdmin = async (req, res) => {
     try {
-        
         const { id } = req.params;
 
         const sql = `
@@ -60,9 +58,9 @@ export const getHallazgoByIdAdmin = async (req, res) => {
         const vestimentaSql = `SELECT * FROM hallazgo_vestimenta WHERE id_hallazgo = $1;`;
 
         const [hallazgoResult, caracteristicasResult, vestimentaResult] = await Promise.all([
-            db.query(sql, [id]),
-            db.query(caracteristicasSql, [id]),
-            db.query(vestimentaSql, [id]),
+            query(sql, [id]),               // ✅ Corregido
+            query(caracteristicasSql, [id]), // ✅ Corregido
+            query(vestimentaSql, [id]),      // ✅ Corregido
         ]);
 
         if (hallazgoResult.rowCount === 0) {
@@ -73,11 +71,11 @@ export const getHallazgoByIdAdmin = async (req, res) => {
         const caracteristicas = caracteristicasResult.rows;
         const vestimenta = vestimentaResult.rows;
 
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             data: { ...hallazgo, caracteristicas, vestimenta }
         });
-        
+
     } catch (error) {
         logger.error(`❌ Error al obtener hallazgo por ID (admin, PostgreSQL): ${error.message}`);
         res.status(500).json({ success: false, message: 'Error interno del servidor al obtener el hallazgo.' });
@@ -88,7 +86,7 @@ export const getHallazgoByIdAdmin = async (req, res) => {
  * Actualiza un hallazgo existente por ID (Versión PostgreSQL).
  */
 export const updateHallazgoAdmin = async (req, res) => {
-    const client = await openDb().connect();
+    const client = await pool.connect(); // ✅ Corregido
     try {
         await client.query('BEGIN');
         const { id } = req.params;
@@ -158,7 +156,7 @@ export const updateHallazgoAdmin = async (req, res) => {
  * Elimina un hallazgo por ID (Versión PostgreSQL).
  */
 export const deleteHallazgoAdmin = async (req, res) => {
-    const client = await openDb().connect();
+    const client = await pool.connect(); // ✅ Corregido
     try {
         await client.query('BEGIN');
         const { id } = req.params;
@@ -202,7 +200,7 @@ export const getCreateHallazgoPageData = async (req, res) => {
  * Crea un nuevo hallazgo (Versión PostgreSQL).
  */
 export const createHallazgoAdmin = async (req, res) => {
-    const client = await openDb().connect();
+    const client = await pool.connect(); // ✅ Corregido
     try {
         await client.query('BEGIN');
         const {
@@ -239,10 +237,10 @@ export const createHallazgoAdmin = async (req, res) => {
             const promises = vestimenta.map(v => client.query(`INSERT INTO hallazgo_vestimenta (id_hallazgo, id_prenda, color, marca, caracteristica_especial) VALUES ($1, $2, $3, $4, $5)`, [id_hallazgo, v.id_prenda, v.color, v.marca, v.caracteristica_especial]));
             await Promise.all(promises);
         }
-        
+
         await client.query('COMMIT');
         res.status(201).json({ success: true, message: 'Hallazgo creado correctamente', id: id_hallazgo });
-        
+
     } catch (error) {
         await client.query('ROLLBACK');
         logger.error(`❌ Error al crear hallazgo (admin, PostgreSQL): ${error.message}`);

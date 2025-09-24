@@ -1,3 +1,5 @@
+// backend/controllers/hallazgos/hallazgosListController.js
+
 import { query } from '../../db/users/initDb.js';
 import logger from '../../utils/logger.js';
 
@@ -6,7 +8,6 @@ import logger from '../../utils/logger.js';
  */
 export const getHallazgosList = async (req, res) => {
     try {
-        
         const limit = parseInt(req.query.limit) || 10;
         const offset = parseInt(req.query.offset) || 0;
 
@@ -20,9 +21,9 @@ export const getHallazgosList = async (req, res) => {
             ORDER BY h.fecha_hallazgo DESC
             LIMIT $1 OFFSET $2;
         `;
-        
-        const result = await db.query(sql, [limit, offset]);
-        
+
+        const result = await query(sql, [limit, offset]); // ✅ Corregido
+
         // La respuesta ahora incluye el success: true para consistencia.
         res.status(200).json({ success: true, data: result.rows });
 
@@ -31,4 +32,3 @@ export const getHallazgosList = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error interno del servidor.' });
     }
 };
-

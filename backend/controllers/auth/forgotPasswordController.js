@@ -1,3 +1,5 @@
+// backend/controllers/auth/forgotPasswordController.js
+
 import { query } from '../../db/users/initDb.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
@@ -15,11 +17,10 @@ export const forgotPassword = async (req, res) => {
     }
 
     try {
-         // Obtiene el pool de PostgreSQL
         const normalizedEmail = email.trim().toLowerCase();
-        
-        // Se usa db.query y placeholder $1
-        const userResult = await db.query('SELECT * FROM users WHERE email = $1', [normalizedEmail]);
+
+        // Se usa la función 'query' y placeholder $1
+        const userResult = await query('SELECT * FROM users WHERE email = $1', [normalizedEmail]); // ✅ Corregido
         const user = userResult.rows[0];
 
         const genericMessage = 'Si el correo existe, se ha enviado un enlace';
@@ -32,7 +33,7 @@ export const forgotPassword = async (req, res) => {
         const token = crypto.randomBytes(32).toString('hex');
         const expiresAt = new Date(Date.now() + TOKEN_EXPIRATION_MINUTES * 60 * 1000);
 
-        await db.query(
+        await query( // ✅ Corregido
             `UPDATE users SET reset_token = $1, reset_token_expiration = $2 WHERE id = $3`,
             [token, expiresAt, user.id]
         );
@@ -62,10 +63,8 @@ export const resetPassword = async (req, res) => {
     }
 
     try {
-        
-        
         // PostgreSQL usa NOW() para obtener la fecha y hora actual
-        const userResult = await db.query(
+        const userResult = await query( // ✅ Corregido
             `SELECT * FROM users WHERE reset_token = $1 AND reset_token_expiration > NOW()`,
             [token]
         );
@@ -78,7 +77,7 @@ export const resetPassword = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-        await db.query(
+        await query( // ✅ Corregido
             `UPDATE users SET password = $1, reset_token = NULL, reset_token_expiration = NULL WHERE id = $2`,
             [hashedPassword, user.id]
         );
