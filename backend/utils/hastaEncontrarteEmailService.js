@@ -14,25 +14,16 @@ function getEmailLayout(contentHtml) {
 // --- 2. Función Principal de Envío (SIMPLIFICADA) ---
 async function sendEmail(to, subject, htmlBody, textBody = '') {
     try {
-        // ✅ INICIA CÓDIGO DE DEPURACIÓN
-        const transportConfig = {
-            host: 'smtp.zoho.com',
-            port: 465,
-            secure: true,
+        // ✅ La configuración está unificada y es robusta.
+        const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST, // Usamos las variables genéricas de tu .env
+            port: parseInt(process.env.SMTP_PORT, 10), // Convertimos a número
+            secure: process.env.SMTP_SECURE === 'true', // Convertimos a booleano
             auth: {
                 user: process.env.ZOHO_EMAIL_USER,
                 pass: process.env.ZOHO_EMAIL_PASS,
             },
-        };
-
-        console.log("📧 Intentando conectar a Zoho con la siguiente configuración:", {
-            host: transportConfig.host,
-            port: transportConfig.port,
-            secure: transportConfig.secure,
-            user: transportConfig.auth.user,
-            pass_exists: !!transportConfig.auth.pass // Solo verificamos si la contraseña existe, no la mostramos
         });
-        // ✅ FIN CÓDIGO DE DEPURACIÓN
 
         const mailOptions = {
             from: `"Hasta Encontrarte" <${process.env.ZOHO_EMAIL_USER}>`,
@@ -42,16 +33,17 @@ async function sendEmail(to, subject, htmlBody, textBody = '') {
             html: getEmailLayout(htmlBody),
         };
 
-
         const info = await transporter.sendMail(mailOptions);
         logger.info(`✅ Correo enviado a ${to}: ${info.messageId}`);
         return info;
 
     } catch (error) {
+        // Este log ahora mostrará el error real si Zoho rechaza la conexión
         logger.error(`❌ Error al enviar correo a través de Zoho: ${error.message}`);
         throw error;
     }
 }
+
 
 // --- 4. Plantillas de Correo Específicas para "Hasta Encontrarte" ---
 
