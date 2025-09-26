@@ -11,22 +11,25 @@ function getEmailLayout(contentHtml) {
   `;
 }
 
-// --- 2. Función Principal de Envío (SIMPLIFICADA) ---
 async function sendEmail(to, subject, htmlBody, textBody = '') {
     try {
-        // ✅ La configuración está unificada y es robusta.
+        console.log('--- 🧪 INICIANDO PRUEBA DE CORREO CON VALORES HARCODEADOS 🧪 ---');
+
         const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST, // Usamos las variables genéricas de tu .env
-            port: parseInt(process.env.SMTP_PORT, 10), // Convertimos a número
-            secure: process.env.SMTP_SECURE === 'true', // Convertimos a booleano
+            host: 'smtp.zoho.com', // Valor directo
+            port: 465,            // Valor directo
+            secure: true,         // Valor directo
             auth: {
-                user: process.env.ZOHO_EMAIL_USER,
-                pass: process.env.ZOHO_EMAIL_PASS,
+                user: 'contacto@hastaencontrarte.lat', // Valor directo
+                pass: 'VbijPFiSUJn0',                  // Valor directo (tu contraseña de aplicación)
             },
+            // ✅ AÑADIMOS OPCIONES DE DEBUGGING DE NODEMAILER
+            debug: true, // Muestra la conversación SMTP en la consola
+            logger: true // Loguea información de la conexión
         });
 
         const mailOptions = {
-            from: `"Hasta Encontrarte" <${process.env.ZOHO_EMAIL_USER}>`,
+            from: `"Hasta Encontrarte" <contacto@hastaencontrarte.lat>`, // Valor directo
             to,
             subject,
             text: textBody,
@@ -38,7 +41,6 @@ async function sendEmail(to, subject, htmlBody, textBody = '') {
         return info;
 
     } catch (error) {
-        // Este log ahora mostrará el error real si Zoho rechaza la conexión
         logger.error(`❌ Error al enviar correo a través de Zoho: ${error.message}`);
         throw error;
     }
