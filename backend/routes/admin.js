@@ -1,7 +1,7 @@
 // backend/routes/admin.js
 import express from 'express';
 // Se elimina la importación de 'obtenerUsuariosParaFacturacionServicio' de usuariosController.js
-import { obtenerUsuariosParaAdmin, actualizarUsuario } from '../controllers/admin/usuariosController.js';
+import { obtenerUsuariosParaAdmin, actualizarUsuario, confirmarEmailManualmente, enviarEnlaceDeReseteo, softDeleteUser } from '../controllers/admin/usuariosController.js';
 import { obtenerDashboardAdmin } from '../controllers/admin/adminController.js';
 import { obtenerEstadisticas } from '../controllers/admin/estadisticasController.js';
 import { loginAdmin } from '../controllers/admin/loginAdminController.js';
@@ -27,6 +27,16 @@ router.post('/login', loginAdmin);
 // Rutas admin
 router.get('/usuarios', authenticateAdminToken, obtenerUsuariosParaAdmin);
 router.put('/usuarios/:id', authenticateAdminToken, actualizarUsuario);
+// ✅ 2. AÑADIMOS LA NUEVA RUTA
+// Usamos PUT porque estamos actualizando una propiedad del usuario
+router.put('/usuarios/:id/confirmar', authenticateAdminToken, confirmarEmailManualmente);
+
+router.delete('/usuarios/:id/soft-delete', authenticateAdminToken, softDeleteUser);
+
+// ✅ 2. AÑADIMOS LA NUEVA RUTA DE RESETEO
+// Usamos POST porque inicia una acción que envía un correo
+router.post('/usuarios/:id/enviar-reseteo', authenticateAdminToken, enviarEnlaceDeReseteo);
+
 router.get('/dashboard', authenticateAdminToken, obtenerDashboardAdmin);
 
 // --- NUEVA RUTA para las estadísticas ---

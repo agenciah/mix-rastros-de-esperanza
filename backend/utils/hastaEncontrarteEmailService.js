@@ -65,7 +65,7 @@ export async function sendHEConfirmationEmail(to, token) {
         <p>Si no te registraste, puedes ignorar este correo.</p>
     `;
 
-    return sendEmail(to, subject, text, html);
+    return sendEmail(to, subject, html, text);
 }
 
 export async function sendHEResetPasswordEmail(to, resetUrl) {

@@ -76,7 +76,10 @@ export async function createUser({
  * Buscar usuario por email (Versión PostgreSQL)
  */
 export async function findUserByEmail(email) {
-    const res = await query('SELECT * FROM users WHERE email = $1', [email]); // ✅ Corregido
+    const res = await query(`
+        SELECT * FROM users 
+        WHERE email = $1 AND estado_cuenta = 'activo'
+    `, [email]); // ✅ Corregido
     const user = res.rows[0];
 
     if (user && user.plan) {

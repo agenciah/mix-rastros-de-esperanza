@@ -166,7 +166,7 @@ const Register = () => {
       {errors.acepto_terminos && <p className="text-red-500 text-xs mt-1">{errors.acepto_terminos.message}</p>}
       
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Creando..." : "Crear cuenta"}
+            {loading ? "Creando... Puede tardar un poco el registro pero te pedimos un poco de paciencia, en breve te llegará un email para que confirmes tu cuenta, revisa tu bandeja de spam." : "Crear cuenta"}
           </Button>
 
           <p className="text-center text-sm text-muted-foreground">

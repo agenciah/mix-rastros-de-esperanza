@@ -68,7 +68,7 @@ const Login = () => {
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Entrando...' : 'Entrar'}
+            {loading ? 'Entrando... Por favor espera un poco, en ocasiones puede tardar en iniciar la sesión' : 'Entrar'}
           </Button>
 
           <div className="text-center text-sm text-muted-foreground space-y-2">

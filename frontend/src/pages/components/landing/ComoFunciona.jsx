@@ -15,7 +15,7 @@
         {
             titulo: "Centraliza y Busca",
             pasos: [
-                "Nuestra plataforma cruza tu información con reportes de hospitales, albergues, reclusorios, semefos, fiscalias y otros lugares reportados por los mismo usuarios en sus municipios y estados de origen.",
+                "Nuestra plataforma cruza tu información con reportes de hospitales, albergues, reclusorios, semefos, fiscalias y otros lugares reportados por los mismos usuarios en sus municipios y estados de origen.",
                 "Usa nuestro buscador para explorar fichas y hallazgos por nombre, lugar o características.",
                 "Cualquier persona puede reportar un hallazgo de forma anónima o registrada."
             ],

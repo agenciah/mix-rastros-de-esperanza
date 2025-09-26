@@ -244,6 +244,8 @@ export async function ensureAllTables() {
                 reset_token TEXT,
                 reset_token_expiration TIMESTAMPTZ,
                 role TEXT DEFAULT 'user',
+                estado_cuenta TEXT NOT NULL DEFAULT 'activo', -- Reemplaza a 'cancelado'. Puede ser 'activo', 'inactivo', 'suspendido'.
+                fecha_desactivacion TIMESTAMPTZ, -- Reemplaza a 'cancelacion_efectiva'.
                 cancelado INTEGER DEFAULT 0,
                 cancelacion_efectiva TIMESTAMPTZ,
                 acepto_terminos BOOLEAN NOT NULL DEFAULT false,
@@ -295,7 +297,7 @@ export async function ensureAllTables() {
         await client.query(`
             CREATE TABLE IF NOT EXISTS fichas_desaparicion (
                 id_ficha SERIAL PRIMARY KEY,
-                id_usuario_creador INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                id_usuario_creador INTEGER NOT NULL REFERENCES users(id) ON DELETE SET NULL,
                 nombre TEXT NOT NULL, segundo_nombre TEXT, apellido_paterno TEXT NOT NULL, apellido_materno TEXT,
                 fecha_desaparicion DATE NOT NULL,
                 id_ubicacion_desaparicion INTEGER REFERENCES ubicaciones(id_ubicacion) ON DELETE SET NULL,
@@ -326,7 +328,7 @@ export async function ensureAllTables() {
         await client.query(`
             CREATE TABLE IF NOT EXISTS hallazgos (
                 id_hallazgo SERIAL PRIMARY KEY,
-                id_usuario_buscador INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                id_usuario_buscador INTEGER NOT NULL REFERENCES users(id) ON DELETE SET NULL,
                 id_ubicacion_hallazgo INTEGER REFERENCES ubicaciones(id_ubicacion) ON DELETE SET NULL,
                 id_tipo_lugar_hallazgo INTEGER REFERENCES catalogo_tipo_lugar(id_tipo_lugar) ON DELETE SET NULL,
                 nombre TEXT NOT NULL, segundo_nombre TEXT, apellido_paterno TEXT NOT NULL, apellido_materno TEXT,
