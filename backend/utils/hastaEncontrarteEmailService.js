@@ -14,23 +14,15 @@ function getEmailLayout(contentHtml) {
 // --- 2. Función Principal de Envío (SIMPLIFICADA) ---
 async function sendEmail(to, subject, htmlBody, textBody = '') {
     try {
-        // ✅ La configuración ahora es mucho más simple y usa las nuevas variables
-        const transporter = nodemailer.createTransport({
+        // ✅ INICIA CÓDIGO DE DEPURACIÓN
+        const transportConfig = {
             host: 'smtp.zoho.com',
             port: 465,
             secure: true,
             auth: {
-                user: process.env.ZOHO_EMAIL_USER, // Tu variable de .env
-                pass: process.env.ZOHO_EMAIL_PASS, // Tu contraseña de aplicación
+                user: process.env.ZOHO_EMAIL_USER,
+                pass: process.env.ZOHO_EMAIL_PASS,
             },
-        });
-
-        const mailOptions = {
-            from: `"Hasta Encontrarte" <${process.env.ZOHO_EMAIL_USER}>`,
-            to,
-            subject,
-            text: textBody,
-            html: getEmailLayout(htmlBody),
         };
 
         console.log("📧 Intentando conectar a Zoho con la siguiente configuración:", {
@@ -41,6 +33,15 @@ async function sendEmail(to, subject, htmlBody, textBody = '') {
             pass_exists: !!transportConfig.auth.pass // Solo verificamos si la contraseña existe, no la mostramos
         });
         // ✅ FIN CÓDIGO DE DEPURACIÓN
+
+        const mailOptions = {
+            from: `"Hasta Encontrarte" <${process.env.ZOHO_EMAIL_USER}>`,
+            to,
+            subject,
+            text: textBody,
+            html: getEmailLayout(htmlBody),
+        };
+
 
         const info = await transporter.sendMail(mailOptions);
         logger.info(`✅ Correo enviado a ${to}: ${info.messageId}`);
