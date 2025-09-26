@@ -244,10 +244,12 @@ export async function ensureAllTables() {
                 reset_token TEXT,
                 reset_token_expiration TIMESTAMPTZ,
                 role TEXT DEFAULT 'user',
-                estado_cuenta TEXT NOT NULL DEFAULT 'activo', -- Reemplaza a 'cancelado'. Puede ser 'activo', 'inactivo', 'suspendido'.
-                fecha_desactivacion TIMESTAMPTZ, -- Reemplaza a 'cancelacion_efectiva'.
-                cancelado INTEGER DEFAULT 0,
-                cancelacion_efectiva TIMESTAMPTZ,
+                
+                -- ✅ CAMPOS FINALES PARA EL ESTADO DE LA CUENTA --
+                estado_cuenta TEXT NOT NULL DEFAULT 'activo', -- Puede ser 'activo', 'inactivo', 'suspendido'
+                fecha_desactivacion TIMESTAMPTZ,
+                -- -----------------------------------------
+                
                 acepto_terminos BOOLEAN NOT NULL DEFAULT false,
                 fecha_aceptacion DATE,
                 version_terminos TEXT,
@@ -261,6 +263,45 @@ export async function ensureAllTables() {
                 simplika_referral_status TEXT NOT NULL DEFAULT 'inactivo'
             );
         `);
+
+        // ✅ --- INICIO: LÓGICA DE MIGRACIÓN AUTOMÁTICA ---
+        // Este bloque se ejecutará solo si las columnas nuevas no existen.
+
+        // 1. Gestionar la columna 'estado_cuenta'
+        if (!(await columnExists(client, 'users', 'estado_cuenta'))) {
+            logger.info("⏳ Detectada estructura antigua. Migrando a 'estado_cuenta'...");
+            
+            // Añade la nueva columna
+            await client.query(`ALTER TABLE users ADD COLUMN estado_cuenta TEXT NOT NULL DEFAULT 'activo';`);
+            logger.info("➕ Columna 'estado_cuenta' añadida.");
+
+            // Si la vieja columna 'cancelado' existe, migra los datos
+            if (await columnExists(client, 'users', 'cancelado')) {
+                logger.info("🔄 Migrando datos de 'cancelado' a 'estado_cuenta'...");
+                await client.query(`UPDATE users SET estado_cuenta = 'inactivo' WHERE cancelado = 1;`);
+                
+                // Elimina la columna vieja
+                await client.query(`ALTER TABLE users DROP COLUMN cancelado;`);
+                logger.info("➖ Columna 'cancelado' eliminada.");
+            }
+        }
+
+        // 2. Gestionar la columna 'fecha_desactivacion'
+        if (!(await columnExists(client, 'users', 'fecha_desactivacion'))) {
+            logger.info("⏳ Migrando a 'fecha_desactivacion'...");
+            await client.query(`ALTER TABLE users ADD COLUMN fecha_desactivacion TIMESTAMPTZ;`);
+            logger.info("➕ Columna 'fecha_desactivacion' añadida.");
+
+            if (await columnExists(client, 'users', 'cancelacion_efectiva')) {
+                logger.info("🔄 Migrando datos de 'cancelacion_efectiva'...");
+                await client.query(`UPDATE users SET fecha_desactivacion = cancelacion_efectiva;`);
+                await client.query(`ALTER TABLE users DROP COLUMN cancelacion_efectiva;`);
+                logger.info("➖ Columna 'cancelacion_efectiva' eliminada.");
+            }
+        }
+        // ✅ --- FIN: LÓGICA DE MIGRACIÓN AUTOMÁTICA ---
+
+
         await client.query('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_numero_referencia_unico ON users(numero_referencia_unico);');
         await client.query('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_simplika_referral_code ON users(simplika_referral_code);');
         await actualizarUsuariosSinReferencia(client);

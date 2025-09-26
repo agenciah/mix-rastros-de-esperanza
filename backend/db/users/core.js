@@ -73,15 +73,19 @@ export async function createUser({
 }
 
 /**
- * Buscar usuario por email (Versión PostgreSQL)
+ * Buscar usuario por email.
+ * ✅ VERSIÓN FINAL: Ahora solo busca usuarios con 'estado_cuenta' activo.
  */
 export async function findUserByEmail(email) {
+    // Añadimos la condición "AND estado_cuenta = 'activo'" para el login
     const res = await query(`
-        SELECT * FROM users 
+        SELECT * FROM users
         WHERE email = $1 AND estado_cuenta = 'activo'
-    `, [email]); // ✅ Corregido
+    `, [email]);
+
     const user = res.rows[0];
 
+    // El resto de la lógica para parsear los datos JSON se mantiene igual
     if (user && user.plan) {
         try {
             user.plan = JSON.parse(user.plan);
