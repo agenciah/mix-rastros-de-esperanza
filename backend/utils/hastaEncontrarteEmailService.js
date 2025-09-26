@@ -1,8 +1,9 @@
 // RUTA: backend/utils/hastaEncontrarteEmailService.js
 
-import nodemailer from 'nodemailer';
-import axios from 'axios';
 import logger from './logger.js';
+import sgMail from '@sendgrid/mail'; 
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // --- 1. Plantilla de Correo (Layout) ---
 function getEmailLayout(contentHtml) {
@@ -11,41 +12,30 @@ function getEmailLayout(contentHtml) {
   `;
 }
 
+// --- 2. Función Principal de Envío (VERSIÓN SENDGRID) ---
 async function sendEmail(to, subject, htmlBody, textBody = '') {
+    // 3. Construimos el mensaje en el formato que SendGrid espera
+    const msg = {
+        to: to,
+        from: {
+            email: process.env.SENDGRID_FROM_EMAIL,
+            name: 'Hasta Encontrarte' // El nombre que verán los usuarios
+        },
+        subject: subject,
+        text: textBody,
+        html: getEmailLayout(htmlBody), // Reutilizamos tu misma plantilla HTML
+    };
+
     try {
-        console.log('--- 🧪 INICIANDO PRUEBA DE CORREO CON VALORES HARCODEADOS 🧪 ---');
-
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.zoho.com', // Valor directo
-            port: 465,            // Valor directo
-            secure: true,         // Valor directo
-            auth: {
-                user: 'contacto@hastaencontrarte.lat', // Valor directo
-                pass: 'VbijPFiSUJn0',                  // Valor directo (tu contraseña de aplicación)
-            },
-            // ✅ AÑADIMOS OPCIONES DE DEBUGGING DE NODEMAILER
-            debug: true, // Muestra la conversación SMTP en la consola
-            logger: true // Loguea información de la conexión
-        });
-
-        const mailOptions = {
-            from: `"Hasta Encontrarte" <contacto@hastaencontrarte.lat>`, // Valor directo
-            to,
-            subject,
-            text: textBody,
-            html: getEmailLayout(htmlBody),
-        };
-
-        const info = await transporter.sendMail(mailOptions);
-        logger.info(`✅ Correo enviado a ${to}: ${info.messageId}`);
-        return info;
-
+        // ✅ 4. ¡Y simplemente lo enviamos!
+        await sgMail.send(msg);
+        logger.info(`✅ Correo enviado a ${to} a través de SendGrid.`);
     } catch (error) {
-        logger.error(`❌ Error al enviar correo a través de Zoho: ${error.message}`);
+        // El log de error de SendGrid es muy detallado y útil
+        logger.error(`❌ Error al enviar correo a través de SendGrid:`, error.response?.body || error.message);
         throw error;
     }
 }
-
 
 // --- 4. Plantillas de Correo Específicas para "Hasta Encontrarte" ---
 
