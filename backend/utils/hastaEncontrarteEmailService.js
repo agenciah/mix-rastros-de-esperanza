@@ -33,6 +33,15 @@ async function sendEmail(to, subject, htmlBody, textBody = '') {
             html: getEmailLayout(htmlBody),
         };
 
+        console.log("📧 Intentando conectar a Zoho con la siguiente configuración:", {
+            host: transportConfig.host,
+            port: transportConfig.port,
+            secure: transportConfig.secure,
+            user: transportConfig.auth.user,
+            pass_exists: !!transportConfig.auth.pass // Solo verificamos si la contraseña existe, no la mostramos
+        });
+        // ✅ FIN CÓDIGO DE DEPURACIÓN
+
         const info = await transporter.sendMail(mailOptions);
         logger.info(`✅ Correo enviado a ${to}: ${info.messageId}`);
         return info;
