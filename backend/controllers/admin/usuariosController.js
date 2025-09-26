@@ -4,6 +4,7 @@ import { query } from '../../db/users/initDb.js';
 import { getAllUsuariosAdmin } from '../../db/admin/usuarios.js';
 import logger from '../../utils/logger.js';
 import { generarYEnviarTokenDeReseteo } from '../auth/forgotPasswordController.js';
+import {findUserById} from "../../db/users/core.js";
 
 /**
  * Obtiene la lista de todos los usuarios para el dashboard de administrador.
