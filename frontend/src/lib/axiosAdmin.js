@@ -2,8 +2,8 @@
 import axios from 'axios';
 
 const apiAdmin = axios.create({
-    // ✅ CORRECCIÓN: Se añade '/api' para que la ruta base sea la correcta
-    baseURL: 'https://mix-rastros-de-esperanza.onrender.com/api/admin',
+    // ✅ Construye la URL de admin a partir de la URL base
+    baseURL: `${import.meta.env.VITE_API_BASE_URL}/admin`,
 });
 
 apiAdmin.interceptors.request.use((config) => {

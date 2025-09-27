@@ -2,8 +2,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    // ✅ CORRECCIÓN: Se añade '/api' al final
-    baseURL: 'https://mix-rastros-de-esperanza.onrender.com/api', 
+    // ✅ Lee la URL base desde las variables de entorno de Vite
+    baseURL: import.meta.env.VITE_API_BASE_URL, 
     withCredentials: true,
 });
 
