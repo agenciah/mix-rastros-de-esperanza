@@ -22,15 +22,29 @@ import notificationsRoutes from './routes/notificationsRoutes.js';
 
 const app = express();
 
-const corsOptions = {
-    origin: [
-        'http://localhost:5173',
-        'https://hastaencontrarte.lat' // Asegúrate de que este es tu dominio final
-    ],
-    credentials: true,
-};
-app.use(cors(corsOptions));
+// ✅ INICIA CORRECCIÓN: Configuración de CORS más robusta
+const whitelist = [
+    'http://localhost:5173',
+    'https://hastaencontrarte.lat'
+];
 
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Permitir peticiones sin 'origin' (como Postman o apps móviles) o si el origen está en la lista blanca
+        if (!origin || whitelist.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos permitidos para la llamada de permiso
+    allowedHeaders: 'Content-Type,Authorization' // Headers permitidos
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Habilita explícitamente las respuestas de preflight para todas las rutas
+// ✅ FIN CORRECCIÓN
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
