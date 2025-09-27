@@ -39,7 +39,12 @@ primary_region = 'dfw'
   # Le dice a Fly.io cómo saber si tu app está funcionando.
   [[services.http_checks]]
     interval = "15s" # Cada 15 segundos
-    timeout = "2s"
+    timeout = "5s"
     method = "GET"
     path = "/" # Llama a tu ruta principal (la que responde "Hasta Encontrarte API funcionando 🚀")
-    grace_period = "10s" # Dale a tu app 10s para arrancar antes del primer chequeo
+    grace_period = "30s" # Dale a tu app 10s para arrancar antes del primer chequeo
+
+    # ✅ CORRECCIÓN 2: AÑADE ESTA NUEVA SECCIÓN [machines] AL FINAL
+[machines]
+  size = "shared-cpu-1x"
+  memory = "512mb"
