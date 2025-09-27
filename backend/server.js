@@ -1,3 +1,7 @@
+
+import dotenv from 'dotenv';
+dotenv.config();
+
 // RUTA: backend/server.js (VERSIÓN FINAL)
 import http from 'http';
 import { WebSocketServer } from 'ws';
