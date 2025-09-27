@@ -11,7 +11,24 @@ import LegalLayout from "@/layouts/LegalLayouts";
 import { Checkbox } from "@/components/ui/checkbox"; // Importa el componente Checkbox
 import { Label } from "@/components/ui/label"; // Importa el componente Label
 import { Controller } from "react-hook-form";
+import { Loader2 } from "lucide-react";
 
+const consejosDeRegistro = [
+    "Consejo: Abre el menú en la esquina superior izquierda para explorar la plataforma.",
+    "¿Sabías que? Puedes crear una ficha de tu persona desaparecida y hallazgos para ayudar a encontrar personas desaparecidas.",
+    "Consejo: Revisa la sección de 'Hallazgos' regularmente. Tu ayuda es vital.",
+    "Procesando tu registro de forma segura..."
+];
+  
+  const estadosRepublica = [
+  "Aguascalientes", "Baja California", "Baja California Sur", "Campeche",
+  "Chiapas", "Chihuahua", "Ciudad de México", "Coahuila", "Colima",
+  "Durango", "Estado de México", "Guanajuato", "Guerrero", "Hidalgo",
+  "Jalisco", "Michoacán", "Morelos", "Nayarit", "Nuevo León", "Oaxaca",
+  "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí", "Sinaloa",
+  "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz",
+  "Yucatán", "Zacatecas"
+];
 
 // Se actualiza el esquema de validación para incluir la casilla de términos y condiciones
 const schema = z.object({
@@ -32,17 +49,9 @@ const schema = z.object({
 const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [loadingTip, setLoadingTip] = useState('');
   const [planSeleccionado, setPlanSeleccionado] = useState(null);
   const [esAnual, setEsAnual] = useState(false);
-  const estadosRepublica = [
-  "Aguascalientes", "Baja California", "Baja California Sur", "Campeche",
-  "Chiapas", "Chihuahua", "Ciudad de México", "Coahuila", "Colima",
-  "Durango", "Estado de México", "Guanajuato", "Guerrero", "Hidalgo",
-  "Jalisco", "Michoacán", "Morelos", "Nayarit", "Nuevo León", "Oaxaca",
-  "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí", "Sinaloa",
-  "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz",
-  "Yucatán", "Zacatecas"
-];
 
   const {
     register,
@@ -58,6 +67,13 @@ const Register = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
+
+    setLoadingTip(consejosDeRegistro[0]); // Mostramos el primer mensaje inmediatamente
+        let tipIndex = 0;
+        const tipInterval = setInterval(() => {
+            tipIndex = (tipIndex + 1) % consejosDeRegistro.length;
+            setLoadingTip(consejosDeRegistro[tipIndex]);
+        }, 4000); // Cambia el consejo cada 4 segundos
 
     try {
       const payload = {
@@ -85,6 +101,7 @@ const Register = () => {
       console.error("Detalles del error:", err.response?.data);
     } finally {
       setLoading(false);
+      clearInterval(tipInterval);
     }
   };
 
@@ -166,8 +183,21 @@ const Register = () => {
       {errors.acepto_terminos && <p className="text-red-500 text-xs mt-1">{errors.acepto_terminos.message}</p>}
       
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Creando... Puede tardar un poco el registro pero te pedimos un poco de paciencia, en breve te llegará un email para que confirmes tu cuenta, revisa tu bandeja de spam." : "Crear cuenta"}
+            {/* ✅ 6. MEJORAMOS EL BOTÓN DE CARGA */}
+                        {loading ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Creando cuenta...
+                            </>
+                        ) : "Crear cuenta"}
           </Button>
+
+          {/* ✅ 7. MOSTRAMOS EL CONSEJO DINÁMICO DURANTE LA CARGA */}
+                    {loading && (
+                        <div className="text-center mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                            <p className="text-sm text-blue-800 animate-pulse">{loadingTip}</p>
+                        </div>
+                    )}
 
           <p className="text-center text-sm text-muted-foreground">
             ¿Ya tienes cuenta?{" "}
