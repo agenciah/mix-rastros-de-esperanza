@@ -1,27 +1,45 @@
-# fly.toml app configuration file generated for hasta-encontrarte-backend on 2025-09-27T12:51:46-06:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
+# fly.toml app configuration file for a Node.js Express app
 
 app = 'hasta-encontrarte-backend'
 primary_region = 'dfw'
 
-[[mounts]]
-  source = 'data'
-  destination = '/data'
-  auto_extend_size_threshold = 80
-  auto_extend_size_increment = '1GB'
-  auto_extend_size_limit = '10GB'
+[build]
+  # Usa el constructor estándar y más fiable de Fly.io
+  builder = "paketobuildpacks/builder:base"
 
+# Define el servicio web principal
 [http_service]
-  internal_port = 3000
+  internal_port = 3000 # El puerto que tu app usa internamente
   force_https = true
-  auto_stop_machines = 'stop'
-  auto_start_machines = true
-  min_machines_running = 0
-  processes = ['app']
+  auto_stop_machines = true # Se apaga si no hay tráfico para ahorrar recursos
+  auto_start_machines = true # Se enciende automáticamente con el primer request
+  min_machines_running = 0 # Típico del plan gratuito
 
-[[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
-  cpus = 1
+# Define cómo el mundo exterior se conecta a tu app
+[[services]]
+  protocol = "tcp"
+  internal_port = 3000
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
+
+  # ✅ LA SECCIÓN MÁS IMPORTANTE: El "Chequeo de Salud"
+  # Le dice a Fly.io cómo saber si tu app está funcionando.
+  [[services.http_checks]]
+    interval = "15s" # Cada 15 segundos
+    timeout = "2s"
+    method = "GET"
+    path = "/" # Llama a tu ruta principal (la que responde "Hasta Encontrarte API funcionando 🚀")
+    grace_period = "10s" # Dale a tu app 10s para arrancar antes del primer chequeo
