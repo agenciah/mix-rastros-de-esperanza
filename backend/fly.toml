@@ -1,12 +1,10 @@
-# fly.toml app configuration file generated for hasta-encontrarte-backend on 2025-09-27T12:05:58-06:00
+# fly.toml app configuration file generated for hasta-encontrarte-backend on 2025-09-27T12:51:46-06:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = 'hasta-encontrarte-backend'
 primary_region = 'dfw'
-
-[build]
 
 [[mounts]]
   source = 'data'
