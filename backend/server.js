@@ -8,7 +8,24 @@ import logger from './utils/logger.js';
 import { ensureAllTables, insertCatalogos } from './db/users/initDb.js';
 
 async function main() {
+
     try {
+        // ✅ --- INICIO: BLOQUE DE VERIFICACIÓN DE VARIABLES ---
+        console.log('--- Verificando variables de entorno al arrancar ---');
+        const criticalVars = ['DATABASE_URL', 'SENDGRID_API_KEY', 'SENDGRID_FROM_EMAIL', 'JWT_SECRET'];
+        let missingVar = false;
+        criticalVars.forEach(v => {
+            if (!process.env[v]) {
+                console.error(`❌ Variable de entorno crítica FALTANTE: ${v}`);
+                missingVar = true;
+            } else {
+                console.log(`✔️ Variable encontrada: ${v}`);
+            }
+        });
+        console.log('----------------------------------------------------');
+        if (missingVar) {
+            throw new Error('Faltan variables de entorno críticas. El servidor no puede arrancar.');
+        }
         await ensureAllTables();
         await insertCatalogos();
 
