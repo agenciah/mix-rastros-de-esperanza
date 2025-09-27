@@ -35,4 +35,4 @@ EXPOSE 3000
 # 🗑️ ELIMINADO: ¡La línea que sobrescribía nuestra DATABASE_URL!
 
 # ✅ CORREGIDO: El comando de arranque simple y estándar para una app de Node.js
-CMD [ "npm", "start" ]
+CMD [ "node", "server.js" ]
