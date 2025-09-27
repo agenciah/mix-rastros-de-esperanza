@@ -4,8 +4,8 @@ app = 'hasta-encontrarte-backend'
 primary_region = 'dfw'
 
 [build]
-  # Usa el constructor estándar y más fiable de Fly.io
-  builder = "paketobuildpacks/builder:base"
+# Esta línea le dice a Fly.io que use el Dockerfile en la misma carpeta
+  dockerfile = "Dockerfile"
 
 # Define el servicio web principal
 [http_service]
