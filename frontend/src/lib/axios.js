@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const api = axios.create({
     // ✅ Lee la URL base desde las variables de entorno de Vite
-    baseURL: import.meta.env.VITE_API_BASE_URL, 
+    baseURL: 'https://hasta-encontrarte-backend.fly.dev/api', 
     withCredentials: true,
 });
 

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const apiAdmin = axios.create({
     // ✅ Construye la URL de admin a partir de la URL base
-    baseURL: `${import.meta.env.VITE_API_BASE_URL}/admin`,
+    baseURL: `https://hasta-encontrarte-backend.fly.dev/api/admin`,
 });
 
 apiAdmin.interceptors.request.use((config) => {
