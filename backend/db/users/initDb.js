@@ -154,8 +154,11 @@ console.log(`DB_PORT: ${process.env.DB_PORT} (Tipo: ${typeof process.env.DB_PORT
 console.log('----------------------------------------------------');
 // --- TERMINA EL CÓDIGO DE DEPURACIÓN FINAL ---
 
-// ✅ CORRECCIÓN FINAL: Usamos variables individuales para una conexión más robusta.
 export const pool = new pg.Pool({
+    // La librería 'pg' es inteligente: si 'connectionString' existe, la usará e ignorará el resto.
+    // Si no existe, usará las variables individuales.
+    connectionString: process.env.DATABASE_URL,
+
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
