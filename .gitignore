@@ -71,3 +71,13 @@ frontend/.env
 
 # Credenciales y secretos
 backend/config/serviceAccountKey.json
+
+# Ignorar todos los archivos .env que contienen secretos
+.env
+backend/.env
+frontend/.env
+frontend/.env.local
+
+# PERO NO ignorar los archivos de configuración de Vite que son públicos
+!frontend/.env.development
+!frontend/.env.production
