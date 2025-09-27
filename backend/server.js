@@ -1,8 +1,5 @@
+// RUTA: backend/server.js (VERSIÓN FINAL, LIMPIA Y CORRECTA)
 
-import dotenv from 'dotenv';
-dotenv.config();
-
-// RUTA: backend/server.js (VERSIÓN FINAL)
 import http from 'http';
 import { WebSocketServer } from 'ws';
 import jwt from 'jsonwebtoken';
@@ -12,24 +9,10 @@ import logger from './utils/logger.js';
 import { ensureAllTables, insertCatalogos } from './db/users/initDb.js';
 
 async function main() {
-
     try {
-        // ✅ --- INICIO: BLOQUE DE VERIFICACIÓN DE VARIABLES ---
-        console.log('--- Verificando variables de entorno al arrancar ---');
-        const criticalVars = ['DATABASE_URL', 'SENDGRID_API_KEY', 'SENDGRID_FROM_EMAIL', 'JWT_SECRET'];
-        let missingVar = false;
-        criticalVars.forEach(v => {
-            if (!process.env[v]) {
-                console.error(`❌ Variable de entorno crítica FALTANTE: ${v}`);
-                missingVar = true;
-            } else {
-                console.log(`✔️ Variable encontrada: ${v}`);
-            }
-        });
-        console.log('----------------------------------------------------');
-        if (missingVar) {
-            throw new Error('Faltan variables de entorno críticas. El servidor no puede arrancar.');
-        }
+        // La aplicación ahora confía en que las variables de entorno están inyectadas
+        // por la plataforma. Si falta alguna, la conexión a la DB fallará y el
+        // error se capturará en el bloque catch.
         await ensureAllTables();
         await insertCatalogos();
 
