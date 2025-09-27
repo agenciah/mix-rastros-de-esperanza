@@ -2,8 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    // ✅ Lee la URL base desde las variables de entorno de Vite
-    baseURL: 'https://hasta-encontrarte-backend.fly.dev/api', 
+    baseURL: 'https://hasta-encontrarte-backend-c5aaf60bf144.herokuapp.com/api', // ✅ REEMPLAZA CON TU URL DE HEROKU
     withCredentials: true,
 });
 

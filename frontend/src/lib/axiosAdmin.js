@@ -2,8 +2,7 @@
 import axios from 'axios';
 
 const apiAdmin = axios.create({
-    // ✅ Construye la URL de admin a partir de la URL base
-    baseURL: `https://hasta-encontrarte-backend.fly.dev/api/admin`,
+    baseURL: `https://hasta-encontrarte-backend-c5aaf60bf144.herokuapp.com/api/admin`, // ✅ REEMPLAZA CON TU URL DE HEROKU
 });
 
 apiAdmin.interceptors.request.use((config) => {
