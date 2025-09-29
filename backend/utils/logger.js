@@ -2,7 +2,12 @@
 import winston from 'winston';
 import path from 'path';
 import DailyRotateFile from 'winston-daily-rotate-file';
-import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+// --- ¡CORRECCIÓN CLAVE! Obtenemos la ruta absoluta del directorio actual ---
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Esto asegura que la carpeta 'logs' siempre se cree dentro de 'utils'
+const logDir = path.join(__dirname, 'logs');
 
 // Define niveles y colores personalizados
 const levels = {
@@ -12,7 +17,6 @@ const levels = {
   http: 3,
   debug: 4
 };
-
 const colors = {
   error: 'red',
   warn: 'yellow',
@@ -20,22 +24,7 @@ const colors = {
   http: 'magenta',
   debug: 'blue'
 };
-
 winston.addColors(colors);
-
-// Define ruta para logs rotativos
-const logDir = 'utils/logs';
-if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
-
-// 🚀 Transport rotativo diario comprimido
-const transportRotate = new DailyRotateFile({
-  dirname: logDir,
-  filename: 'app-%DATE%.log',
-  datePattern: 'YYYY-MM-DD',
-  zippedArchive: true,
-  maxSize: '2m',
-  maxFiles: '14d'
-});
 
 // ✨ Formato legible para consola
 const consoleFormat = winston.format.combine(
@@ -65,7 +54,15 @@ const logger = winston.createLogger({
       filename: path.join(logDir, 'error.log'),
       level: 'error'
     }),
-    transportRotate
+    // 🚀 Transport rotativo diario comprimido (él creará la carpeta si no existe)
+    new DailyRotateFile({
+      dirname: logDir,
+      filename: 'app-%DATE%.log',
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: true,
+      maxSize: '2m',
+      maxFiles: '14d'
+    })
   ],
   exceptionHandlers: [
     new winston.transports.File({ filename: path.join(logDir, 'exceptions.log') })

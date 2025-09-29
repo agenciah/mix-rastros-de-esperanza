@@ -1,9 +1,17 @@
 // RUTA: backend/app.js (VERSIÓN FINAL)
+console.log('[APP.JS] - INICIO DEL ARCHIVO');
 
 import express from 'express';
+console.log('[APP.JS] - import express OK');
+
 import cors from 'cors';
+console.log('[APP.JS] - import cors OK');
+
 import logger from './utils/logger.js';
+console.log('[APP.JS] - import logger OK');
+
 import errorHandler from './middleware/errorHandler.js';
+console.log('[APP.JS] - import errorHandler OK');
 
 // Importación de TODAS tus rutas
 import authRoutes from './routes/auth.js';
@@ -20,38 +28,24 @@ import feedRoutes from './routes/feedRoutes.js';
 import messagingRoutes from './routes/messagingRoutes.js';
 import notificationsRoutes from './routes/notificationsRoutes.js';
 
+console.log('[APP.JS] - Creando instancia de express...');
 const app = express();
+console.log('[APP.JS] - Instancia de express CREADA');
 
-// ✅ INICIA CORRECCIÓN: Configuración de CORS más robusta
-const whitelist = [
-    'http://localhost:5173',
-    'https://hastaencontrarte.lat'
-];
+app.use(cors({
+    origin: ['http://localhost:5173', 'https://hastaencontrarte.lat'],
+    credentials: true
+}));
 
-const corsOptions = {
-    origin: function (origin, callback) {
-        // Permitir peticiones sin 'origin' (como Postman o apps móviles) o si el origen está en la lista blanca
-        if (!origin || whitelist.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos permitidos para la llamada de permiso
-    allowedHeaders: 'Content-Type,Authorization' // Headers permitidos
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Habilita explícitamente las respuestas de preflight para todas las rutas
-// ✅ FIN CORRECCIÓN
+console.log('[APP.JS] - CORS (temporalmente desactivado) OK'); // <--- ¡NUEVA LÍNEA DE PRUEBA!
+console.log('[APP.JS] - Configurando middlewares de express...');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use((req, _res, next) => {
     logger.info(`→ ${req.method} ${req.originalUrl}`);
     next();
 });
+console.log('[APP.JS] - Middlewares de express configurados OK');
 
 // Rutas
 app.use('/api/auth', authRoutes);
@@ -69,10 +63,13 @@ app.use('/api/feed', feedRoutes);
 app.use('/api/messaging', messagingRoutes);
 app.use('/api/notifications', notificationsRoutes);
 
+console.log('[APP.JS] - Configurando ruta GET / y errorHandler...');
 app.get('/', (_req, res) => {
     res.send('<pre>Hasta Encontrarte API funcionando 🚀</pre>');
 });
-
 app.use(errorHandler);
+console.log('[APP.JS] - Ruta GET / y errorHandler configurados OK');
 
+
+console.log('[APP.JS] - FIN DEL ARCHIVO, EXPORTANDO APP...');
 export default app;

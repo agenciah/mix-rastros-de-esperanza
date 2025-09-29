@@ -1,5 +1,7 @@
 // RUTA: backend/server.js
-console.log("--- DEBUG: EJECUTANDO LA VERSIÓN CORRECTA DE SERVER.JS (29/09/2025) ---");
+
+console.log("--- DEBUG: EJECUTANDO LA VERSIÓN CORRECTA...");
+console.log(`--- DEBUG: La clave de SendGrid es: ${process.env.SENDGRID_API_KEY ? 'Cargada ✅' : 'NO Cargada ❌'}`);
 import http from 'http';
 import { WebSocketServer } from 'ws';
 import jwt from 'jsonwebtoken';
