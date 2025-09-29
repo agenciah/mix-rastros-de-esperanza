@@ -1,4 +1,5 @@
 // RUTA: backend/server.js
+console.log("--- DEBUG: EJECUTANDO LA VERSIÓN CORRECTA DE SERVER.JS (29/09/2025) ---");
 import http from 'http';
 import { WebSocketServer } from 'ws';
 import jwt from 'jsonwebtoken';
