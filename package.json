@@ -5,11 +5,11 @@
   "description": "Aplicación full-stack de Rastros de Esperanza",
   "main": "backend/server.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -r dotenv/config backend/server.js",
-    "admin:create": "node -r dotenv/config backend/scripts/createAdmin.js"
-  },
+  "start": "node backend/server.js",
+  "dev": "nodemon -r dotenv/config backend/server.js",
+  "admin:create": "node -r dotenv/config backend/scripts/createAdmin.js",
+  "test": "echo \"Error: no test specified\" && exit 1"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
