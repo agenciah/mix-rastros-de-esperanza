@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://hasta-encontrarte-backend-c5aaf60bf144.herokuapp.com/api', // ✅ REEMPLAZA CON TU URL DE HEROKU
+    baseURL: 'https://hasta-encontrarte-backend-fe5f73c970ea.herokuapp.com/api', // ✅ REEMPLAZA CON TU URL DE HEROKU
     withCredentials: true,
 });
 
