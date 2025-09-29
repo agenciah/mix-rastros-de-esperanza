@@ -35,7 +35,7 @@ export async function createUser({
                 razon_social_servicio, rfc_servicio, cp_fiscal_servicio,
                 uso_cfdi_servicio, email_fiscal_servicio,
 
-                estado_cuenta, fecha_desactivacion, // <-- Se usan las nuevas columnas
+                estado_cuenta, fecha_desactivacion,
 
                 acepto_terminos, fecha_aceptacion, version_terminos,
                 user_state,
