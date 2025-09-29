@@ -20,23 +20,23 @@ export async function createUser({
     numero_referencia_unico = null, fichas_activas_pagadas = 0,
     estado_suscripcion = 'inactivo',
 }) {
-    const trialStartDate = new Date(); // PostgreSQL maneja bien los objetos Date
+    const trialStartDate = new Date();
     const initialState = JSON.stringify({ flow: null, step: null, data: {} });
-
     if (!Array.isArray(plan)) plan = [plan];
 
     logger.info("🛠️ Datos completos recibidos para createUser:", { /* ... tus datos ... */ });
 
     try {
-        // La sintaxis de PostgreSQL usa $1, $2, etc. como placeholders.
-        // Usamos 'RETURNING id' para obtener el ID del usuario recién creado.
-        const res = await query( // ✅ Corregido
+        // ✅ INICIO DE LA CORRECCIÓN
+        const res = await query(
             `INSERT INTO users (
                 nombre, telefono, email, password, plan, trial_start_date,
                 confirmation_token, role,
                 razon_social_servicio, rfc_servicio, cp_fiscal_servicio,
                 uso_cfdi_servicio, email_fiscal_servicio,
-                cancelado, cancelacion_efectiva,
+
+                estado_cuenta, fecha_desactivacion, // <-- Se usan las nuevas columnas
+
                 acepto_terminos, fecha_aceptacion, version_terminos,
                 user_state,
                 estado_republica, ultima_conexion, numero_referencia_unico,
@@ -50,13 +50,16 @@ export async function createUser({
                 confirmationToken, role,
                 razon_social_servicio, rfc_servicio, cp_fiscal_servicio,
                 uso_cfdi_servicio, email_fiscal_servicio,
-                0, null,
+
+                'activo', null, // <-- Valores por defecto para las nuevas columnas
+
                 acepto_terminos, fecha_aceptacion, version_terminos,
                 initialState,
                 estado_republica, ultima_conexion, numero_referencia_unico,
                 fichas_activas_pagadas, estado_suscripcion
             ]
         );
+        // ✅ FIN DE LA CORRECCIÓN
 
         const userId = res.rows[0].id;
         if (!userId) {

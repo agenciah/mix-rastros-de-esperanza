@@ -288,6 +288,13 @@ export async function ensureAllTables() {
                 logger.info("➖ Columna 'cancelacion_efectiva' eliminada.");
             }
         }
+
+         // 3. Gestionar la columna 'cancelado' (la que causaba el error)
+        if (!(await columnExists(client, 'users', 'cancelado'))) {
+            logger.info("➕ Agregando columna faltante 'cancelado' a la tabla users...");
+            await client.query(`ALTER TABLE users ADD COLUMN cancelado INTEGER DEFAULT 0;`);
+            logger.info("✅ Columna 'cancelado' añadida correctamente.");
+        }
         // ✅ --- FIN: LÓGICA DE MIGRACIÓN AUTOMÁTICA ---
 
 
