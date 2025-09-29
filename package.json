@@ -5,10 +5,9 @@
   "description": "Aplicación full-stack de Rastros de Esperanza",
   "main": "backend/server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node -r dotenv/config server.js",
-    "admin:create": "node -r dotenv/config scripts/createAdmin.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node backend/server.js",
+    "dev": "node -r dotenv/config backend/server.js",
+    "admin:create": "node -r dotenv/config backend/scripts/createAdmin.js"
     },
   "keywords": [],
   "author": "",
