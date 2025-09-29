@@ -144,26 +144,12 @@ const PRENDAS = [
     { tipo: "Uniforme laboral", cat: "Otros" },
 ];
 
-// --- INICIA EL CÓDIGO DE DEPURACIÓN FINAL ---
-console.log('--- Depurando variables de entorno en initDb.js ---');
-console.log(`DB_HOST: ${process.env.DB_HOST} (Tipo: ${typeof process.env.DB_HOST})`);
-console.log(`DB_USER: ${process.env.DB_USER} (Tipo: ${typeof process.env.DB_USER})`);
-console.log(`DB_PASSWORD: ${process.env.DB_PASSWORD ? 'Cargada (oculta por seguridad)' : 'NO CARGADA'} (Tipo: ${typeof process.env.DB_PASSWORD})`);
-console.log(`DB_NAME: ${process.env.DB_NAME} (Tipo: ${typeof process.env.DB_NAME})`);
-console.log(`DB_PORT: ${process.env.DB_PORT} (Tipo: ${typeof process.env.DB_PORT})`);
-console.log('----------------------------------------------------');
-// --- TERMINA EL CÓDIGO DE DEPURACIÓN FINAL ---
 
 export const pool = new pg.Pool({
-    // La librería 'pg' es inteligente: si 'connectionString' existe, la usará e ignorará el resto.
-    // Si no existe, usará las variables individuales.
+    // ✅ Dejamos únicamente connectionString. Esto funcionará tanto en Heroku como en local.
     connectionString: process.env.DATABASE_URL,
-
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT,
+    
+    // Configuración de SSL requerida por Heroku y otras plataformas en la nube
     ssl: {
         rejectUnauthorized: false
     }
